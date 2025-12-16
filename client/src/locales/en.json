@@ -46,7 +46,7 @@
     "listViewHint": "Screen reader friendly list view. Each device can be moved to a different zone using the dropdown selector.",
     "count": "{count, plural, one {# device} other {# devices}}",
     "noDevices": "No devices in this zone",
-    "in": "Devices in",
+    "in": "Devices in {zone}",
     "unknownFlag": "Unknown",
     "iotFlag": "IoT",
     "visitorFlag": "Visitor",

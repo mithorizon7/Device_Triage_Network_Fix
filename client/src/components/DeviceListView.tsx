@@ -68,7 +68,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                 {t('devices.noDevices')}
               </p>
             ) : (
-              <ul className="divide-y divide-border" role="list" aria-label={`${t('devices.in')} ${label}`}>
+              <ul className="divide-y divide-border" role="list" aria-label={t('devices.in', { zone: label })}>
                 {zoneDevices.map((device) => {
                   const DeviceIcon = getDeviceIcon(device.type);
                   return (

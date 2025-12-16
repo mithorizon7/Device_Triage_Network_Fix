@@ -46,7 +46,7 @@
     "listViewHint": "Ekrānlasītājam draudzīgs saraksta skats. Katru ierīci var pārvietot uz citu zonu, izmantojot nolaižamo izvēlni.",
     "count": "{count, plural, one {# ierīce} other {# ierīces}}",
     "noDevices": "Šajā zonā nav ierīču",
-    "in": "Ierīces zonā",
+    "in": "Ierīces zonā {zone}",
     "unknownFlag": "Nezināms",
     "iotFlag": "IoT",
     "visitorFlag": "Viesis",

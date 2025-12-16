@@ -105,7 +105,7 @@ export function ZoneDropTarget({
       <div
         className="flex-1 p-3 overflow-auto"
         role="list"
-        aria-label={`${t('devices.in')} ${label}`}
+        aria-label={t('devices.in', { zone: label })}
       >
         {devicesInZone.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-center">
