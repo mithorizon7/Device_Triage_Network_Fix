@@ -45,20 +45,45 @@ export function generateScenarioId(): string {
   return `custom_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function createEmptyScenario(): Scenario {
+export interface CreateEmptyScenarioOptions {
+  title?: string;
+  notes?: string;
+  networkLabels?: {
+    main?: string;
+    guest?: string;
+    iot?: string;
+    investigate?: string;
+  };
+  learningObjectives?: string[];
+}
+
+const DEFAULT_NETWORKS = [
+  { id: "main", label: "Main Network", ssid: "MyNetwork_Main", security: "WPA2", subnet: "192.168.1.0/24", enabled: true },
+  { id: "guest", label: "Guest Network", ssid: "MyNetwork_Guest", security: "WPA2", subnet: "192.168.2.0/24", enabled: false },
+  { id: "iot", label: "IoT Network", ssid: "MyNetwork_IoT", security: "WPA2", subnet: "192.168.3.0/24", enabled: false },
+  { id: "investigate", label: "Investigate / Quarantine", ssid: null, security: null, subnet: null, enabled: true }
+];
+
+const DEFAULT_LEARNING_OBJECTIVES = [
+  "Organize devices into appropriate trust zones",
+  "Apply security controls to reduce risk",
+  "Understand the impact of each control on overall security"
+];
+
+export function createEmptyScenario(options?: CreateEmptyScenarioOptions): Scenario {
+  const networks = DEFAULT_NETWORKS.map(n => ({
+    ...n,
+    label: options?.networkLabels?.[n.id as keyof typeof options.networkLabels] ?? n.label
+  }));
+
   return {
     id: generateScenarioId(),
-    title: "New Custom Scenario",
+    title: options?.title ?? "New Custom Scenario",
     environment: {
       type: "home",
-      notes: "Custom scenario created by instructor"
+      notes: options?.notes ?? "Custom scenario created by instructor"
     },
-    networks: [
-      { id: "main", label: "Main Network", ssid: "MyNetwork_Main", security: "WPA2", subnet: "192.168.1.0/24", enabled: true },
-      { id: "guest", label: "Guest Network", ssid: "MyNetwork_Guest", security: "WPA2", subnet: "192.168.2.0/24", enabled: false },
-      { id: "iot", label: "IoT Network", ssid: "MyNetwork_IoT", security: "WPA2", subnet: "192.168.3.0/24", enabled: false },
-      { id: "investigate", label: "Investigate / Quarantine", ssid: null, security: null, subnet: null, enabled: true }
-    ],
+    networks,
     initialControls: {
       wifiSecurity: "WPA2",
       strongWifiPassword: false,
@@ -69,11 +94,7 @@ export function createEmptyScenario(): Scenario {
       defaultPasswordsAddressed: false
     },
     devices: [],
-    learningObjectives: [
-      "Organize devices into appropriate trust zones",
-      "Apply security controls to reduce risk",
-      "Understand the impact of each control on overall security"
-    ],
+    learningObjectives: options?.learningObjectives ?? DEFAULT_LEARNING_OBJECTIVES,
     suggestedWinConditions: {
       maxTotalRisk: 35,
       requires: []

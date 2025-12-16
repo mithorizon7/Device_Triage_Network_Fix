@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Award, Star, Shield, Zap, Target, BookOpen, FileText, Trophy
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Badge as BadgeType, UserProgress } from "@/lib/progressTracking";
 
 interface BadgesPanelProps {
@@ -30,6 +31,7 @@ const badgeColors: Record<string, string> = {
 };
 
 export function BadgesPanel({ progress }: BadgesPanelProps) {
+  const { t } = useTranslation();
   const { badges, totalCompletions } = progress;
 
   if (badges.length === 0 && totalCompletions === 0) {
@@ -41,7 +43,7 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Award className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          Progress & Badges
+          {t('badges.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,12 +51,12 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
           <div className="flex items-center gap-1.5">
             <Trophy className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium" data-testid="text-completions">{totalCompletions}</span>
-            <span className="text-muted-foreground">completed</span>
+            <span className="text-muted-foreground">{t('badges.completed')}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Award className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium" data-testid="text-badges-count">{badges.length}</span>
-            <span className="text-muted-foreground">badges</span>
+            <span className="text-muted-foreground">{t('badges.badgesCount')}</span>
           </div>
         </div>
 
@@ -71,7 +73,7 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
                   data-testid={`badge-${badge.id}`}
                 >
                   <Icon className={`h-3.5 w-3.5 ${colorClass}`} aria-hidden="true" />
-                  {badge.name}
+                  {t(badge.name)}
                 </Badge>
               );
             })}
@@ -83,6 +85,7 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
 }
 
 export function BadgeNotification({ badge }: { badge: BadgeType }) {
+  const { t } = useTranslation();
   const Icon = badgeIcons[badge.id] || Award;
   const colorClass = badgeColors[badge.id] || "text-foreground";
 
@@ -92,8 +95,8 @@ export function BadgeNotification({ badge }: { badge: BadgeType }) {
         <Icon className="h-6 w-6" />
       </div>
       <div>
-        <p className="font-medium">Badge Earned!</p>
-        <p className="text-sm text-muted-foreground">{badge.name}: {badge.description}</p>
+        <p className="font-medium">{t('badges.badgeEarned')}</p>
+        <p className="text-sm text-muted-foreground">{t(badge.name)}: {t(badge.description)}</p>
       </div>
     </div>
   );
@@ -106,6 +109,8 @@ export function CompletionBanner({
   score: number; 
   isNewCompletion: boolean;
 }) {
+  const { t } = useTranslation();
+  
   if (score > 35) return null;
 
   return (
@@ -122,10 +127,10 @@ export function CompletionBanner({
       <Trophy className={`h-5 w-5 ${isNewCompletion ? "text-green-500" : "text-muted-foreground"}`} />
       <div>
         <p className="font-medium">
-          {isNewCompletion ? "Scenario Complete!" : "Win Condition Met"}
+          {isNewCompletion ? t('notifications.scenarioComplete') : t('badges.winConditionMet')}
         </p>
         <p className="text-sm opacity-80">
-          Risk score: {Math.round(score)} (target: 35 or below)
+          {t('badges.riskScoreTarget', { score: Math.round(score), target: 35 })}
         </p>
       </div>
     </div>

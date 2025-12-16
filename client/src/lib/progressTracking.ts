@@ -25,34 +25,34 @@ export interface Badge {
   scenarioId?: string;
 }
 
-const BADGE_DEFINITIONS = {
+export const BADGE_DEFINITIONS: Record<string, { nameKey: string; descriptionKey: string }> = {
   first_completion: {
-    name: "First Steps",
-    description: "Complete your first scenario"
+    nameKey: "badges.firstSteps",
+    descriptionKey: "badges.firstStepsDesc"
   },
   all_builtin: {
-    name: "Security Scholar",
-    description: "Complete all three built-in scenarios"
+    nameKey: "badges.zoneMaster",
+    descriptionKey: "badges.zoneMasterDesc"
   },
   perfect_score: {
-    name: "Perfect Security",
-    description: "Achieve a risk score of 20 or below"
+    nameKey: "badges.perfectScore",
+    descriptionKey: "badges.perfectScoreDesc"
   },
   iot_master: {
-    name: "IoT Master",
-    description: "Complete a scenario with all IoT devices properly isolated"
+    nameKey: "badges.iotWrangler",
+    descriptionKey: "badges.iotWranglerDesc"
   },
   quick_learner: {
-    name: "Quick Learner",
-    description: "Complete a scenario on your first attempt"
+    nameKey: "badges.speedDemon",
+    descriptionKey: "badges.speedDemonDesc"
   },
   persistent: {
-    name: "Persistent",
-    description: "Complete a scenario after 5 or more attempts"
+    nameKey: "badges.persistent",
+    descriptionKey: "badges.persistentDesc"
   },
   custom_creator: {
-    name: "Scenario Author",
-    description: "Create and save a custom scenario"
+    nameKey: "badges.scenarioAuthor",
+    descriptionKey: "badges.scenarioAuthorDesc"
   }
 };
 
@@ -177,13 +177,13 @@ function hasBadge(progress: UserProgress, badgeId: string): boolean {
 function awardBadge(progress: UserProgress, badgeId: string, scenarioId?: string): Badge | null {
   if (hasBadge(progress, badgeId)) return null;
   
-  const definition = BADGE_DEFINITIONS[badgeId as keyof typeof BADGE_DEFINITIONS];
+  const definition = BADGE_DEFINITIONS[badgeId];
   if (!definition) return null;
 
   const badge: Badge = {
     id: badgeId,
-    name: definition.name,
-    description: definition.description,
+    name: definition.nameKey,
+    description: definition.descriptionKey,
     earnedAt: new Date().toISOString(),
     scenarioId
   };

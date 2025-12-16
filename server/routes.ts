@@ -22,8 +22,17 @@ function loadScenarios() {
 }
 
 function loadScenarioById(id: string) {
-  const scenarios = loadScenarios();
-  return scenarios.find((s: { id: string }) => s.id === id);
+  const files = readdirSync(scenariosDir).filter(
+    (f) => f.endsWith(".json") && f !== "scoringRules.json"
+  );
+  for (const file of files) {
+    const content = readFileSync(join(scenariosDir, file), "utf-8");
+    const scenario = JSON.parse(content);
+    if (scenario.id === id) {
+      return scenario;
+    }
+  }
+  return undefined;
 }
 
 export async function registerRoutes(

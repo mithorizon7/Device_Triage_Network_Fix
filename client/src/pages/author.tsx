@@ -30,6 +30,7 @@ import {
   ArrowLeft, Plus, Trash2, Download, Upload, Save, 
   Target, FileText, Pencil, Copy
 } from "lucide-react";
+import { scenarioSchema } from "@shared/schema";
 import type { Scenario, Device, DeviceType, RiskFlag } from "@shared/schema";
 
 const deviceTypes: DeviceType[] = [
@@ -118,10 +119,13 @@ export default function AuthorPage() {
     reader.onload = (event) => {
       try {
         const content = event.target?.result as string;
-        const scenario = JSON.parse(content) as Scenario;
-        if (!scenario.id || !scenario.title || !scenario.devices) {
+        const parsed = JSON.parse(content);
+        const result = scenarioSchema.safeParse(parsed);
+        if (!result.success) {
+          console.error("Scenario validation failed:", result.error.errors);
           throw new Error("Invalid scenario format");
         }
+        const scenario = result.data;
         scenario.id = `imported_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
         saveCustomScenario(scenario);
         setCustomScenarios(getCustomScenarios());
@@ -132,7 +136,7 @@ export default function AuthorPage() {
     };
     reader.readAsText(file);
     e.target.value = "";
-  }, []);
+  }, [t]);
 
   const updateScenarioField = useCallback(<K extends keyof Scenario>(field: K, value: Scenario[K]) => {
     setEditingScenario(prev => prev ? { ...prev, [field]: value } : null);

@@ -124,9 +124,15 @@ export function exportAsJson(data: ExportData): void {
   URL.revokeObjectURL(url);
 }
 
+const ZONE_NAMES: Record<ZoneId, string> = {
+  main: "Main Network",
+  guest: "Guest Network",
+  iot: "IoT Network",
+  investigate: "Investigate"
+};
+
 function getZoneName(zoneId: ZoneId): string {
-  const zone = zones.find(z => z.id === zoneId);
-  return zone?.label || zoneId;
+  return ZONE_NAMES[zoneId] || zoneId;
 }
 
 function getRiskLevel(score: number): string {
