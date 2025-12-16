@@ -139,6 +139,9 @@ shared/
 - All UI strings use translation keys from `client/src/locales/{en,lv,ru}.json`
 - Zone labels/descriptions use `labelKey`/`descriptionKey` for translation lookups
 - Locale-aware formatting via `formatNumber()` and `formatDate()` helpers in `i18n.ts`
+- i18n validation script: `node scripts/i18n-validate.js` checks key parity and ICU syntax
+- 224 translation keys fully synchronized across all three locales
+- Author page fully internationalized with scenario creation/editing workflow
 
 ## User Preferences
 - Dark/light mode persisted in localStorage
@@ -148,6 +151,8 @@ shared/
 - Language preference persisted in localStorage (key: `i18nextLng`)
 
 ## Recent Changes
+- 2024-12-16: Added i18n validation script (scripts/i18n-validate.js) for key parity and ICU syntax checking
+- 2024-12-16: Fully internationalized author.tsx scenario authoring page with 35+ new translation keys
 - 2024-12-16: Completed full i18n implementation with proper ICU interpolation for all aria-labels
 - 2024-12-16: Added full i18n support with English, Latvian, and Russian translations using react-i18next
 - 2024-12-16: Added language switcher with flag icons to header
