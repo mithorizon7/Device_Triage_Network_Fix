@@ -63,7 +63,7 @@ export function ControlsDrawer({
         <ControlItem
           icon={Wifi}
           label={t('controls.wifiSecurity')}
-          description={t('controls.wifiSecurityDesc', { defaultValue: 'Encryption standard for wireless traffic' })}
+          description={t('controls.wifiSecurityDesc')}
         >
           <Select
             value={controls.wifiSecurity}
@@ -88,7 +88,7 @@ export function ControlsDrawer({
         <ControlItem
           icon={Lock}
           label={t('controls.strongWifiPassword')}
-          description={t('controls.strongWifiPasswordDesc', { defaultValue: 'Complex password for network access' })}
+          description={t('controls.strongWifiPasswordDesc')}
         >
           <Switch
             checked={controls.strongWifiPassword}
@@ -104,8 +104,8 @@ export function ControlsDrawer({
           icon={Users}
           label={t('controls.guestNetworkEnabled')}
           description={guestNetworkAvailable 
-            ? t('controls.guestNetworkDesc', { defaultValue: 'Separate network for visitors' })
-            : t('controls.enableInSettings', { defaultValue: 'Enable in scenario settings' })
+            ? t('controls.guestNetworkDesc')
+            : t('controls.enableInSettings')
           }
         >
           <Switch
@@ -123,8 +123,8 @@ export function ControlsDrawer({
           icon={Shield}
           label={t('controls.iotNetworkEnabled')}
           description={iotNetworkAvailable 
-            ? t('controls.iotNetworkDesc', { defaultValue: 'Isolated network for smart devices' })
-            : t('controls.enableInSettings', { defaultValue: 'Enable in scenario settings' })
+            ? t('controls.iotNetworkDesc')
+            : t('controls.enableInSettings')
           }
         >
           <Switch
@@ -141,7 +141,7 @@ export function ControlsDrawer({
         <ControlItem
           icon={Key}
           label={t('controls.mfaEnabled')}
-          description={t('controls.mfaDesc', { defaultValue: 'Multi-factor auth for device accounts' })}
+          description={t('controls.mfaDesc')}
         >
           <Switch
             checked={controls.mfaEnabled}
@@ -156,7 +156,7 @@ export function ControlsDrawer({
         <ControlItem
           icon={RefreshCw}
           label={t('controls.autoUpdatesEnabled')}
-          description={t('controls.autoUpdatesDesc', { defaultValue: 'Keep device firmware current' })}
+          description={t('controls.autoUpdatesDesc')}
         >
           <Switch
             checked={controls.autoUpdatesEnabled}
@@ -171,7 +171,7 @@ export function ControlsDrawer({
         <ControlItem
           icon={KeyRound}
           label={t('controls.defaultPasswordsAddressed')}
-          description={t('controls.defaultPasswordsDesc', { defaultValue: 'Replace factory default credentials' })}
+          description={t('controls.defaultPasswordsDesc')}
         >
           <Switch
             checked={controls.defaultPasswordsAddressed}

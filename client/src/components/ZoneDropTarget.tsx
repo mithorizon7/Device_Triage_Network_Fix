@@ -73,7 +73,7 @@ export function ZoneDropTarget({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       role="region"
-      aria-label={`${label} zone with ${devicesInZone.length} devices`}
+      aria-label={t('zones.zoneWithDevices', { zone: label, count: devicesInZone.length })}
       data-testid={`zone-${zone.id}`}
       className={`
         relative flex flex-col min-h-[200px] rounded-lg border-2 border-dashed
@@ -105,7 +105,7 @@ export function ZoneDropTarget({
       <div
         className="flex-1 p-3 overflow-auto"
         role="list"
-        aria-label={`Devices in ${label}`}
+        aria-label={`${t('devices.in')} ${label}`}
       >
         {devicesInZone.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-center">
@@ -113,7 +113,7 @@ export function ZoneDropTarget({
               <ZoneIcon className={`h-6 w-6 ${zone.colorClass} opacity-60`} aria-hidden="true" />
             </div>
             <p className="text-sm text-muted-foreground">
-              {t('zones.dropHere', { defaultValue: 'Drop devices here' })}
+              {t('zones.dropHere')}
             </p>
           </div>
         ) : (
@@ -136,7 +136,7 @@ export function ZoneDropTarget({
       {isDragOver && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg">
           <div className={`px-4 py-2 rounded-full ${zone.bgClass} ${zone.colorClass} font-medium text-sm`}>
-            {t('zones.dropToMove', { defaultValue: 'Drop to move here' })}
+            {t('zones.dropToMove')}
           </div>
         </div>
       )}

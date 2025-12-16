@@ -24,7 +24,10 @@
     "iot": "IoT Network",
     "iotDescription": "Smart devices isolated from main network",
     "investigate": "Investigate",
-    "investigateDescription": "Unknown or suspicious devices for review"
+    "investigateDescription": "Unknown or suspicious devices for review",
+    "dropHere": "Drop devices here",
+    "dropToMove": "Drop to move here",
+    "zoneWithDevices": "{zone} zone with {count, plural, one {# device} other {# devices}}"
   },
   "devices": {
     "router": "Router",
@@ -38,27 +41,45 @@
     "printer": "Printer",
     "iot": "IoT Device",
     "unknown": "Unknown Device",
-    "moveToZone": "Move {device} to zone"
+    "moveToZone": "Move {device} to zone",
+    "listViewLabel": "Devices organized by network zone",
+    "listViewHint": "Screen reader friendly list view. Each device can be moved to a different zone using the dropdown selector.",
+    "count": "{count, plural, one {# device} other {# devices}}",
+    "noDevices": "No devices in this zone",
+    "in": "Devices in",
+    "unknownFlag": "Unknown",
+    "iotFlag": "IoT",
+    "visitorFlag": "Visitor",
+    "workFlag": "Work"
   },
   "controls": {
     "title": "Security Controls",
     "wifiSecurity": "Wi-Fi Security",
+    "wifiSecurityDesc": "Encryption standard for wireless traffic",
     "wifiSecurityOpen": "Open",
     "wifiSecurityWPA2": "WPA2",
     "wifiSecurityWPA3": "WPA3",
     "strongWifiPassword": "Strong Wi-Fi Password",
+    "strongWifiPasswordDesc": "Complex password for network access",
     "guestNetworkEnabled": "Guest Network",
+    "guestNetworkDesc": "Separate network for visitors",
     "iotNetworkEnabled": "IoT Network",
+    "iotNetworkDesc": "Isolated network for smart devices",
     "mfaEnabled": "MFA on Accounts",
+    "mfaDesc": "Multi-factor auth for device accounts",
     "autoUpdatesEnabled": "Auto Updates",
-    "defaultPasswordsAddressed": "Default Passwords Changed"
+    "autoUpdatesDesc": "Keep device firmware current",
+    "defaultPasswordsAddressed": "Default Passwords Changed",
+    "defaultPasswordsDesc": "Replace factory default credentials",
+    "enableInSettings": "Enable in scenario settings"
   },
   "riskMeter": {
     "title": "Overall Risk Score",
     "of100": "/100",
-    "low": "Low",
-    "medium": "Medium",
+    "low": "Low Risk",
+    "medium": "Moderate",
     "high": "High",
+    "critical": "Critical",
     "exposure": "Exposure",
     "credential": "Credential",
     "hygiene": "Hygiene"

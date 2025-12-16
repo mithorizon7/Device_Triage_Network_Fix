@@ -24,7 +24,10 @@
     "iot": "Сеть IoT",
     "iotDescription": "Умные устройства, изолированные от основной сети",
     "investigate": "Расследование",
-    "investigateDescription": "Неизвестные или подозрительные устройства для проверки"
+    "investigateDescription": "Неизвестные или подозрительные устройства для проверки",
+    "dropHere": "Перетащите устройства сюда",
+    "dropToMove": "Отпустите для перемещения",
+    "zoneWithDevices": "Зона {zone} с {count, plural, one {# устройством} few {# устройствами} many {# устройствами} other {# устройствами}}"
   },
   "devices": {
     "router": "Маршрутизатор",
@@ -38,27 +41,45 @@
     "printer": "Принтер",
     "iot": "Устройство IoT",
     "unknown": "Неизвестное устройство",
-    "moveToZone": "Переместить {device} в зону"
+    "moveToZone": "Переместить {device} в зону",
+    "listViewLabel": "Устройства, организованные по сетевым зонам",
+    "listViewHint": "Удобный для программ чтения с экрана режим списка. Каждое устройство можно переместить в другую зону с помощью выпадающего списка.",
+    "count": "{count, plural, one {# устройство} few {# устройства} many {# устройств} other {# устройств}}",
+    "noDevices": "Нет устройств в этой зоне",
+    "in": "Устройства в зоне",
+    "unknownFlag": "Неизвестный",
+    "iotFlag": "IoT",
+    "visitorFlag": "Гость",
+    "workFlag": "Работа"
   },
   "controls": {
     "title": "Настройки безопасности",
     "wifiSecurity": "Безопасность Wi-Fi",
+    "wifiSecurityDesc": "Стандарт шифрования для беспроводного трафика",
     "wifiSecurityOpen": "Открытый",
     "wifiSecurityWPA2": "WPA2",
     "wifiSecurityWPA3": "WPA3",
     "strongWifiPassword": "Надёжный пароль Wi-Fi",
+    "strongWifiPasswordDesc": "Сложный пароль для доступа к сети",
     "guestNetworkEnabled": "Гостевая сеть",
+    "guestNetworkDesc": "Отдельная сеть для гостей",
     "iotNetworkEnabled": "Сеть IoT",
+    "iotNetworkDesc": "Изолированная сеть для умных устройств",
     "mfaEnabled": "MFA для аккаунтов",
+    "mfaDesc": "Многофакторная аутентификация для аккаунтов устройств",
     "autoUpdatesEnabled": "Автообновления",
-    "defaultPasswordsAddressed": "Пароли по умолчанию изменены"
+    "autoUpdatesDesc": "Поддержание актуальной прошивки устройств",
+    "defaultPasswordsAddressed": "Пароли по умолчанию изменены",
+    "defaultPasswordsDesc": "Замена заводских учётных данных по умолчанию",
+    "enableInSettings": "Включить в настройках сценария"
   },
   "riskMeter": {
     "title": "Общая оценка риска",
     "of100": "/100",
-    "low": "Низкий",
-    "medium": "Средний",
+    "low": "Низкий риск",
+    "medium": "Умеренный",
     "high": "Высокий",
+    "critical": "Критический",
     "exposure": "Уязвимость",
     "credential": "Учётные данные",
     "hygiene": "Гигиена"

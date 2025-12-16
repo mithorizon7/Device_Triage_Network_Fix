@@ -40,11 +40,11 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
     <div 
       className="space-y-4" 
       role="region" 
-      aria-label={t('devices.listViewLabel', { defaultValue: 'Devices organized by network zone' })}
+      aria-label={t('devices.listViewLabel')}
       data-testid="device-list-view"
     >
       <p className="sr-only">
-        {t('devices.listViewHint', { defaultValue: 'Screen reader friendly list view. Each device can be moved to a different zone using the dropdown selector.' })}
+        {t('devices.listViewHint')}
       </p>
       
       {devicesByZone.map(({ zone, label, description, devices: zoneDevices }) => (
@@ -57,7 +57,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
               />
               {label}
               <Badge variant="outline" className="ml-auto">
-                {t('devices.count', { count: zoneDevices.length, defaultValue: `${zoneDevices.length} device${zoneDevices.length !== 1 ? 's' : ''}` })}
+                {t('devices.count', { count: zoneDevices.length })}
               </Badge>
             </CardTitle>
             <p className="text-xs text-muted-foreground">{description}</p>
@@ -65,10 +65,10 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
           <CardContent>
             {zoneDevices.length === 0 ? (
               <p className="text-sm text-muted-foreground italic py-2">
-                {t('devices.noDevices', { defaultValue: 'No devices in this zone' })}
+                {t('devices.noDevices')}
               </p>
             ) : (
-              <ul className="divide-y divide-border" role="list" aria-label={`${t('devices.in', { defaultValue: 'Devices in' })} ${label}`}>
+              <ul className="divide-y divide-border" role="list" aria-label={`${t('devices.in')} ${label}`}>
                 {zoneDevices.map((device) => {
                   const DeviceIcon = getDeviceIcon(device.type);
                   return (
@@ -100,7 +100,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                                     className="text-xs px-1.5 py-0 gap-1"
                                   >
                                     <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                                    {t(config.labelKey, { defaultValue: flag.replace('_', ' ') })}
+                                    {t(config.labelKey)}
                                   </Badge>
                                 );
                               })}
@@ -110,7 +110,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                         
                         <div className="flex-shrink-0">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
-                            {t('devices.moveToZone', { device: device.label, defaultValue: `Move ${device.label} to zone` })}
+                            {t('devices.moveToZone', { device: device.label })}
                           </label>
                           <Select
                             value={deviceZones[device.id]}

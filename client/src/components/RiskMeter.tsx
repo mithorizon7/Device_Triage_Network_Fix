@@ -23,7 +23,7 @@ function getRiskLevel(score: number, t: (key: string) => string): { label: strin
   if (score <= 75) {
     return { label: t('riskMeter.high'), colorClass: "text-orange-600 dark:text-orange-400", bgClass: "bg-orange-500" };
   }
-  return { label: t('riskMeter.high'), colorClass: "text-red-600 dark:text-red-400", bgClass: "bg-red-500" };
+  return { label: t('riskMeter.critical'), colorClass: "text-red-600 dark:text-red-400", bgClass: "bg-red-500" };
 }
 
 function SubscoreBar({ 

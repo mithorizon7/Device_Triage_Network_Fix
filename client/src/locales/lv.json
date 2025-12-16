@@ -24,7 +24,10 @@
     "iot": "IoT tīkls",
     "iotDescription": "Viedierīces, kas izolētas no galvenā tīkla",
     "investigate": "Izmeklēšana",
-    "investigateDescription": "Nezināmas vai aizdomīgas ierīces pārbaudei"
+    "investigateDescription": "Nezināmas vai aizdomīgas ierīces pārbaudei",
+    "dropHere": "Nometiet ierīces šeit",
+    "dropToMove": "Nometiet, lai pārvietotu šeit",
+    "zoneWithDevices": "{zone} zona ar {count, plural, one {# ierīci} other {# ierīcēm}}"
   },
   "devices": {
     "router": "Maršrutētājs",
@@ -38,27 +41,45 @@
     "printer": "Printeris",
     "iot": "IoT ierīce",
     "unknown": "Nezināma ierīce",
-    "moveToZone": "Pārvietot {device} uz zonu"
+    "moveToZone": "Pārvietot {device} uz zonu",
+    "listViewLabel": "Ierīces sakārtotas pēc tīkla zonas",
+    "listViewHint": "Ekrānlasītājam draudzīgs saraksta skats. Katru ierīci var pārvietot uz citu zonu, izmantojot nolaižamo izvēlni.",
+    "count": "{count, plural, one {# ierīce} other {# ierīces}}",
+    "noDevices": "Šajā zonā nav ierīču",
+    "in": "Ierīces zonā",
+    "unknownFlag": "Nezināms",
+    "iotFlag": "IoT",
+    "visitorFlag": "Viesis",
+    "workFlag": "Darbs"
   },
   "controls": {
     "title": "Drošības kontroles",
     "wifiSecurity": "Wi-Fi drošība",
+    "wifiSecurityDesc": "Šifrēšanas standarts bezvadu satiksmei",
     "wifiSecurityOpen": "Atvērts",
     "wifiSecurityWPA2": "WPA2",
     "wifiSecurityWPA3": "WPA3",
     "strongWifiPassword": "Spēcīga Wi-Fi parole",
+    "strongWifiPasswordDesc": "Sarežģīta parole tīkla piekļuvei",
     "guestNetworkEnabled": "Viesu tīkls",
+    "guestNetworkDesc": "Atsevišķs tīkls viesiem",
     "iotNetworkEnabled": "IoT tīkls",
+    "iotNetworkDesc": "Izolēts tīkls viedierīcēm",
     "mfaEnabled": "MFA kontiem",
+    "mfaDesc": "Daudzfaktoru autentifikācija ierīču kontiem",
     "autoUpdatesEnabled": "Automātiskie atjauninājumi",
-    "defaultPasswordsAddressed": "Noklusējuma paroles mainītas"
+    "autoUpdatesDesc": "Uzturēt ierīces programmaparatūru aktuālu",
+    "defaultPasswordsAddressed": "Noklusējuma paroles mainītas",
+    "defaultPasswordsDesc": "Aizstāt rūpnīcas noklusējuma akreditācijas datus",
+    "enableInSettings": "Iespējot scenārija iestatījumos"
   },
   "riskMeter": {
     "title": "Kopējais riska vērtējums",
     "of100": "/100",
-    "low": "Zems",
+    "low": "Zems risks",
     "medium": "Vidējs",
     "high": "Augsts",
+    "critical": "Kritisks",
     "exposure": "Ekspozīcija",
     "credential": "Akreditācijas dati",
     "hygiene": "Higiēna"

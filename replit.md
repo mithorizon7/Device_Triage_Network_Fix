@@ -131,13 +131,26 @@ shared/
 - Completely offline-safe
 - Deterministic scoring (same inputs = same outputs)
 
+## Internationalization (i18n)
+- Supports English (default), Latvian, and Russian
+- Uses react-i18next with ICU message format for plurals
+- Language switcher in header (flag icons with dropdown)
+- Language preference persisted in localStorage
+- All UI strings use translation keys from `client/src/locales/{en,lv,ru}.json`
+- Zone labels/descriptions use `labelKey`/`descriptionKey` for translation lookups
+- Locale-aware formatting via `formatNumber()` and `formatDate()` helpers in `i18n.ts`
+
 ## User Preferences
 - Dark/light mode persisted in localStorage
 - Tutorial completion persisted in localStorage
 - Progress and badges persisted in localStorage
 - Custom scenarios persisted in localStorage
+- Language preference persisted in localStorage (key: `i18nextLng`)
 
 ## Recent Changes
+- 2024-12-16: Added full i18n support with English, Latvian, and Russian translations using react-i18next
+- 2024-12-16: Added language switcher with flag icons to header
+- 2024-12-16: Translated all core gameplay components: RiskMeter, ControlsDrawer, WinConditionsCard, zones, DeviceListView, ZoneDropTarget
 - 2024-12-16: Added 18 unit tests for scoring engine ensuring deterministic behavior
 - 2024-12-16: Added screen-reader friendly list view toggle (grid/list) with localStorage persistence
 - 2024-12-16: Added WinConditionsCard showing target score and required controls with visual progress
