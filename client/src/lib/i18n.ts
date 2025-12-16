@@ -19,7 +19,11 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: ['lv', 'en'],
+    fallbackLng: {
+      'lv': ['en'],
+      'ru': ['en', 'lv'],
+      'default': ['lv', 'en']
+    },
     supportedLngs: ['en', 'lv', 'ru'],
     load: 'languageOnly',
     interpolation: {

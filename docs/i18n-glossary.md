@@ -98,15 +98,18 @@ These terms are product/technical names and should remain in English across all 
 
 Translation keys follow this pattern:
 ```
-{namespace}.{screen/component}.{element}.{state}
+{namespace}.{screen/component}.{element}
 ```
 
 Examples:
+- `app.title` - Application title
 - `header.tutorial` - Tutorial button in header
-- `zones.main.label` - Main zone label
+- `zones.main` - Main zone label
+- `zones.mainDescription` - Main zone description
 - `controls.wifiSecurity` - Wi-Fi security control
 - `notifications.badgeEarned` - Badge earned notification
 - `author.deviceDefaultName` - Default device name in author
+- `badges.firstSteps` - First Steps badge name
 
 ## Quality Sign-off
 

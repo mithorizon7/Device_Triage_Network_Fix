@@ -136,7 +136,10 @@ shared/
 ### Architecture
 - **Source locale**: English (en.json) - canonical keyset
 - **Target locales**: Latvian (lv), Russian (ru)
-- **Fallback chain**: user preference → browser locale → lv → en
+- **Fallback chain**: user preference → browser locale → locale-specific fallbacks
+  - Latvian (lv): falls back to English
+  - Russian (ru): falls back to English, then Latvian
+  - Unknown: falls back to Latvian, then English
 - **Library**: react-i18next with ICU message format (i18next-icu)
 - **Loading strategy**: Bundled (all locales loaded at startup for offline support)
 
