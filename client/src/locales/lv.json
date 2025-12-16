@@ -9,7 +9,10 @@
     "tutorial": "Pamācība",
     "gridView": "Režģa skats",
     "listView": "Saraksta skats",
-    "language": "Valoda: {language}"
+    "language": "Valoda: {language}",
+    "viewMode": "Skata režīms",
+    "gridViewAriaLabel": "Režģa skats ar vilkšanu un nomešanu",
+    "listViewAriaLabel": "Ekrānlasītājam draudzīgs saraksta skats"
   },
   "scenarios": {
     "select": "Izvēlieties scenāriju",
@@ -201,13 +204,47 @@
     "tutorial": "Pamācība"
   },
   "author": {
-    "title": "Scenārija autors",
+    "title": "Scenāriju veidošana",
+    "editScenario": "Rediģēt scenāriju",
     "scenarioTitle": "Scenārija nosaukums",
+    "scenarioTitlePlaceholder": "piem., Mājas tīkla drošības izaicinājums",
     "environment": "Vides tips",
+    "scenarioNotes": "Scenārija piezīmes",
+    "scenarioNotesPlaceholder": "Īss apraksts vai konteksts apmācāmajiem...",
+    "basicInfo": "Pamatinformācija",
     "devices": "Ierīces",
+    "devicesCount": "Ierīces ({count})",
     "addDevice": "Pievienot ierīci",
+    "deviceNamePlaceholder": "Ierīces nosaukums",
+    "ipAddressPlaceholder": "IP adrese",
+    "noDevicesYet": "Vēl nav ierīču. Noklikšķiniet \"Pievienot ierīci\", lai sāktu.",
+    "learningObjectives": "Mācību mērķi",
+    "addObjective": "Pievienot mērķi",
+    "noObjectivesYet": "Vēl nav mācību mērķu.",
+    "objectivePlaceholder": "Mācību mērķis...",
+    "initialControls": "Sākotnējais kontroles stāvoklis",
+    "winConditions": "Uzvaras nosacījumi (neobligāti)",
+    "maxRiskScore": "Maksimālais kopējais riska vērtējums",
+    "maxRiskHint": "Apmācāmais sasniedz pabeigšanu, kad kopējais risks nokrītas zem šīs vērtības",
     "save": "Saglabāt scenāriju",
-    "cancel": "Atcelt"
+    "cancel": "Atcelt",
+    "import": "Importēt",
+    "importJson": "Importēt JSON",
+    "newScenario": "Jauns scenārijs",
+    "createNew": "Izveidot jaunu",
+    "dismiss": "Noraidīt",
+    "noScenariosYet": "Vēl nav pielāgotu scenāriju",
+    "noScenariosDesc": "Izveidojiet savus scenārijus apmācāmajiem vai importējiet esošus JSON failus.",
+    "devicesLabel": "{count, plural, one {# ierīce} other {# ierīces}}",
+    "edit": "Rediģēt",
+    "duplicate": "Dublēt",
+    "export": "Eksportēt",
+    "riskFlags": {
+      "unknown_device": "nezināma ierīce",
+      "iot_device": "IoT ierīce",
+      "visitor_device": "viesu ierīce",
+      "trusted_work_device": "uzticama darba ierīce"
+    }
   },
   "common": {
     "start": "Sākt",

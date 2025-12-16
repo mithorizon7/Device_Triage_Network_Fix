@@ -188,7 +188,7 @@ export default function Home() {
 
       newBadges.forEach(badge => {
         toast({
-          title: "Badge Earned!",
+          title: t('notifications.badgeEarned'),
           description: `${badge.name}: ${badge.description}`,
         });
       });
@@ -219,10 +219,10 @@ export default function Home() {
       const isImprovement = delta < 0;
 
       toast({
-        title: isImprovement ? "Risk Reduced" : "Risk Increased",
+        title: isImprovement ? t('notifications.riskReduced') : t('notifications.riskIncreased'),
         description: lastExplanation 
-          ? `${deltaDisplay} risk: ${lastExplanation.explain}`
-          : `${deltaDisplay} risk from recent change`,
+          ? t('notifications.riskDelta', { delta: deltaDisplay, reason: lastExplanation.explain })
+          : t('notifications.riskDeltaGeneric', { delta: deltaDisplay }),
         variant: isImprovement ? "default" : "destructive",
       });
     }
@@ -293,14 +293,14 @@ export default function Home() {
                 {t('header.author')}
               </Button>
             </Link>
-            <div className="flex items-center border rounded-md" role="group" aria-label="View mode">
+            <div className="flex items-center border rounded-md" role="group" aria-label={t('header.viewMode')}>
               <Button
                 variant={viewMode === "grid" ? "secondary" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
                 data-testid="button-view-grid"
                 aria-pressed={viewMode === "grid"}
-                aria-label="Grid view with drag and drop"
+                aria-label={t('header.gridViewAriaLabel')}
                 className="rounded-r-none border-r"
               >
                 <LayoutGrid className="h-4 w-4" aria-hidden="true" />
@@ -311,7 +311,7 @@ export default function Home() {
                 onClick={() => setViewMode("list")}
                 data-testid="button-view-list"
                 aria-pressed={viewMode === "list"}
-                aria-label="Screen reader friendly list view"
+                aria-label={t('header.listViewAriaLabel')}
                 className="rounded-l-none"
               >
                 <List className="h-4 w-4" aria-hidden="true" />

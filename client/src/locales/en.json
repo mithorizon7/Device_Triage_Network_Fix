@@ -9,7 +9,10 @@
     "tutorial": "Tutorial",
     "gridView": "Grid view",
     "listView": "List view",
-    "language": "Language: {language}"
+    "language": "Language: {language}",
+    "viewMode": "View mode",
+    "gridViewAriaLabel": "Grid view with drag and drop",
+    "listViewAriaLabel": "Screen reader friendly list view"
   },
   "scenarios": {
     "select": "Select scenario",
@@ -201,13 +204,47 @@
     "tutorial": "Tutorial"
   },
   "author": {
-    "title": "Scenario Author",
+    "title": "Scenario Authoring",
+    "editScenario": "Edit Scenario",
     "scenarioTitle": "Scenario Title",
+    "scenarioTitlePlaceholder": "e.g., Home Network Security Challenge",
     "environment": "Environment Type",
+    "scenarioNotes": "Scenario Notes",
+    "scenarioNotesPlaceholder": "Brief description or context for learners...",
+    "basicInfo": "Basic Information",
     "devices": "Devices",
+    "devicesCount": "Devices ({count})",
     "addDevice": "Add Device",
+    "deviceNamePlaceholder": "Device name",
+    "ipAddressPlaceholder": "IP Address",
+    "noDevicesYet": "No devices yet. Click \"Add Device\" to get started.",
+    "learningObjectives": "Learning Objectives",
+    "addObjective": "Add Objective",
+    "noObjectivesYet": "No learning objectives yet.",
+    "objectivePlaceholder": "Learning objective...",
+    "initialControls": "Initial Controls State",
+    "winConditions": "Win Conditions (Optional)",
+    "maxRiskScore": "Maximum Total Risk Score",
+    "maxRiskHint": "Learner achieves completion when total risk drops below this value",
     "save": "Save Scenario",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "import": "Import",
+    "importJson": "Import JSON",
+    "newScenario": "New Scenario",
+    "createNew": "Create New",
+    "dismiss": "Dismiss",
+    "noScenariosYet": "No Custom Scenarios Yet",
+    "noScenariosDesc": "Create your own scenarios for learners or import existing JSON files.",
+    "devicesLabel": "{count, plural, one {# device} other {# devices}}",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "export": "Export",
+    "riskFlags": {
+      "unknown_device": "unknown device",
+      "iot_device": "IoT device",
+      "visitor_device": "visitor device",
+      "trusted_work_device": "trusted work device"
+    }
   },
   "common": {
     "start": "Start",

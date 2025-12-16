@@ -9,7 +9,10 @@
     "tutorial": "Обучение",
     "gridView": "Сетка",
     "listView": "Список",
-    "language": "Язык: {language}"
+    "language": "Язык: {language}",
+    "viewMode": "Режим просмотра",
+    "gridViewAriaLabel": "Режим сетки с перетаскиванием",
+    "listViewAriaLabel": "Удобный для программ чтения с экрана режим списка"
   },
   "scenarios": {
     "select": "Выберите сценарий",
@@ -201,13 +204,47 @@
     "tutorial": "Обучение"
   },
   "author": {
-    "title": "Автор сценария",
+    "title": "Создание сценариев",
+    "editScenario": "Редактировать сценарий",
     "scenarioTitle": "Название сценария",
+    "scenarioTitlePlaceholder": "напр., Задача безопасности домашней сети",
     "environment": "Тип среды",
+    "scenarioNotes": "Заметки к сценарию",
+    "scenarioNotesPlaceholder": "Краткое описание или контекст для обучающихся...",
+    "basicInfo": "Основная информация",
     "devices": "Устройства",
+    "devicesCount": "Устройства ({count})",
     "addDevice": "Добавить устройство",
+    "deviceNamePlaceholder": "Название устройства",
+    "ipAddressPlaceholder": "IP-адрес",
+    "noDevicesYet": "Устройств пока нет. Нажмите \"Добавить устройство\", чтобы начать.",
+    "learningObjectives": "Учебные цели",
+    "addObjective": "Добавить цель",
+    "noObjectivesYet": "Учебных целей пока нет.",
+    "objectivePlaceholder": "Учебная цель...",
+    "initialControls": "Начальное состояние настроек",
+    "winConditions": "Условия победы (необязательно)",
+    "maxRiskScore": "Максимальная общая оценка риска",
+    "maxRiskHint": "Обучающийся завершает сценарий, когда общий риск падает ниже этого значения",
     "save": "Сохранить сценарий",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "import": "Импорт",
+    "importJson": "Импорт JSON",
+    "newScenario": "Новый сценарий",
+    "createNew": "Создать новый",
+    "dismiss": "Закрыть",
+    "noScenariosYet": "Пользовательских сценариев пока нет",
+    "noScenariosDesc": "Создайте собственные сценарии для обучающихся или импортируйте существующие JSON-файлы.",
+    "devicesLabel": "{count, plural, one {# устройство} few {# устройства} many {# устройств} other {# устройств}}",
+    "edit": "Редактировать",
+    "duplicate": "Дублировать",
+    "export": "Экспорт",
+    "riskFlags": {
+      "unknown_device": "неизвестное устройство",
+      "iot_device": "устройство IoT",
+      "visitor_device": "устройство гостя",
+      "trusted_work_device": "доверенное рабочее устройство"
+    }
   },
   "common": {
     "start": "Начать",

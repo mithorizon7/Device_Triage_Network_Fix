@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +57,7 @@ function generateMac(index: number): string {
 }
 
 export default function AuthorPage() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [customScenarios, setCustomScenarios] = useState<Scenario[]>(getCustomScenarios());
   const [editingScenario, setEditingScenario] = useState<Scenario | null>(null);
@@ -205,15 +207,15 @@ export default function AuthorPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <Pencil className="h-5 w-5 text-muted-foreground" />
-              <h1 className="text-lg font-semibold">Edit Scenario</h1>
+              <h1 className="text-lg font-semibold">{t('author.editScenario')}</h1>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={handleCancel} data-testid="button-cancel">
-                Cancel
+                {t('author.cancel')}
               </Button>
               <Button onClick={handleSave} data-testid="button-save">
                 <Save className="h-4 w-4 mr-2" />
-                Save Scenario
+                {t('author.save')}
               </Button>
               <ThemeToggle />
             </div>
@@ -223,22 +225,22 @@ export default function AuthorPage() {
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Basic Information</CardTitle>
+              <CardTitle className="text-base">{t('author.basicInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Scenario Title</Label>
+                  <Label htmlFor="title">{t('author.scenarioTitle')}</Label>
                   <Input
                     id="title"
                     value={editingScenario.title}
                     onChange={(e) => updateScenarioField("title", e.target.value)}
-                    placeholder="e.g., Home Network Security Challenge"
+                    placeholder={t('author.scenarioTitlePlaceholder')}
                     data-testid="input-scenario-title"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="environment-type">Environment Type</Label>
+                  <Label htmlFor="environment-type">{t('author.environment')}</Label>
                   <Select 
                     value={editingScenario.environment.type} 
                     onValueChange={(value) => updateScenarioField("environment", { ...editingScenario.environment, type: value })}
@@ -255,12 +257,12 @@ export default function AuthorPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="notes">Scenario Notes</Label>
+                <Label htmlFor="notes">{t('author.scenarioNotes')}</Label>
                 <Textarea
                   id="notes"
                   value={editingScenario.environment.notes || ""}
                   onChange={(e) => updateScenarioField("environment", { ...editingScenario.environment, notes: e.target.value })}
-                  placeholder="Brief description or context for learners..."
+                  placeholder={t('author.scenarioNotesPlaceholder')}
                   className="resize-none"
                   rows={2}
                   data-testid="textarea-notes"
@@ -271,16 +273,16 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2">
-              <CardTitle className="text-base">Devices ({editingScenario.devices.length})</CardTitle>
+              <CardTitle className="text-base">{t('author.devicesCount', { count: editingScenario.devices.length })}</CardTitle>
               <Button variant="outline" size="sm" onClick={addDevice} data-testid="button-add-device">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Device
+                {t('author.addDevice')}
               </Button>
             </CardHeader>
             <CardContent>
               {editingScenario.devices.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <p>No devices yet. Click "Add Device" to get started.</p>
+                  <p>{t('author.noDevicesYet')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -301,7 +303,7 @@ export default function AuthorPage() {
                             <Input
                               value={device.label}
                               onChange={(e) => updateDevice(device.id, { label: e.target.value })}
-                              placeholder="Device name"
+                              placeholder={t('author.deviceNamePlaceholder')}
                               className="flex-1"
                               data-testid={`input-device-label-${index}`}
                             />
@@ -331,7 +333,7 @@ export default function AuthorPage() {
                                   onCheckedChange={() => toggleDeviceFlag(device.id, flag)}
                                   data-testid={`checkbox-flag-${device.id}-${flag}`}
                                 />
-                                <span className="text-muted-foreground">{flag.replace(/_/g, " ")}</span>
+                                <span className="text-muted-foreground">{t(`author.riskFlags.${flag}`)}</span>
                               </label>
                             ))}
                           </div>
@@ -341,7 +343,7 @@ export default function AuthorPage() {
                           <Input
                             value={device.ip || ""}
                             onChange={(e) => updateDevice(device.id, { ip: e.target.value })}
-                            placeholder="IP Address"
+                            placeholder={t('author.ipAddressPlaceholder')}
                             className="w-[140px] font-mono text-xs"
                             data-testid={`input-device-ip-${index}`}
                           />
@@ -364,16 +366,16 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2">
-              <CardTitle className="text-base">Learning Objectives</CardTitle>
+              <CardTitle className="text-base">{t('author.learningObjectives')}</CardTitle>
               <Button variant="outline" size="sm" onClick={addLearningObjective} data-testid="button-add-objective">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Objective
+                {t('author.addObjective')}
               </Button>
             </CardHeader>
             <CardContent>
               {(editingScenario.learningObjectives?.length || 0) === 0 ? (
                 <div className="text-center py-6 text-muted-foreground">
-                  <p>No learning objectives yet.</p>
+                  <p>{t('author.noObjectivesYet')}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -385,7 +387,7 @@ export default function AuthorPage() {
                       <Input
                         value={objective}
                         onChange={(e) => updateLearningObjective(index, e.target.value)}
-                        placeholder="Learning objective..."
+                        placeholder={t('author.objectivePlaceholder')}
                         data-testid={`input-objective-${index}`}
                       />
                       <Button 
@@ -405,12 +407,12 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Initial Controls State</CardTitle>
+              <CardTitle className="text-base">{t('author.initialControls')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label>Wi-Fi Security</Label>
+                  <Label>{t('controls.wifiSecurity')}</Label>
                   <Select 
                     value={editingScenario.initialControls.wifiSecurity}
                     onValueChange={(value: "OPEN" | "WPA2" | "WPA3") => 
@@ -421,21 +423,21 @@ export default function AuthorPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="OPEN">Open</SelectItem>
-                      <SelectItem value="WPA2">WPA2</SelectItem>
-                      <SelectItem value="WPA3">WPA3</SelectItem>
+                      <SelectItem value="OPEN">{t('controls.wifiSecurityOpen')}</SelectItem>
+                      <SelectItem value="WPA2">{t('controls.wifiSecurityWPA2')}</SelectItem>
+                      <SelectItem value="WPA3">{t('controls.wifiSecurityWPA3')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 {[
-                  { key: "strongWifiPassword", label: "Strong Wi-Fi Password" },
-                  { key: "guestNetworkEnabled", label: "Guest Network Enabled" },
-                  { key: "iotNetworkEnabled", label: "IoT Network Enabled" },
-                  { key: "mfaEnabled", label: "MFA Enabled" },
-                  { key: "autoUpdatesEnabled", label: "Auto Updates" },
-                  { key: "defaultPasswordsAddressed", label: "Default Passwords Addressed" }
-                ].map(({ key, label }) => (
+                  { key: "strongWifiPassword", labelKey: "controls.strongWifiPassword" },
+                  { key: "guestNetworkEnabled", labelKey: "controls.guestNetworkEnabled" },
+                  { key: "iotNetworkEnabled", labelKey: "controls.iotNetworkEnabled" },
+                  { key: "mfaEnabled", labelKey: "controls.mfaEnabled" },
+                  { key: "autoUpdatesEnabled", labelKey: "controls.autoUpdatesEnabled" },
+                  { key: "defaultPasswordsAddressed", labelKey: "controls.defaultPasswordsAddressed" }
+                ].map(({ key, labelKey }) => (
                   <label key={key} className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       checked={editingScenario.initialControls[key as keyof typeof editingScenario.initialControls] as boolean}
@@ -447,7 +449,7 @@ export default function AuthorPage() {
                       }
                       data-testid={`checkbox-control-${key}`}
                     />
-                    <span className="text-sm">{label}</span>
+                    <span className="text-sm">{t(labelKey)}</span>
                   </label>
                 ))}
               </div>
@@ -456,12 +458,12 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Win Conditions (Optional)</CardTitle>
+              <CardTitle className="text-base">{t('author.winConditions')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="max-risk">Maximum Total Risk Score</Label>
+                  <Label htmlFor="max-risk">{t('author.maxRiskScore')}</Label>
                   <Input
                     id="max-risk"
                     type="number"
@@ -475,7 +477,7 @@ export default function AuthorPage() {
                     className="w-[120px]"
                     data-testid="input-max-risk"
                   />
-                  <p className="text-xs text-muted-foreground">Learner achieves completion when total risk drops below this value</p>
+                  <p className="text-xs text-muted-foreground">{t('author.maxRiskHint')}</p>
                 </div>
               </div>
             </CardContent>
@@ -494,19 +496,19 @@ export default function AuthorPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <FileText className="h-5 w-5 text-muted-foreground" />
-            <h1 className="text-lg font-semibold">Scenario Authoring</h1>
+            <h1 className="text-lg font-semibold">{t('author.title')}</h1>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
               <label className="cursor-pointer" data-testid="button-import">
                 <Upload className="h-4 w-4 mr-2" />
-                Import
+                {t('author.import')}
                 <input type="file" accept=".json" className="hidden" onChange={handleImport} />
               </label>
             </Button>
             <Button onClick={handleCreateNew} data-testid="button-create-new">
               <Plus className="h-4 w-4 mr-2" />
-              New Scenario
+              {t('author.newScenario')}
             </Button>
             <ThemeToggle />
           </div>
@@ -518,7 +520,7 @@ export default function AuthorPage() {
           <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
             {importError}
             <Button variant="ghost" size="sm" className="ml-2" onClick={() => setImportError(null)}>
-              Dismiss
+              {t('author.dismiss')}
             </Button>
           </div>
         )}
@@ -527,21 +529,21 @@ export default function AuthorPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h2 className="text-lg font-medium mb-2">No Custom Scenarios Yet</h2>
+              <h2 className="text-lg font-medium mb-2">{t('author.noScenariosYet')}</h2>
               <p className="text-muted-foreground mb-6">
-                Create your own scenarios for learners or import existing JSON files.
+                {t('author.noScenariosDesc')}
               </p>
               <div className="flex justify-center gap-3">
                 <Button variant="outline" asChild>
                   <label className="cursor-pointer">
                     <Upload className="h-4 w-4 mr-2" />
-                    Import JSON
+                    {t('author.importJson')}
                     <input type="file" accept=".json" className="hidden" onChange={handleImport} />
                   </label>
                 </Button>
                 <Button onClick={handleCreateNew}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Create New
+                  {t('author.createNew')}
                 </Button>
               </div>
             </CardContent>
@@ -562,20 +564,20 @@ export default function AuthorPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    {scenario.devices.length} devices
+                    {t('author.devicesLabel', { count: scenario.devices.length })}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" onClick={() => handleEdit(scenario)} data-testid={`button-edit-${scenario.id}`}>
                       <Pencil className="h-3 w-3 mr-1" />
-                      Edit
+                      {t('author.edit')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleDuplicate(scenario)} data-testid={`button-duplicate-${scenario.id}`}>
                       <Copy className="h-3 w-3 mr-1" />
-                      Duplicate
+                      {t('author.duplicate')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => exportScenarioAsJson(scenario)} data-testid={`button-export-${scenario.id}`}>
                       <Download className="h-3 w-3 mr-1" />
-                      Export
+                      {t('author.export')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleDelete(scenario.id)} data-testid={`button-delete-${scenario.id}`}>
                       <Trash2 className="h-3 w-3 text-destructive" />
