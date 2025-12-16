@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { 
@@ -15,6 +16,7 @@ interface TutorialOverlayProps {
 }
 
 export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [isVisible, setIsVisible] = useState(true);
@@ -146,7 +148,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 onClick={handleSkip}
                 className="h-8 w-8"
                 data-testid="button-tutorial-skip"
-                aria-label="Skip tutorial"
+                aria-label={t('tutorial.skipAriaLabel')}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -182,7 +184,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                   data-testid="button-tutorial-prev"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" aria-hidden="true" />
-                  Back
+                  {t('tutorial.back')}
                 </Button>
               )}
               <Button
@@ -190,7 +192,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 onClick={handleNext}
                 data-testid="button-tutorial-next"
               >
-                {isLastStep ? "Get Started" : "Next"}
+                {isLastStep ? t('tutorial.getStarted') : t('tutorial.next')}
                 {!isLastStep && <ChevronRight className="h-4 w-4 ml-1" aria-hidden="true" />}
               </Button>
             </div>
@@ -206,16 +208,18 @@ interface TutorialTriggerProps {
 }
 
 export function TutorialTrigger({ onStart }: TutorialTriggerProps) {
+  const { t } = useTranslation();
+  
   return (
     <Button
       variant="ghost"
       size="sm"
       onClick={onStart}
       data-testid="button-start-tutorial"
-      aria-label="Start tutorial"
+      aria-label={t('tutorial.startAriaLabel')}
     >
       <GraduationCap className="h-4 w-4 mr-2" aria-hidden="true" />
-      Tutorial
+      {t('tutorial.tutorial')}
     </Button>
   );
 }

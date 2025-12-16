@@ -10,7 +10,7 @@ import {
 import { languages } from '@/lib/i18n';
 
 export function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
           variant="ghost" 
           size="icon"
           data-testid="button-language-switcher"
-          aria-label={`Language: ${currentLanguage.nativeName}`}
+          aria-label={t('header.language', { language: currentLanguage.nativeName })}
         >
           <Globe className="h-4 w-4" />
         </Button>

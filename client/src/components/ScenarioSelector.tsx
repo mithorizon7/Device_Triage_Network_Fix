@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -28,6 +29,7 @@ export function ScenarioSelector({
   onSelect,
   isLoading = false
 }: ScenarioSelectorProps) {
+  const { t } = useTranslation();
   const selectedScenario = scenarios.find(s => s.id === selectedId);
 
   if (isLoading) {
@@ -41,7 +43,7 @@ export function ScenarioSelector({
       <SelectTrigger 
         className="w-[280px]"
         data-testid="select-scenario"
-        aria-label="Select scenario"
+        aria-label={t('scenarios.select')}
       >
         <div className="flex items-center gap-2">
           {selectedScenario && (
@@ -50,10 +52,10 @@ export function ScenarioSelector({
                 const Icon = environmentIcons[selectedScenario.environment.type] || Home;
                 return <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />;
               })()}
-              <SelectValue placeholder="Select a scenario" />
+              <SelectValue placeholder={t('scenarios.selectPlaceholder')} />
             </>
           )}
-          {!selectedScenario && <SelectValue placeholder="Select a scenario" />}
+          {!selectedScenario && <SelectValue placeholder={t('scenarios.selectPlaceholder')} />}
         </div>
       </SelectTrigger>
       <SelectContent>

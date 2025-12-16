@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -14,17 +15,18 @@ interface SynergyVisualizationProps {
 
 interface Synergy {
   id: string;
-  name: string;
-  description: string;
+  nameKey: string;
+  descriptionKey: string;
   isActive: boolean;
   impact: "high" | "medium" | "low";
-  components: string[];
+  componentKeys: string[];
 }
 
 interface PotentialImprovement {
   id: string;
-  action: string;
-  impact: string;
+  actionKey: string;
+  actionParams?: Record<string, number>;
+  impactKey: string;
   priority: "high" | "medium" | "low";
 }
 
@@ -33,6 +35,8 @@ export function SynergyVisualization({
   deviceZones,
   controls
 }: SynergyVisualizationProps) {
+  const { t } = useTranslation();
+
   const iotDevices = useMemo(() => 
     scenario.devices.filter(d => d.riskFlags.includes("iot_device")),
     [scenario.devices]
@@ -72,11 +76,11 @@ export function SynergyVisualization({
     
     result.push({
       id: "iot_isolation",
-      name: "IoT Isolation",
-      description: "IoT network enabled with devices properly segregated",
+      nameKey: "synergy.iotIsolation",
+      descriptionKey: "synergy.iotIsolationDesc",
       isActive: iotIsolationActive,
       impact: "high",
-      components: ["IoT Network", "Device Placement"]
+      componentKeys: ["synergy.componentIotNetwork", "synergy.componentDevicePlacement"]
     });
 
     const guestSegmentationActive = controls.guestNetworkEnabled && 
@@ -85,11 +89,11 @@ export function SynergyVisualization({
     
     result.push({
       id: "guest_segmentation",
-      name: "Guest Segmentation",
-      description: "Guest network enabled with visitors properly isolated",
+      nameKey: "synergy.guestSegmentation",
+      descriptionKey: "synergy.guestSegmentationDesc",
       isActive: guestSegmentationActive,
       impact: "medium",
-      components: ["Guest Network", "Visitor Devices"]
+      componentKeys: ["synergy.componentGuestNetwork", "synergy.componentVisitorDevices"]
     });
 
     const threatQuarantineActive = unknownDevices.length > 0 && 
@@ -97,11 +101,11 @@ export function SynergyVisualization({
     
     result.push({
       id: "threat_quarantine",
-      name: "Threat Quarantine",
-      description: "All unknown devices isolated for investigation",
+      nameKey: "synergy.threatQuarantine",
+      descriptionKey: "synergy.threatQuarantineDesc",
       isActive: threatQuarantineActive,
       impact: "high",
-      components: ["Investigate Zone", "Unknown Devices"]
+      componentKeys: ["synergy.componentInvestigateZone", "synergy.componentUnknownDevices"]
     });
 
     const strongAuthActive = controls.strongWifiPassword && 
@@ -110,11 +114,11 @@ export function SynergyVisualization({
     
     result.push({
       id: "strong_auth",
-      name: "Defense in Depth",
-      description: "Strong Wi-Fi security with MFA and WPA3",
+      nameKey: "synergy.defenseInDepth",
+      descriptionKey: "synergy.defenseInDepthDesc",
       isActive: strongAuthActive,
       impact: "high",
-      components: ["WPA3", "Strong Password", "MFA"]
+      componentKeys: ["synergy.componentWPA3", "synergy.componentStrongPassword", "synergy.componentMFA"]
     });
 
     const maintenanceActive = controls.autoUpdatesEnabled && 
@@ -122,11 +126,11 @@ export function SynergyVisualization({
     
     result.push({
       id: "maintenance",
-      name: "Active Maintenance",
-      description: "Auto-updates enabled and default passwords changed",
+      nameKey: "synergy.activeMaintenance",
+      descriptionKey: "synergy.activeMaintenanceDesc",
       isActive: maintenanceActive,
       impact: "medium",
-      components: ["Auto Updates", "Password Hygiene"]
+      componentKeys: ["synergy.componentAutoUpdates", "synergy.componentPasswordHygiene"]
     });
 
     return result;
@@ -138,8 +142,8 @@ export function SynergyVisualization({
     if (!controls.iotNetworkEnabled && iotDevices.length > 0) {
       improvements.push({
         id: "enable_iot",
-        action: "Enable IoT Network",
-        impact: "Isolate smart devices from main network",
+        actionKey: "synergy.actionEnableIot",
+        impactKey: "synergy.impactIsolateIot",
         priority: "high"
       });
     }
@@ -147,8 +151,9 @@ export function SynergyVisualization({
     if (controls.iotNetworkEnabled && iotDevices.length > 0 && iotInIotZone < iotDevices.length) {
       improvements.push({
         id: "move_iot",
-        action: `Move IoT devices to IoT zone (${iotInIotZone}/${iotDevices.length} placed)`,
-        impact: "Complete IoT isolation for full synergy bonus",
+        actionKey: "synergy.actionMoveIot",
+        actionParams: { placed: iotInIotZone, total: iotDevices.length },
+        impactKey: "synergy.impactCompleteIot",
         priority: "high"
       });
     }
@@ -156,8 +161,8 @@ export function SynergyVisualization({
     if (!controls.guestNetworkEnabled && visitorDevices.length > 0) {
       improvements.push({
         id: "enable_guest",
-        action: "Enable Guest Network",
-        impact: "Separate visitor devices from main network",
+        actionKey: "synergy.actionEnableGuest",
+        impactKey: "synergy.impactSeparateVisitors",
         priority: "medium"
       });
     }
@@ -165,8 +170,8 @@ export function SynergyVisualization({
     if (controls.guestNetworkEnabled && visitorDevices.length > visitorsInGuest) {
       improvements.push({
         id: "move_visitors",
-        action: "Move visitor devices to Guest zone",
-        impact: "Activate guest segmentation synergy",
+        actionKey: "synergy.actionMoveVisitors",
+        impactKey: "synergy.impactGuestSynergy",
         priority: "medium"
       });
     }
@@ -174,8 +179,8 @@ export function SynergyVisualization({
     if (unknownDevices.length > unknownsQuarantined) {
       improvements.push({
         id: "quarantine_unknown",
-        action: "Quarantine unknown devices",
-        impact: "Reduce exposure from unidentified devices",
+        actionKey: "synergy.actionQuarantineUnknown",
+        impactKey: "synergy.impactQuarantine",
         priority: "high"
       });
     }
@@ -183,8 +188,8 @@ export function SynergyVisualization({
     if (controls.wifiSecurity !== "WPA3") {
       improvements.push({
         id: "upgrade_wifi",
-        action: "Upgrade to WPA3",
-        impact: "Stronger wireless encryption",
+        actionKey: "synergy.actionUpgradeWifi",
+        impactKey: "synergy.impactStrongerEncryption",
         priority: controls.wifiSecurity === "OPEN" ? "high" : "low"
       });
     }
@@ -192,8 +197,8 @@ export function SynergyVisualization({
     if (!controls.mfaEnabled) {
       improvements.push({
         id: "enable_mfa",
-        action: "Enable MFA on accounts",
-        impact: "Protect cloud-connected devices from account compromise",
+        actionKey: "synergy.actionEnableMfa",
+        impactKey: "synergy.impactProtectAccounts",
         priority: "medium"
       });
     }
@@ -201,8 +206,8 @@ export function SynergyVisualization({
     if (!controls.autoUpdatesEnabled) {
       improvements.push({
         id: "enable_updates",
-        action: "Enable auto-updates",
-        impact: "Reduce vulnerability exposure over time",
+        actionKey: "synergy.actionEnableUpdates",
+        impactKey: "synergy.impactReduceVulnerability",
         priority: "medium"
       });
     }
@@ -235,10 +240,10 @@ export function SynergyVisualization({
         <CardTitle className="text-sm font-medium flex items-center justify-between gap-2">
           <span className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            Control Synergies
+            {t('synergy.title')}
           </span>
           <Badge variant="secondary">
-            {activeSynergies.length}/{synergies.length} active
+            {t('synergy.activeCount', { active: activeSynergies.length, total: synergies.length })}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -246,7 +251,7 @@ export function SynergyVisualization({
         {activeSynergies.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Active Synergies
+              {t('synergy.activeSynergies')}
             </p>
             <div className="space-y-2">
               {activeSynergies.map(synergy => (
@@ -257,15 +262,15 @@ export function SynergyVisualization({
                 >
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                    <span className="text-sm font-medium">{synergy.name}</span>
+                    <span className="text-sm font-medium">{t(synergy.nameKey)}</span>
                   </div>
-                  <p className="text-xs mt-1 opacity-80">{synergy.description}</p>
+                  <p className="text-xs mt-1 opacity-80">{t(synergy.descriptionKey)}</p>
                   <div className="flex items-center gap-1 mt-2 flex-wrap">
-                    {synergy.components.map((comp, i) => (
-                      <span key={comp} className="flex items-center gap-1 text-xs">
+                    {synergy.componentKeys.map((compKey, i) => (
+                      <span key={compKey} className="flex items-center gap-1 text-xs">
                         {i > 0 && <ArrowRight className="h-3 w-3 opacity-50" />}
                         <span className="px-1.5 py-0.5 bg-background/50 rounded text-[10px]">
-                          {comp}
+                          {t(compKey)}
                         </span>
                       </span>
                     ))}
@@ -279,7 +284,7 @@ export function SynergyVisualization({
         {inactiveSynergies.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Available Synergies
+              {t('synergy.availableSynergies')}
             </p>
             <div className="space-y-1">
               {inactiveSynergies.map(synergy => (
@@ -290,7 +295,7 @@ export function SynergyVisualization({
                 >
                   <div className="flex items-center gap-2">
                     <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
-                    <span className="text-sm text-muted-foreground">{synergy.name}</span>
+                    <span className="text-sm text-muted-foreground">{t(synergy.nameKey)}</span>
                   </div>
                 </div>
               ))}
@@ -301,7 +306,7 @@ export function SynergyVisualization({
         {potentialImprovements.length > 0 && (
           <div className="space-y-2 pt-2 border-t">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Suggested Actions
+              {t('synergy.suggestedActions')}
             </p>
             <div className="space-y-2">
               {potentialImprovements.map(improvement => (
@@ -310,8 +315,10 @@ export function SynergyVisualization({
                   className={`p-2 rounded-md ${getPriorityColor(improvement.priority)}`}
                   data-testid={`improvement-${improvement.id}`}
                 >
-                  <p className="text-sm font-medium">{improvement.action}</p>
-                  <p className="text-xs opacity-80">{improvement.impact}</p>
+                  <p className="text-sm font-medium">
+                    {t(improvement.actionKey, improvement.actionParams)}
+                  </p>
+                  <p className="text-xs opacity-80">{t(improvement.impactKey)}</p>
                 </div>
               ))}
             </div>
@@ -322,10 +329,10 @@ export function SynergyVisualization({
           <div className="p-4 rounded-md bg-green-500/10 border border-green-500/30 text-center">
             <Shield className="h-8 w-8 mx-auto text-green-600 dark:text-green-400 mb-2" />
             <p className="text-sm font-medium text-green-700 dark:text-green-400">
-              Maximum Synergies Active
+              {t('synergy.maxSynergiesActive')}
             </p>
             <p className="text-xs text-green-600/80 dark:text-green-400/80">
-              All control combinations are optimized
+              {t('synergy.allOptimized')}
             </p>
           </div>
         )}
