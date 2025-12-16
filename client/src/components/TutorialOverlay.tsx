@@ -97,6 +97,22 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     return () => clearTimeout(timer);
   }, [currentStep, updateTooltipPosition]);
 
+  const handleComplete = useCallback(() => {
+    markTutorialComplete();
+    setIsVisible(false);
+    onComplete();
+  }, [onComplete]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleComplete();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleComplete]);
+
   const handleNext = () => {
     if (isLastStep) {
       handleComplete();
@@ -109,12 +125,6 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     setCurrentStep(prev => Math.max(0, prev - 1));
   };
 
-  const handleComplete = () => {
-    markTutorialComplete();
-    setIsVisible(false);
-    onComplete();
-  };
-
   const handleSkip = () => {
     handleComplete();
   };
@@ -125,7 +135,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     <>
       <div 
         className="fixed inset-0 bg-black/50 z-[100]"
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleComplete}
         data-testid="tutorial-backdrop"
       />
       

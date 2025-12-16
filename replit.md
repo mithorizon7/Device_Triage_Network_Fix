@@ -177,6 +177,7 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-16: Fixed tutorial overlay to properly dismiss on Escape key or backdrop click
 - 2024-12-16: Added robust localStorage error handling with try-catch across all read/write operations
 - 2024-12-16: Fixed badge notification to properly translate badge names and descriptions
 - 2024-12-16: Implemented security_expert badge (awarded after completing 5 different scenarios)
