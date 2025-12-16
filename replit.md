@@ -140,7 +140,7 @@ shared/
 - Zone labels/descriptions use `labelKey`/`descriptionKey` for translation lookups
 - Locale-aware formatting via `formatNumber()` and `formatDate()` helpers in `i18n.ts`
 - i18n validation script: `node scripts/i18n-validate.js` checks key parity and ICU syntax
-- 224 translation keys fully synchronized across all three locales
+- 227 translation keys fully synchronized across all three locales
 - Author page fully internationalized with scenario creation/editing workflow
 
 ## User Preferences
