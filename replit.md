@@ -14,6 +14,11 @@ An interactive educational security tool that teaches network segmentation and s
 - Real-time scoring engine with configurable rules
 - Drag-and-drop interface with keyboard accessibility
 - Dark/light mode support
+- Scenario authoring mode for custom scenarios
+- Progress tracking with 7 achievement badges
+- Guided tutorial for first-time users
+- Export functionality (HTML reports and JSON data)
+- Synergy visualization showing control combinations
 
 ## Project Architecture
 
@@ -21,7 +26,8 @@ An interactive educational security tool that teaches network segmentation and s
 ```
 client/src/
 ├── pages/
-│   └── home.tsx              # Main application page
+│   ├── home.tsx              # Main application page
+│   └── author.tsx            # Scenario authoring page
 ├── components/
 │   ├── DeviceCard.tsx        # Draggable device card with zone selector
 │   ├── ZoneDropTarget.tsx    # Drop zone for device categorization
@@ -29,11 +35,19 @@ client/src/
 │   ├── ControlsDrawer.tsx    # Security controls toggles
 │   ├── ExplainScorePanel.tsx # Score explanation panel
 │   ├── ScenarioSelector.tsx  # Scenario dropdown
-│   └── ThemeToggle.tsx       # Dark/light mode toggle
+│   ├── ThemeToggle.tsx       # Dark/light mode toggle
+│   ├── BadgesPanel.tsx       # Progress badges display
+│   ├── TutorialOverlay.tsx   # Guided tutorial system
+│   ├── ExportPanel.tsx       # Report export buttons
+│   └── SynergyVisualization.tsx # Control synergy display
 ├── lib/
 │   ├── scoringEngine.ts      # Client-side scoring calculation
 │   ├── deviceIcons.tsx       # Device type icon mapping
 │   ├── zones.ts              # Zone configuration
+│   ├── customScenarios.ts    # Custom scenario localStorage management
+│   ├── progressTracking.ts   # Badge and progress system
+│   ├── tutorialSteps.ts      # Tutorial content definitions
+│   ├── exportUtils.ts        # Export report generation
 │   └── queryClient.ts        # TanStack Query setup
 ```
 
@@ -82,6 +96,23 @@ shared/
 - Configurable via `scoringRules.json`
 - Transparent "Explain My Score" panel
 
+### Synergy System
+- IoT Isolation (IoT network + proper device placement)
+- Guest Segmentation (Guest network + visitor placement)
+- Threat Quarantine (Unknown devices in Investigate zone)
+- Defense in Depth (WPA3 + Strong Password + MFA)
+- Active Maintenance (Auto Updates + Changed Passwords)
+
+### Progress Tracking
+7 achievement badges:
+- First Steps - Complete your first scenario
+- IoT Wrangler - Properly isolate IoT devices
+- Zone Master - Complete all three built-in scenarios
+- Perfect Score - Achieve a risk score of 10 or below
+- Speed Demon - Complete a scenario in under 2 minutes
+- Security Expert - Complete 5 different scenarios
+- Scenario Author - Create a custom scenario
+
 ## API Endpoints
 - `GET /api/scenarios` - List all scenarios (id, title, environment type)
 - `GET /api/scenarios/:id` - Get full scenario by ID
@@ -96,6 +127,13 @@ shared/
 
 ## User Preferences
 - Dark/light mode persisted in localStorage
+- Tutorial completion persisted in localStorage
+- Progress and badges persisted in localStorage
+- Custom scenarios persisted in localStorage
 
 ## Recent Changes
+- 2024-12-16: Fixed tutorial reset flow - Reset button now clears tutorial completion, allowing tutorial to auto-start again
+- 2024-12-16: Removed misleading bonus point values from synergy visualization, now shows "X/5 active" count
+- 2024-12-16: Fixed export controls counting to properly handle Wi-Fi security as separate from boolean toggles
+- 2024-12-16: Added synergy visualization, export functionality, tutorial mode, badges, and scenario authoring
 - 2024-12-16: Initial MVP implementation with all three scenarios, drag-drop UI, and scoring engine

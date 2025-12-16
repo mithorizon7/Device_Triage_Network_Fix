@@ -11,6 +11,9 @@ import { RiskMeter } from "@/components/RiskMeter";
 import { ControlsDrawer } from "@/components/ControlsDrawer";
 import { ExplainScorePanel } from "@/components/ExplainScorePanel";
 import { BadgesPanel, CompletionBanner } from "@/components/BadgesPanel";
+import { TutorialOverlay, TutorialTrigger, useTutorial } from "@/components/TutorialOverlay";
+import { ExportPanel } from "@/components/ExportPanel";
+import { SynergyVisualization } from "@/components/SynergyVisualization";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios } from "@/lib/customScenarios";
@@ -18,8 +21,7 @@ import {
   getProgress, 
   recordAttempt, 
   checkWinCondition,
-  type UserProgress,
-  type Badge as BadgeType
+  type UserProgress
 } from "@/lib/progressTracking";
 import { useToast } from "@/hooks/use-toast";
 import { RotateCcw, Target, BookOpen, FileText } from "lucide-react";
@@ -72,6 +74,8 @@ export default function Home() {
     return serverScenario;
   }, [isCustomScenario, selectedScenarioId, customScenarios, serverScenario]);
 
+  const { showTutorial, startTutorial, completeTutorial, resetTutorialState } = useTutorial(!!currentScenario);
+
   useEffect(() => {
     if (allScenarios.length && !selectedScenarioId) {
       setSelectedScenarioId(allScenarios[0].id);
@@ -119,8 +123,9 @@ export default function Home() {
       });
       setDeviceZones(initialZones);
       setControls({ ...currentScenario.initialControls });
+      resetTutorialState();
     }
-  }, [currentScenario]);
+  }, [currentScenario, resetTutorialState]);
 
   const scoreResult: ScoreResult = useMemo(() => {
     if (!scoringRules || !currentScenario || !controls) {
@@ -244,6 +249,7 @@ export default function Home() {
                 Author
               </Button>
             </Link>
+            <TutorialTrigger onStart={startTutorial} />
             <ThemeToggle />
           </div>
         </div>
@@ -324,6 +330,23 @@ export default function Home() {
               maxItems={8}
             />
 
+            {currentScenario && controls && (
+              <SynergyVisualization
+                scenario={currentScenario}
+                deviceZones={deviceZones}
+                controls={controls}
+              />
+            )}
+
+            {currentScenario && controls && (
+              <ExportPanel
+                scenario={currentScenario}
+                deviceZones={deviceZones}
+                controls={controls}
+                scoreResult={scoreResult}
+              />
+            )}
+
             <BadgesPanel progress={userProgress} />
           </div>
         </div>
@@ -336,6 +359,8 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {showTutorial && <TutorialOverlay onComplete={completeTutorial} />}
     </div>
   );
 }
