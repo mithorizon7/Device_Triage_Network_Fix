@@ -11,8 +11,11 @@ An interactive educational security tool that teaches network segmentation and s
 
 ## Current State
 - Fully functional MVP with three pre-built scenarios
-- Real-time scoring engine with configurable rules
+- Real-time scoring engine with configurable rules (unit-tested)
 - Drag-and-drop interface with keyboard accessibility
+- Screen-reader friendly list view toggle for accessibility
+- Win conditions card showing target score and required controls
+- Real-time score change notifications explaining risk delta
 - Dark/light mode support
 - Scenario authoring mode for custom scenarios
 - Progress tracking with 7 achievement badges
@@ -39,9 +42,12 @@ client/src/
 │   ├── BadgesPanel.tsx       # Progress badges display
 │   ├── TutorialOverlay.tsx   # Guided tutorial system
 │   ├── ExportPanel.tsx       # Report export buttons
-│   └── SynergyVisualization.tsx # Control synergy display
+│   ├── SynergyVisualization.tsx # Control synergy display
+│   ├── DeviceListView.tsx    # Screen-reader accessible list view
+│   └── WinConditionsCard.tsx # Win conditions display
 ├── lib/
 │   ├── scoringEngine.ts      # Client-side scoring calculation
+│   ├── scoringEngine.test.ts # Unit tests for scoring engine
 │   ├── deviceIcons.tsx       # Device type icon mapping
 │   ├── zones.ts              # Zone configuration
 │   ├── customScenarios.ts    # Custom scenario localStorage management
@@ -132,6 +138,10 @@ shared/
 - Custom scenarios persisted in localStorage
 
 ## Recent Changes
+- 2024-12-16: Added 18 unit tests for scoring engine ensuring deterministic behavior
+- 2024-12-16: Added screen-reader friendly list view toggle (grid/list) with localStorage persistence
+- 2024-12-16: Added WinConditionsCard showing target score and required controls with visual progress
+- 2024-12-16: Added real-time score change notifications explaining risk delta
 - 2024-12-16: Fixed tutorial reset flow - Reset button now clears tutorial completion, allowing tutorial to auto-start again
 - 2024-12-16: Removed misleading bonus point values from synergy visualization, now shows "X/5 active" count
 - 2024-12-16: Fixed export controls counting to properly handle Wi-Fi security as separate from boolean toggles

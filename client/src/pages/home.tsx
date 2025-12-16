@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ScenarioSelector } from "@/components/ScenarioSelector";
 import { ZoneDropTarget } from "@/components/ZoneDropTarget";
+import { DeviceListView } from "@/components/DeviceListView";
 import { RiskMeter } from "@/components/RiskMeter";
 import { ControlsDrawer } from "@/components/ControlsDrawer";
 import { ExplainScorePanel } from "@/components/ExplainScorePanel";
@@ -14,6 +15,7 @@ import { BadgesPanel, CompletionBanner } from "@/components/BadgesPanel";
 import { TutorialOverlay, TutorialTrigger, useTutorial } from "@/components/TutorialOverlay";
 import { ExportPanel } from "@/components/ExportPanel";
 import { SynergyVisualization } from "@/components/SynergyVisualization";
+import { WinConditionsCard } from "@/components/WinConditionsCard";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios } from "@/lib/customScenarios";
@@ -24,7 +26,7 @@ import {
   type UserProgress
 } from "@/lib/progressTracking";
 import { useToast } from "@/hooks/use-toast";
-import { RotateCcw, Target, BookOpen, FileText } from "lucide-react";
+import { RotateCcw, Target, BookOpen, FileText, LayoutGrid, List } from "lucide-react";
 import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
 
 export default function Home() {
@@ -34,8 +36,17 @@ export default function Home() {
   const [customScenarios, setCustomScenarios] = useState<Scenario[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
   const [isNewCompletion, setIsNewCompletion] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    const saved = localStorage.getItem("deviceTriage_viewMode");
+    return saved === "list" ? "list" : "grid";
+  });
   const lastRecordedScore = useRef<number | null>(null);
+  const previousScore = useRef<number | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    localStorage.setItem("deviceTriage_viewMode", viewMode);
+  }, [viewMode]);
 
   const { data: serverScenariosList, isLoading: scenariosLoading } = useQuery<Array<{ id: string; title: string; environment: { type: string } }>>({
     queryKey: ["/api/scenarios"]
@@ -183,8 +194,38 @@ export default function Home() {
 
   useEffect(() => {
     lastRecordedScore.current = null;
+    previousScore.current = null;
     setIsNewCompletion(false);
   }, [selectedScenarioId]);
+
+  useEffect(() => {
+    if (previousScore.current === null) {
+      previousScore.current = scoreResult.total;
+      return;
+    }
+
+    const delta = scoreResult.total - previousScore.current;
+    const shouldNotify = Math.abs(delta) >= 0.5;
+
+    if (shouldNotify) {
+      const lastExplanation = scoreResult.explanations.length > 0 
+        ? scoreResult.explanations[scoreResult.explanations.length - 1] 
+        : null;
+      
+      const deltaDisplay = delta > 0 ? `+${Math.round(delta)}` : `${Math.round(delta)}`;
+      const isImprovement = delta < 0;
+
+      toast({
+        title: isImprovement ? "Risk Reduced" : "Risk Increased",
+        description: lastExplanation 
+          ? `${deltaDisplay} risk: ${lastExplanation.explain}`
+          : `${deltaDisplay} risk from recent change`,
+        variant: isImprovement ? "default" : "destructive",
+      });
+    }
+
+    previousScore.current = scoreResult.total;
+  }, [scoreResult.total, scoreResult.explanations, toast]);
 
   const isLoading = scenariosLoading || rulesLoading || scenarioLoading;
 
@@ -249,6 +290,30 @@ export default function Home() {
                 Author
               </Button>
             </Link>
+            <div className="flex items-center border rounded-md" role="group" aria-label="View mode">
+              <Button
+                variant={viewMode === "grid" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                data-testid="button-view-grid"
+                aria-pressed={viewMode === "grid"}
+                aria-label="Grid view with drag and drop"
+                className="rounded-r-none border-r"
+              >
+                <LayoutGrid className="h-4 w-4" aria-hidden="true" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                data-testid="button-view-list"
+                aria-pressed={viewMode === "list"}
+                aria-label="Screen reader friendly list view"
+                className="rounded-l-none"
+              >
+                <List className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </div>
             <TutorialTrigger onStart={startTutorial} />
             <ThemeToggle />
           </div>
@@ -285,18 +350,26 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="zones-container">
-              {zones.map((zone) => (
-                <ZoneDropTarget
-                  key={zone.id}
-                  zone={zone}
-                  devices={currentScenario?.devices || []}
-                  deviceZones={deviceZones}
-                  onDeviceDrop={handleDeviceDrop}
-                  onZoneChange={handleZoneChange}
-                />
-              ))}
-            </div>
+            {viewMode === "grid" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="zones-container">
+                {zones.map((zone) => (
+                  <ZoneDropTarget
+                    key={zone.id}
+                    zone={zone}
+                    devices={currentScenario?.devices || []}
+                    deviceZones={deviceZones}
+                    onDeviceDrop={handleDeviceDrop}
+                    onZoneChange={handleZoneChange}
+                  />
+                ))}
+              </div>
+            ) : (
+              <DeviceListView
+                devices={currentScenario?.devices || []}
+                deviceZones={deviceZones}
+                onZoneChange={handleZoneChange}
+              />
+            )}
           </div>
 
           <div className="lg:col-span-4 space-y-4">
@@ -315,6 +388,14 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
+
+            {currentScenario && controls && (
+              <WinConditionsCard
+                scenario={currentScenario}
+                currentScore={scoreResult.total}
+                controls={controls}
+              />
+            )}
 
             {controls && (
               <ControlsDrawer
