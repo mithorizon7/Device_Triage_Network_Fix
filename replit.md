@@ -148,6 +148,7 @@ shared/
 - Language preference persisted in localStorage (key: `i18nextLng`)
 
 ## Recent Changes
+- 2024-12-16: Completed full i18n implementation with proper ICU interpolation for all aria-labels
 - 2024-12-16: Added full i18n support with English, Latvian, and Russian translations using react-i18next
 - 2024-12-16: Added language switcher with flag icons to header
 - 2024-12-16: Translated all core gameplay components: RiskMeter, ControlsDrawer, WinConditionsCard, zones, DeviceListView, ZoneDropTarget
