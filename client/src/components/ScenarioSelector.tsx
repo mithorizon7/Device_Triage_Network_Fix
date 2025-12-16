@@ -23,6 +23,12 @@ const environmentIcons: Record<string, typeof Home> = {
   public: Hotel
 };
 
+const builtInScenarioTitleKeys: Record<string, string> = {
+  "family_iot_sprawl_v1": "scenarios.familyIoT",
+  "small_office_v1": "scenarios.smallOffice",
+  "hotel_public_v1": "scenarios.hotelPublic"
+};
+
 export function ScenarioSelector({
   scenarios,
   selectedId,
@@ -63,6 +69,9 @@ export function ScenarioSelector({
           const Icon = environmentIcons[scenario.environment.type] || Home;
           const isSelected = scenario.id === selectedId;
           
+          const titleKey = builtInScenarioTitleKeys[scenario.id];
+          const displayTitle = titleKey ? t(titleKey) : scenario.title;
+          
           return (
             <SelectItem
               key={scenario.id}
@@ -71,7 +80,7 @@ export function ScenarioSelector({
             >
               <div className="flex items-center gap-2">
                 <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <span>{scenario.title}</span>
+                <span>{displayTitle}</span>
                 {isSelected && (
                   <Check className="h-4 w-4 text-primary ml-auto" aria-hidden="true" />
                 )}

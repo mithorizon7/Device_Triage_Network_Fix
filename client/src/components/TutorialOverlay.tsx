@@ -150,7 +150,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
-                <CardTitle className="text-base">{step.title}</CardTitle>
+                <CardTitle className="text-base">{t(step.titleKey)}</CardTitle>
               </div>
               <Button
                 variant="ghost"
@@ -166,7 +166,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
           </CardHeader>
           <CardContent className="pb-3">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              {step.content}
+              {t(step.contentKey)}
             </p>
           </CardContent>
           <CardFooter className="flex items-center justify-between gap-2 pt-0">

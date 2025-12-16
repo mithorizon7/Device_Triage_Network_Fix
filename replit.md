@@ -177,6 +177,10 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-16: Completed full i18n for tutorial steps (12 steps with titles and content in all 3 languages)
+- 2024-12-16: Added translated learning objectives for all 3 built-in scenarios (9 objectives per language)
+- 2024-12-16: Translated scenario titles in selector dropdown for built-in scenarios
+- 2024-12-16: Translated device type labels in list view with proper fallbacks for custom scenarios
 - 2024-12-16: Fixed zone selector dropdown in DeviceCard to properly translate zone labels using i18n
 - 2024-12-16: Fixed tutorial overlay to properly dismiss on Escape key or backdrop click
 - 2024-12-16: Added robust localStorage error handling with try-catch across all read/write operations

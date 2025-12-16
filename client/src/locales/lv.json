@@ -99,7 +99,22 @@
     "allComplete": "Visi mērķi sasniegti!"
   },
   "learningObjectives": {
-    "title": "Mācību mērķi"
+    "title": "Mācību mērķi",
+    "family_iot_sprawl_v1": {
+      "0": "Sadalīt ierīces uzticamības zonās (Galvenā, Viesu, IoT, Izmeklēšana).",
+      "1": "Iespējot augstas ietekmes kontroles (Wi-Fi drošība, viesu/IoT tīkli, MFA, atjauninājumi).",
+      "2": "Interpretēt vērtējuma izmaiņas, izmantojot Paskaidrojumu paneli."
+    },
+    "small_office_v1": {
+      "0": "Kategorizēt darba ierīces pret personīgajām ierīcēm biznesa tīklā.",
+      "1": "Ieviest pareizu viesu tīkla segmentāciju apmeklētājiem.",
+      "2": "Piemērot biznesam atbilstošas drošības kontroles un politikas."
+    },
+    "hotel_public_v1": {
+      "0": "Izprast riskus, pieslēdzoties publiskajiem/koplietošanas Wi-Fi tīkliem.",
+      "1": "Izlemt, kurām ierīcēm vajadzētu pieslēgties un kurām palikt izslēgtām.",
+      "2": "Apsvērt personīgā hotspota vai VPN izmantošanu sensitīvām darbībām."
+    }
   },
   "explain": {
     "title": "Paskaidrot manu vērtējumu",
@@ -208,7 +223,57 @@
     "startAriaLabel": "Sākt pamācību",
     "stepOf": "{current}. solis no {total}",
     "getStarted": "Sākt darbu",
-    "tutorial": "Pamācība"
+    "tutorial": "Pamācība",
+    "steps": {
+      "welcome": {
+        "title": "Laipni lūdzam ierīču šķirošanas plānotājā",
+        "content": "Šis rīks māca organizēt ierīces jūsu tīklā labākai drošībai. Mēs izstaigāsim galvenos konceptus soli pa solim."
+      },
+      "scenarioSelector": {
+        "title": "Izvēlieties scenāriju",
+        "content": "Sāciet, izvēloties scenāriju. Katrs simulē atšķirīgu tīkla vidi ar dažādām ierīcēm, kas jāorganizē."
+      },
+      "zonesOverview": {
+        "title": "Izpratne par uzticamības zonām",
+        "content": "Jūsu tīkls ir sadalīts četrās zonās atkarībā no uzticamības līmeņa. Katrai zonai ir atšķirīgas piekļuves atļaujas un drošības līmeņi."
+      },
+      "mainZone": {
+        "title": "Galvenā tīkla zona",
+        "content": "Šeit ir vieta jūsu uzticamākajām ierīcēm - personālajiem datoriem, tālruņiem un planšetdatoriem, kuriem nepieciešama pilna tīkla piekļuve."
+      },
+      "guestZone": {
+        "title": "Viesu tīkla zona",
+        "content": "Viesu ierīces pieder šeit. Tās iegūst piekļuvi internetam, bet nevar redzēt vai sasniegt jūsu galvenās ierīces."
+      },
+      "iotZone": {
+        "title": "IoT tīkla zona",
+        "content": "Viedās mājas ierīces, piemēram, kameras, termostati un skaļruņi, jāizolē šeit. Tām bieži ir vājāka drošība."
+      },
+      "investigateZone": {
+        "title": "Izmeklēšanas zona",
+        "content": "Nezināmas vai aizdomīgas ierīces nonāk šeit pārbaudei. Turiet tās izolētas, līdz noskaidrojat, kas tās ir."
+      },
+      "deviceCards": {
+        "title": "Ierīču pārvietošana",
+        "content": "Jūs varat vilkt ierīces starp zonām vai izmantot nolaižamo izvēlni katrā kartītē, lai tās pārdalītu. Mēģiniet organizēt ierīces pēc to veida un riska līmeņa."
+      },
+      "riskMeter": {
+        "title": "Riska vērtējums",
+        "content": "Šis mērītājs parāda jūsu pašreizējo tīkla riska līmeni. Jo zemāks, jo labāk! Mērķis parasti ir nokrist zem 35 punktiem."
+      },
+      "controls": {
+        "title": "Drošības kontroles",
+        "content": "Pārslēdziet šīs drošības kontroles, lai vēl vairāk samazinātu risku. Katra kontrole risina dažādas ievainojamības jūsu tīklā."
+      },
+      "explainPanel": {
+        "title": "Jūsu vērtējuma izpratne",
+        "content": "Šis panelis paskaidro, kāpēc jūsu vērtējums ir tāds, kāds tas ir. Katrs elements parāda, kas palielina jūsu risku, un sniedz padomus, kā to novērst."
+      },
+      "complete": {
+        "title": "Jūs esat gatavs!",
+        "content": "Tie ir pamati! Mēģiniet panākt pēc iespējas zemāku riska vērtējumu, organizējot ierīces atbilstošās zonās un iespējojot drošības kontroles. Veiksmi!"
+      }
+    }
   },
   "author": {
     "title": "Scenāriju veidošana",

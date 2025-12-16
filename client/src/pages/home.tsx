@@ -343,18 +343,24 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <ul className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                {currentScenario.learningObjectives.map((objective, index) => (
-                  <li 
-                    key={index} 
-                    className="text-sm text-muted-foreground flex items-start gap-2"
-                    data-testid={`text-objective-${index}`}
-                  >
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-                      {index + 1}
-                    </span>
-                    {objective}
-                  </li>
-                ))}
+                {currentScenario.learningObjectives.map((objective, index) => {
+                  const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
+                  const translated = t(translationKey, { defaultValue: objective });
+                  const displayText = translated || objective;
+                  
+                  return (
+                    <li 
+                      key={index} 
+                      className="text-sm text-muted-foreground flex items-start gap-2"
+                      data-testid={`text-objective-${index}`}
+                    >
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                        {index + 1}
+                      </span>
+                      {displayText}
+                    </li>
+                  );
+                })}
               </ul>
             </CardContent>
           </Card>

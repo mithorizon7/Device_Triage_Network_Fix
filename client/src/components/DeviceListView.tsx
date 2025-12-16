@@ -85,7 +85,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{device.label}</p>
                           <p className="text-xs text-muted-foreground">
-                            {device.type.charAt(0).toUpperCase() + device.type.slice(1)}
+                            {t(`devices.${device.type}`, { defaultValue: device.type.charAt(0).toUpperCase() + device.type.slice(1) })}
                             {device.ip && ` - ${device.ip}`}
                           </p>
                           {device.riskFlags.length > 0 && (
