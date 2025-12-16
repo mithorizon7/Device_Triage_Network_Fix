@@ -1,7 +1,7 @@
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -38,6 +38,7 @@ export function DeviceCard({
   onDragStart,
   onDragEnd
 }: DeviceCardProps) {
+  const { t } = useTranslation();
   const cardRef = useRef<HTMLDivElement>(null);
   const DeviceIcon = getDeviceIcon(device.type);
 
@@ -131,7 +132,7 @@ export function DeviceCard({
                 value={zone.id}
                 data-testid={`option-zone-${device.id}-${zone.id}`}
               >
-                {zone.label}
+                {t(zone.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
