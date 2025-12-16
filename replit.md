@@ -151,7 +151,7 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - `notifications.badgeEarned` - Badge earned notification
 
 ### Files
-- `client/src/locales/{en,lv,ru}.json` - Translation files (227 keys each)
+- `client/src/locales/{en,lv,ru}.json` - Translation files (235 keys each)
 - `client/src/lib/i18n.ts` - i18next configuration with ICU support
 - `scripts/i18n-validate.js` - Validation script
 - `docs/i18n-glossary.md` - Terminology glossary for translators
@@ -177,6 +177,11 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-16: Added robust localStorage error handling with try-catch across all read/write operations
+- 2024-12-16: Fixed badge notification to properly translate badge names and descriptions
+- 2024-12-16: Implemented security_expert badge (awarded after completing 5 different scenarios)
+- 2024-12-16: Added footer disclaimer translation to all three locales (235 total keys)
+- 2024-12-16: Removed unused zones import from exportUtils.ts
 - 2024-12-16: Completed principal engineer code review fixes - 6 issues resolved
 - 2024-12-16: Fully internationalized BadgesPanel, BadgeNotification, CompletionBanner components
 - 2024-12-16: Added 7 new translation keys for badges system (234 total keys across all locales)
