@@ -13,20 +13,28 @@ export function getCustomScenarios(): Scenario[] {
 }
 
 export function saveCustomScenario(scenario: Scenario): void {
-  const existing = getCustomScenarios();
-  const index = existing.findIndex(s => s.id === scenario.id);
-  if (index >= 0) {
-    existing[index] = scenario;
-  } else {
-    existing.push(scenario);
+  try {
+    const existing = getCustomScenarios();
+    const index = existing.findIndex(s => s.id === scenario.id);
+    if (index >= 0) {
+      existing[index] = scenario;
+    } else {
+      existing.push(scenario);
+    }
+    localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(existing));
+  } catch {
+    // Ignore localStorage errors (e.g., quota exceeded, private browsing)
   }
-  localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(existing));
 }
 
 export function deleteCustomScenario(scenarioId: string): void {
-  const existing = getCustomScenarios();
-  const filtered = existing.filter(s => s.id !== scenarioId);
-  localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(filtered));
+  try {
+    const existing = getCustomScenarios();
+    const filtered = existing.filter(s => s.id !== scenarioId);
+    localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(filtered));
+  } catch {
+    // Ignore localStorage errors
+  }
 }
 
 export function exportScenarioAsJson(scenario: Scenario): void {

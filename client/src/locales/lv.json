@@ -268,5 +268,8 @@
     "loading": "Ielādē...",
     "error": "Kļūda",
     "success": "Veiksmīgi"
+  },
+  "footer": {
+    "disclaimer": "Visas adreses un identifikatori ir izdomāti apmācību nolūkiem. Nekādi reāli tīkla dati netiek apkopoti."
   }
 }

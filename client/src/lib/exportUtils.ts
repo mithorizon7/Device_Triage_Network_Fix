@@ -1,5 +1,4 @@
 import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
-import { zones } from "@/lib/zones";
 
 export interface ExportData {
   exportedAt: string;

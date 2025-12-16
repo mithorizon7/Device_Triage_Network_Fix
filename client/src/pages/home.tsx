@@ -40,15 +40,23 @@ export default function Home() {
   const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
   const [isNewCompletion, setIsNewCompletion] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
-    const saved = localStorage.getItem("deviceTriage_viewMode");
-    return saved === "list" ? "list" : "grid";
+    try {
+      const saved = localStorage.getItem("deviceTriage_viewMode");
+      return saved === "list" ? "list" : "grid";
+    } catch {
+      return "grid";
+    }
   });
   const lastRecordedScore = useRef<number | null>(null);
   const previousScore = useRef<number | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    localStorage.setItem("deviceTriage_viewMode", viewMode);
+    try {
+      localStorage.setItem("deviceTriage_viewMode", viewMode);
+    } catch {
+      // Ignore localStorage errors
+    }
   }, [viewMode]);
 
   const { data: serverScenariosList, isLoading: scenariosLoading } = useQuery<Array<{ id: string; title: string; environment: { type: string } }>>({
@@ -189,7 +197,7 @@ export default function Home() {
       newBadges.forEach(badge => {
         toast({
           title: t('notifications.badgeEarned'),
-          description: `${badge.name}: ${badge.description}`,
+          description: `${t(badge.name)}: ${t(badge.description)}`,
         });
       });
     }
@@ -440,7 +448,7 @@ export default function Home() {
       <footer className="border-t mt-12">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className="text-xs text-muted-foreground text-center">
-            All addresses and identifiers are fictional for training purposes. No real network data is collected.
+            {t('footer.disclaimer')}
           </p>
         </div>
       </footer>

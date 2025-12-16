@@ -268,5 +268,8 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success"
+  },
+  "footer": {
+    "disclaimer": "All addresses and identifiers are fictional for training purposes. No real network data is collected."
   }
 }

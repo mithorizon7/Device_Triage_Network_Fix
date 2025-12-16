@@ -53,6 +53,10 @@ export const BADGE_DEFINITIONS: Record<string, { nameKey: string; descriptionKey
   custom_creator: {
     nameKey: "badges.scenarioAuthor",
     descriptionKey: "badges.scenarioAuthorDesc"
+  },
+  security_expert: {
+    nameKey: "badges.securityExpert",
+    descriptionKey: "badges.securityExpertDesc"
   }
 };
 
@@ -79,7 +83,11 @@ export function getProgress(): UserProgress {
 }
 
 export function saveProgress(progress: UserProgress): void {
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  try {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  } catch {
+    // Ignore localStorage errors (e.g., quota exceeded, private browsing)
+  }
 }
 
 export function recordAttempt(
@@ -155,6 +163,13 @@ export function recordAttempt(
     if (badge) newBadges.push(badge);
   }
 
+  // Security Expert badge: Complete 5 different scenarios
+  const completedScenarioCount = Object.values(progress.scenarios).filter(s => s.completedAt !== null).length;
+  if (completedScenarioCount >= 5 && !hasBadge(progress, "security_expert")) {
+    const badge = awardBadge(progress, "security_expert");
+    if (badge) newBadges.push(badge);
+  }
+
   progress.scenarios[scenarioId] = existing;
   saveProgress(progress);
 
@@ -200,11 +215,19 @@ export function checkWinCondition(
 }
 
 export function getTutorialCompleted(): boolean {
-  return localStorage.getItem(TUTORIAL_KEY) === "true";
+  try {
+    return localStorage.getItem(TUTORIAL_KEY) === "true";
+  } catch {
+    return false;
+  }
 }
 
 export function setTutorialCompleted(): void {
-  localStorage.setItem(TUTORIAL_KEY, "true");
+  try {
+    localStorage.setItem(TUTORIAL_KEY, "true");
+  } catch {
+    // Ignore localStorage errors
+  }
 }
 
 export function getBadgeDefinitions() {
