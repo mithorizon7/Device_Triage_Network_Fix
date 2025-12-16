@@ -19,8 +19,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: ['lv', 'en'],
     supportedLngs: ['en', 'lv', 'ru'],
+    load: 'languageOnly',
     interpolation: {
       escapeValue: false
     },
@@ -31,7 +32,16 @@ i18n
     },
     react: {
       useSuspense: false
-    }
+    },
+    saveMissing: import.meta.env.DEV,
+    missingKeyHandler: import.meta.env.DEV 
+      ? (lngs, ns, key) => {
+          console.warn(`[MISSING:${key}] in ${lngs.join(', ')}`);
+        }
+      : undefined,
+    parseMissingKeyHandler: import.meta.env.DEV 
+      ? (key) => `[MISSING:${key}]`
+      : undefined
   });
 
 export default i18n;

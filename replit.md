@@ -132,15 +132,38 @@ shared/
 - Deterministic scoring (same inputs = same outputs)
 
 ## Internationalization (i18n)
-- Supports English (default), Latvian, and Russian
-- Uses react-i18next with ICU message format for plurals
+
+### Architecture
+- **Source locale**: English (en.json) - canonical keyset
+- **Target locales**: Latvian (lv), Russian (ru)
+- **Fallback chain**: user preference → browser locale → lv → en
+- **Library**: react-i18next with ICU message format (i18next-icu)
+- **Loading strategy**: Bundled (all locales loaded at startup for offline support)
+
+### Key Conventions
+Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
+- `header.tutorial` - Tutorial button in header
+- `zones.main.label` - Main zone label
+- `controls.wifiSecurity` - Wi-Fi security control
+- `notifications.badgeEarned` - Badge earned notification
+
+### Files
+- `client/src/locales/{en,lv,ru}.json` - Translation files (227 keys each)
+- `client/src/lib/i18n.ts` - i18next configuration with ICU support
+- `scripts/i18n-validate.js` - Validation script
+- `docs/i18n-glossary.md` - Terminology glossary for translators
+
+### Tooling
+- **Validate**: `node scripts/i18n-validate.js`
+  - Fails on missing keys, empty values, invalid ICU syntax
+  - Warns on placeholder mismatches between locales
+- **Dev mode**: Missing keys display as `[MISSING:key]` in UI and console
+
+### Features
 - Language switcher in header (flag icons with dropdown)
-- Language preference persisted in localStorage
-- All UI strings use translation keys from `client/src/locales/{en,lv,ru}.json`
-- Zone labels/descriptions use `labelKey`/`descriptionKey` for translation lookups
-- Locale-aware formatting via `formatNumber()` and `formatDate()` helpers in `i18n.ts`
-- i18n validation script: `node scripts/i18n-validate.js` checks key parity and ICU syntax
-- 227 translation keys fully synchronized across all three locales
+- Language preference persisted in localStorage (key: `deviceTriage_language`)
+- Locale-aware formatting via `formatNumber()` and `formatDate()` helpers
+- ICU plural support (Russian 4-form, Latvian 2-form, English 2-form)
 - Author page fully internationalized with scenario creation/editing workflow
 
 ## User Preferences
@@ -148,9 +171,10 @@ shared/
 - Tutorial completion persisted in localStorage
 - Progress and badges persisted in localStorage
 - Custom scenarios persisted in localStorage
-- Language preference persisted in localStorage (key: `i18nextLng`)
+- Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-16: Enhanced i18n with fallback chain (lv → en), dev mode missing key detection, and glossary
 - 2024-12-16: Added i18n validation script (scripts/i18n-validate.js) for key parity and ICU syntax checking
 - 2024-12-16: Fully internationalized author.tsx scenario authoring page with 35+ new translation keys
 - 2024-12-16: Completed full i18n implementation with proper ICU interpolation for all aria-labels
