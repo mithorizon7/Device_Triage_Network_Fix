@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,17 +10,32 @@ import { ZoneDropTarget } from "@/components/ZoneDropTarget";
 import { RiskMeter } from "@/components/RiskMeter";
 import { ControlsDrawer } from "@/components/ControlsDrawer";
 import { ExplainScorePanel } from "@/components/ExplainScorePanel";
+import { BadgesPanel, CompletionBanner } from "@/components/BadgesPanel";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
-import { RotateCcw, Target, BookOpen } from "lucide-react";
+import { getCustomScenarios } from "@/lib/customScenarios";
+import { 
+  getProgress, 
+  recordAttempt, 
+  checkWinCondition,
+  type UserProgress,
+  type Badge as BadgeType
+} from "@/lib/progressTracking";
+import { useToast } from "@/hooks/use-toast";
+import { RotateCcw, Target, BookOpen, FileText } from "lucide-react";
 import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
 
 export default function Home() {
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("");
   const [deviceZones, setDeviceZones] = useState<Record<string, ZoneId>>({});
   const [controls, setControls] = useState<Controls | null>(null);
+  const [customScenarios, setCustomScenarios] = useState<Scenario[]>([]);
+  const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
+  const [isNewCompletion, setIsNewCompletion] = useState(false);
+  const lastRecordedScore = useRef<number | null>(null);
+  const { toast } = useToast();
 
-  const { data: scenariosList, isLoading: scenariosLoading } = useQuery<Array<{ id: string; title: string; environment: { type: string } }>>({
+  const { data: serverScenariosList, isLoading: scenariosLoading } = useQuery<Array<{ id: string; title: string; environment: { type: string } }>>({
     queryKey: ["/api/scenarios"]
   });
 
@@ -27,16 +43,40 @@ export default function Home() {
     queryKey: ["/api/scoring-rules"]
   });
 
-  const { data: currentScenario, isLoading: scenarioLoading } = useQuery<Scenario>({
+  useEffect(() => {
+    setCustomScenarios(getCustomScenarios());
+  }, []);
+
+  const allScenarios = useMemo(() => {
+    const serverScenarios = serverScenariosList || [];
+    const customSummaries = customScenarios.map(s => ({
+      id: s.id,
+      title: s.title,
+      environment: { type: s.environment.type },
+      isCustom: true
+    }));
+    return [...serverScenarios.map(s => ({ ...s, isCustom: false })), ...customSummaries];
+  }, [serverScenariosList, customScenarios]);
+
+  const isCustomScenario = selectedScenarioId.startsWith("custom_") || selectedScenarioId.startsWith("imported_");
+
+  const { data: serverScenario, isLoading: scenarioLoading } = useQuery<Scenario>({
     queryKey: ["/api/scenarios", selectedScenarioId],
-    enabled: !!selectedScenarioId
+    enabled: !!selectedScenarioId && !isCustomScenario
   });
 
-  useEffect(() => {
-    if (scenariosList?.length && !selectedScenarioId) {
-      setSelectedScenarioId(scenariosList[0].id);
+  const currentScenario: Scenario | undefined = useMemo(() => {
+    if (isCustomScenario) {
+      return customScenarios.find(s => s.id === selectedScenarioId);
     }
-  }, [scenariosList, selectedScenarioId]);
+    return serverScenario;
+  }, [isCustomScenario, selectedScenarioId, customScenarios, serverScenario]);
+
+  useEffect(() => {
+    if (allScenarios.length && !selectedScenarioId) {
+      setSelectedScenarioId(allScenarios[0].id);
+    }
+  }, [allScenarios, selectedScenarioId]);
 
   useEffect(() => {
     if (currentScenario) {
@@ -96,6 +136,51 @@ export default function Home() {
   const guestNetworkAvailable = currentScenario?.networks.some(n => n.id === "guest") ?? false;
   const iotNetworkAvailable = currentScenario?.networks.some(n => n.id === "iot") ?? false;
 
+  const iotDevicesInIotZone = useMemo(() => {
+    if (!currentScenario) return false;
+    const iotDevices = currentScenario.devices.filter(d => d.riskFlags.includes("iot_device"));
+    if (iotDevices.length === 0) return false;
+    const inIotZone = iotDevices.filter(d => deviceZones[d.id] === "iot");
+    return inIotZone.length >= iotDevices.length * 0.7;
+  }, [currentScenario, deviceZones]);
+
+  const maxRisk = currentScenario?.suggestedWinConditions?.maxTotalRisk ?? 35;
+  const meetsWinCondition = checkWinCondition(scoreResult.total, maxRisk);
+
+  useEffect(() => {
+    if (!currentScenario || scoreResult.total === 0) return;
+    
+    const currentScore = Math.round(scoreResult.total);
+    if (lastRecordedScore.current === currentScore) return;
+    
+    if (meetsWinCondition && lastRecordedScore.current !== currentScore) {
+      lastRecordedScore.current = currentScore;
+      
+      const { newBadges, isNewCompletion: newCompletion } = recordAttempt(
+        currentScenario.id,
+        currentScenario.title,
+        currentScore,
+        meetsWinCondition,
+        iotDevicesInIotZone
+      );
+      
+      setUserProgress(getProgress());
+      setIsNewCompletion(newCompletion);
+
+      newBadges.forEach(badge => {
+        toast({
+          title: "Badge Earned!",
+          description: `${badge.name}: ${badge.description}`,
+        });
+      });
+    }
+  }, [currentScenario, scoreResult.total, meetsWinCondition, iotDevicesInIotZone, toast]);
+
+  useEffect(() => {
+    lastRecordedScore.current = null;
+    setIsNewCompletion(false);
+  }, [selectedScenarioId]);
+
   const isLoading = scenariosLoading || rulesLoading || scenarioLoading;
 
   if (isLoading && !currentScenario) {
@@ -138,7 +223,7 @@ export default function Home() {
           
           <div className="flex items-center gap-3">
             <ScenarioSelector
-              scenarios={scenariosList || []}
+              scenarios={allScenarios}
               selectedId={selectedScenarioId}
               onSelect={handleScenarioChange}
               isLoading={scenariosLoading}
@@ -153,6 +238,12 @@ export default function Home() {
               <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
               Reset
             </Button>
+            <Link href="/author">
+              <Button variant="ghost" size="sm" data-testid="button-author">
+                <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
+                Author
+              </Button>
+            </Link>
             <ThemeToggle />
           </div>
         </div>
@@ -203,6 +294,13 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-4 space-y-4">
+            {meetsWinCondition && (
+              <CompletionBanner 
+                score={scoreResult.total} 
+                isNewCompletion={isNewCompletion} 
+              />
+            )}
+
             <Card data-testid="risk-meter-card">
               <CardContent className="pt-6">
                 <RiskMeter
@@ -225,6 +323,8 @@ export default function Home() {
               explanations={scoreResult.explanations}
               maxItems={8}
             />
+
+            <BadgesPanel progress={userProgress} />
           </div>
         </div>
       </main>
