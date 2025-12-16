@@ -1,0 +1,137 @@
+Here are developer-ready answers you can give them (plus a couple “do it this way” directives so you don’t get stuck in endless re-clarifying).
+
+1) Device roster source
+
+Answer: Use the same scenario JSON format/structure as the Cartographer.
+Directive: Build App 4 to consume the shared Scenario schema, but only rely on a subset of fields.
+
+Why: You want one “source of truth” for story networks across apps. It keeps content authoring sane and lets you reuse scenarios.
+
+Implementation notes for dev
+
+App 4 should accept:
+
+networks[] (zones + SSIDs + security state)
+
+devices[] (type, label, networkId, riskFlags)
+
+optional learningPrompts[] (for embedded checks)
+
+It should ignore any extra fields the Cartographer needs (positions, animations, etc.)
+
+It must run entirely offline/sandbox-safe; no uploads, no pasted data.
+
+2) Scoring system specifics
+
+Answer: You should design a reasonable scoring model using security best practices, but make it fully configurable via JSON so we can tune it without touching code.
+
+Directive: Implement scoring as a transparent rules engine, not hardcoded numbers.
+
+What that means
+
+A scoringRules.json file defines:
+
+zone assignment impacts
+
+control impacts
+
+synergy/interaction rules (e.g., IoT isolation reduces risk only if guest/IoT network exists)
+
+caps/floors so scores don’t go negative or explode
+
+App displays an “Explain my score” panel listing the top contributors and why.
+
+Preferred scoring UX
+
+Show a simple meter (e.g., 0–100 risk)
+
+Also show 3 sub-scores:
+
+Exposure (flat network, unknown devices)
+
+Credential/Account (MFA off, default passwords conceptually)
+
+Hygiene (updates, strong Wi-Fi, etc.)
+This prevents “one number” from oversimplifying.
+
+Important constraint
+
+Keep it conceptual—no step-by-step router config instructions and no offensive guidance. This is a planner, not a how-to hacking manual.
+
+3) Number of scenarios
+
+Answer: Start with three pre-built scenarios from day one:
+
+Family Home (IoT sprawl) – highest relatability
+
+Small Office – segmentation and guest Wi-Fi relevance
+
+Hotel/Public Wi-Fi – even though it’s not “home,” it’s great for “what devices belong where” and “what actions are safe”
+
+Directive: Build the app so scenarios are drop-in JSON files, and it auto-detects all files in /scenarios/.
+
+Why three (not one)
+
+One scenario feels like a toy.
+
+Three scenarios show this is a transferable skill, not a one-off puzzle.
+
+4) Visual style
+
+Answer: Create a clean, professional educational interface that matches the rest of the suite, but we are not enforcing a strict external brand system right now.
+
+Directive: Match these design principles:
+
+Calm, “mission-control” feel (not childish)
+
+High readability, low clutter
+
+Clear affordances for drag/drop
+
+Accessible: keyboard, screen-reader-friendly list mode, no color-only cues
+
+Specific UI guidance
+
+Two-pane layout:
+
+Left: device roster (cards)
+
+Right: zones (Main / Guest / IoT / Investigate)
+
+Top: scenario selector
+
+Bottom: risk meter + “Explain my score”
+
+Controls drawer: toggles/checklist for high-impact controls (WPA2/WPA3, strong Wi-Fi password, guest network, isolate IoT, MFA, updates)
+
+Aesthetic defaults
+
+Neutral palette, restrained use of warnings (use icons + text)
+
+Use consistent device icons (laptop, phone, camera, speaker, printer, etc.)
+
+Animations: subtle (snap-to-zone, meter transitions), no gimmicks
+
+Extra constraints you should add (to prevent future misunderstandings)
+
+Tell them explicitly:
+
+No real data in or out
+
+No copy/paste of real device lists
+
+No analytics
+
+No external calls
+
+CSP blocks outbound connections
+
+Deterministic behavior
+
+Given a scenario + rules file, the score must be repeatable
+
+Add unit tests for scoring rules
+
+Content-editable
+
+Scenario content, copy text, and scoring rules should be editable without code changes

@@ -1,0 +1,440 @@
+Great—below are **starter, conservative, explainable defaults** you can hand to the developer *as-is*: a `scoringRules.json` and a minimal `family_iot_sprawl_v1.json` scenario.
+
+These are designed for **Mode A sandbox**:
+
+* **Fictional** IPs (RFC 5737 “TEST-NET” public IPs) and **fictional** MAC-like “local IDs”
+* No need for any learner-provided identifiers
+* Deterministic scoring + transparent “Explain my score” output
+
+---
+
+## 1) `scoringRules.json` (starter rules engine)
+
+**Design intent:**
+
+* Three sub-scores: `exposure`, `credentialAccount`, `hygiene` (each capped 0–100)
+* Total risk is a weighted sum (default: Exposure 50%, Credential/Account 30%, Hygiene 20%)
+* Rules are additive and readable, with a small set of “synergy” rules
+
+```json
+{
+  "version": "1.0",
+  "scoreModel": {
+    "subscores": ["exposure", "credentialAccount", "hygiene"],
+    "weights": {
+      "exposure": 0.5,
+      "credentialAccount": 0.3,
+      "hygiene": 0.2
+    },
+    "caps": {
+      "exposure": { "min": 0, "max": 100 },
+      "credentialAccount": { "min": 0, "max": 100 },
+      "hygiene": { "min": 0, "max": 100 },
+      "total": { "min": 0, "max": 100 }
+    }
+  },
+
+  "defaults": {
+    "baseline": {
+      "exposure": 25,
+      "credentialAccount": 15,
+      "hygiene": 15
+    },
+    "allowedZones": ["main", "guest", "iot", "investigate"]
+  },
+
+  "zoneRules": [
+    {
+      "id": "unknown_not_in_investigate",
+      "when": { "deviceHasFlag": "unknown_device", "zoneNot": "investigate" },
+      "add": { "exposure": 35 },
+      "explain": "Unknown device is not quarantined for investigation."
+    },
+    {
+      "id": "unknown_in_investigate",
+      "when": { "deviceHasFlag": "unknown_device", "zoneIs": "investigate" },
+      "add": { "exposure": -15 },
+      "explain": "Unknown device quarantined for investigation reduces immediate exposure."
+    },
+    {
+      "id": "iot_on_main",
+      "when": { "deviceHasFlag": "iot_device", "zoneIs": "main" },
+      "add": { "exposure": 12 },
+      "explain": "IoT device placed on main network increases blast radius."
+    },
+    {
+      "id": "visitor_on_main",
+      "when": { "deviceHasFlag": "visitor_device", "zoneIs": "main" },
+      "add": { "exposure": 10 },
+      "explain": "Visitor device on main network increases exposure."
+    },
+    {
+      "id": "printer_on_guest_or_iot",
+      "when": { "deviceTypeIs": "printer", "zoneIn": ["guest", "iot"] },
+      "add": { "exposure": 6 },
+      "explain": "Printer placed off main network can create availability/workflow issues; keep justified."
+    },
+    {
+      "id": "trusted_work_device_on_guest",
+      "when": { "deviceHasFlag": "trusted_work_device", "zoneIs": "guest" },
+      "add": { "exposure": 6 },
+      "explain": "Trusted work device on guest network can reduce security controls/visibility depending on policy."
+    }
+  ],
+
+  "controlRules": [
+    {
+      "id": "wifi_security_open",
+      "when": { "controlIs": "wifiSecurity", "valueIs": "OPEN" },
+      "add": { "exposure": 25, "hygiene": 10 },
+      "explain": "Open Wi-Fi removes link-layer protection and is a high-risk default."
+    },
+    {
+      "id": "wifi_security_wpa2",
+      "when": { "controlIs": "wifiSecurity", "valueIs": "WPA2" },
+      "add": { "exposure": 6 },
+      "explain": "WPA2 is a solid baseline; better than open, not best-in-class."
+    },
+    {
+      "id": "wifi_security_wpa3",
+      "when": { "controlIs": "wifiSecurity", "valueIs": "WPA3" },
+      "add": { "exposure": -2 },
+      "explain": "WPA3 provides stronger Wi-Fi protections where supported."
+    },
+    {
+      "id": "strong_wifi_password_on",
+      "when": { "controlIs": "strongWifiPassword", "valueIs": true },
+      "add": { "hygiene": -10 },
+      "explain": "Strong Wi-Fi password reduces opportunistic access."
+    },
+    {
+      "id": "strong_wifi_password_off",
+      "when": { "controlIs": "strongWifiPassword", "valueIs": false },
+      "add": { "hygiene": 10 },
+      "explain": "Weak Wi-Fi passwords increase risk of unauthorized access."
+    },
+    {
+      "id": "guest_network_enabled_on",
+      "when": { "controlIs": "guestNetworkEnabled", "valueIs": true },
+      "add": { "exposure": -8 },
+      "explain": "Guest networks reduce exposure of main devices to visitors."
+    },
+    {
+      "id": "iot_network_enabled_on",
+      "when": { "controlIs": "iotNetworkEnabled", "valueIs": true },
+      "add": { "exposure": -6 },
+      "explain": "Dedicated IoT zone reduces exposure of primary devices."
+    },
+    {
+      "id": "mfa_on",
+      "when": { "controlIs": "mfaEnabled", "valueIs": true },
+      "add": { "credentialAccount": -12 },
+      "explain": "MFA reduces account takeover risk for device cloud accounts."
+    },
+    {
+      "id": "mfa_off",
+      "when": { "controlIs": "mfaEnabled", "valueIs": false },
+      "add": { "credentialAccount": 12 },
+      "explain": "No MFA increases account takeover risk."
+    },
+    {
+      "id": "auto_updates_on",
+      "when": { "controlIs": "autoUpdatesEnabled", "valueIs": true },
+      "add": { "hygiene": -8 },
+      "explain": "Updates reduce known-vulnerability exposure over time."
+    },
+    {
+      "id": "auto_updates_off",
+      "when": { "controlIs": "autoUpdatesEnabled", "valueIs": false },
+      "add": { "hygiene": 8 },
+      "explain": "No updates increases risk from known vulnerabilities."
+    },
+    {
+      "id": "default_passwords_addressed_on",
+      "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": true },
+      "add": { "credentialAccount": -10 },
+      "explain": "Changing default device/app passwords reduces easy compromise."
+    },
+    {
+      "id": "default_passwords_addressed_off",
+      "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": false },
+      "add": { "credentialAccount": 10 },
+      "explain": "Leaving defaults increases easy compromise risk."
+    }
+  ],
+
+  "synergyRules": [
+    {
+      "id": "iot_isolation_bonus",
+      "when": {
+        "all": [
+          { "controlIs": "iotNetworkEnabled", "valueIs": true },
+          { "pctOfDevicesWithFlagInZoneAtLeast": { "flag": "iot_device", "zone": "iot", "pct": 0.7 } }
+        ]
+      },
+      "add": { "exposure": -10 },
+      "explain": "Most IoT devices isolated into IoT zone materially reduces blast radius."
+    },
+    {
+      "id": "guest_network_used_bonus",
+      "when": {
+        "all": [
+          { "controlIs": "guestNetworkEnabled", "valueIs": true },
+          { "countDevicesWithFlagInZoneAtLeast": { "flag": "visitor_device", "zone": "guest", "count": 1 } }
+        ]
+      },
+      "add": { "exposure": -6 },
+      "explain": "Visitor devices actually placed on guest network reduces main exposure."
+    },
+    {
+      "id": "unknown_device_penalty_if_ignored",
+      "when": {
+        "all": [
+          { "countDevicesWithFlagAtLeast": { "flag": "unknown_device", "count": 1 } },
+          { "countDevicesWithFlagInZoneAtLeast": { "flag": "unknown_device", "zone": "investigate", "count": 0 } }
+        ]
+      },
+      "add": { "exposure": 10 },
+      "explain": "Unknown devices present with no quarantine action increases risk."
+    }
+  ],
+
+  "explainPanel": {
+    "maxItems": 8,
+    "sortOrder": "largestAbsoluteImpactFirst",
+    "include": ["baseline", "zoneRules", "controlRules", "synergyRules"]
+  }
+}
+```
+
+### Dev notes for implementation (so scoring stays sane)
+
+* Apply in this order: **baseline → controlRules → zoneRules (per device) → synergyRules → caps → weighted total**
+* Keep an “explain ledger”: each rule adds a line item with delta + explanation, so the UI can show *why* the score moved.
+
+---
+
+## 2) `scenarios/family_iot_sprawl_v1.json` (minimal but strong)
+
+**Design intent:**
+
+* Starts messy: everything dumped on `main`, guest/IoT networks conceptually “available” but not enabled.
+* Includes one **unknown device** and several IoT devices that “should” be moved.
+* Includes visitor devices to motivate guest network.
+
+```json
+{
+  "id": "family_iot_sprawl_v1",
+  "title": "Family Home with IoT Sprawl",
+  "environment": {
+    "type": "home",
+    "isp": "FictionalNet Cable",
+    "publicIp": "203.0.113.12",
+    "notes": "All addresses and identifiers are fictional for training."
+  },
+  "networks": [
+    {
+      "id": "main",
+      "label": "Main Network",
+      "ssid": "MapleHouse_Main",
+      "security": "WPA2",
+      "subnet": "192.168.10.0/24",
+      "enabled": true
+    },
+    {
+      "id": "guest",
+      "label": "Guest Network",
+      "ssid": "MapleHouse_Guest",
+      "security": "WPA2",
+      "subnet": "192.168.20.0/24",
+      "enabled": false
+    },
+    {
+      "id": "iot",
+      "label": "IoT Network",
+      "ssid": "MapleHouse_IoT",
+      "security": "WPA2",
+      "subnet": "192.168.30.0/24",
+      "enabled": false
+    },
+    {
+      "id": "investigate",
+      "label": "Investigate / Quarantine",
+      "ssid": null,
+      "security": null,
+      "subnet": null,
+      "enabled": true
+    }
+  ],
+  "initialControls": {
+    "wifiSecurity": "WPA2",
+    "strongWifiPassword": false,
+    "guestNetworkEnabled": false,
+    "iotNetworkEnabled": false,
+    "mfaEnabled": false,
+    "autoUpdatesEnabled": false,
+    "defaultPasswordsAddressed": false
+  },
+  "devices": [
+    {
+      "id": "router",
+      "type": "router",
+      "label": "Home Router",
+      "networkId": "main",
+      "ip": "192.168.10.1",
+      "localId": "AA:AA:AA:AA:AA:01",
+      "riskFlags": []
+    },
+    {
+      "id": "work_laptop",
+      "type": "laptop",
+      "label": "Work Laptop",
+      "networkId": "main",
+      "ip": "192.168.10.14",
+      "localId": "AA:AA:AA:AA:AA:14",
+      "riskFlags": ["trusted_work_device"]
+    },
+    {
+      "id": "family_laptop",
+      "type": "laptop",
+      "label": "Family Laptop",
+      "networkId": "main",
+      "ip": "192.168.10.22",
+      "localId": "AA:AA:AA:AA:AA:22",
+      "riskFlags": []
+    },
+    {
+      "id": "parent_phone",
+      "type": "phone",
+      "label": "Parent Phone",
+      "networkId": "main",
+      "ip": "192.168.10.31",
+      "localId": "AA:AA:AA:AA:AA:31",
+      "riskFlags": []
+    },
+    {
+      "id": "teen_phone",
+      "type": "phone",
+      "label": "Teen Phone",
+      "networkId": "main",
+      "ip": "192.168.10.32",
+      "localId": "AA:AA:AA:AA:AA:32",
+      "riskFlags": []
+    },
+    {
+      "id": "smart_tv",
+      "type": "tv",
+      "label": "Smart TV",
+      "networkId": "main",
+      "ip": "192.168.10.40",
+      "localId": "AA:AA:AA:AA:AA:40",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "smart_speaker",
+      "type": "speaker",
+      "label": "Smart Speaker",
+      "networkId": "main",
+      "ip": "192.168.10.41",
+      "localId": "AA:AA:AA:AA:AA:41",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "thermostat",
+      "type": "thermostat",
+      "label": "Thermostat",
+      "networkId": "main",
+      "ip": "192.168.10.42",
+      "localId": "AA:AA:AA:AA:AA:42",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "printer",
+      "type": "printer",
+      "label": "Wi-Fi Printer",
+      "networkId": "main",
+      "ip": "192.168.10.50",
+      "localId": "AA:AA:AA:AA:AA:50",
+      "riskFlags": []
+    },
+    {
+      "id": "indoor_camera",
+      "type": "camera",
+      "label": "Indoor Camera",
+      "networkId": "main",
+      "ip": "192.168.10.60",
+      "localId": "AA:AA:AA:AA:AA:60",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "smart_plug",
+      "type": "iot",
+      "label": "Smart Plug",
+      "networkId": "main",
+      "ip": "192.168.10.61",
+      "localId": "AA:AA:AA:AA:AA:61",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "old_tablet",
+      "type": "tablet",
+      "label": "Old Tablet",
+      "networkId": "main",
+      "ip": "192.168.10.70",
+      "localId": "AA:AA:AA:AA:AA:70",
+      "riskFlags": []
+    },
+    {
+      "id": "guest_phone",
+      "type": "phone",
+      "label": "Guest Phone",
+      "networkId": "main",
+      "ip": "192.168.10.80",
+      "localId": "AA:AA:AA:AA:AA:80",
+      "riskFlags": ["visitor_device"]
+    },
+    {
+      "id": "mystery_device",
+      "type": "unknown",
+      "label": "Unrecognized Device",
+      "networkId": "main",
+      "ip": "192.168.10.90",
+      "localId": "AA:AA:AA:AA:AA:90",
+      "riskFlags": ["unknown_device"]
+    }
+  ],
+  "learningObjectives": [
+    "Separate devices into trust zones (Main, Guest, IoT, Investigate).",
+    "Enable high-impact controls (Wi-Fi security, guest/IoT networks, MFA, updates).",
+    "Interpret score changes using Explain panel."
+  ],
+  "suggestedWinConditions": {
+    "maxTotalRisk": 35,
+    "requires": [
+      { "control": "guestNetworkEnabled", "value": true },
+      { "control": "iotNetworkEnabled", "value": true },
+      { "deviceFlagInZoneAtLeastPct": { "flag": "iot_device", "zone": "iot", "pct": 0.7 } },
+      { "deviceFlagInZoneAtLeastCount": { "flag": "unknown_device", "zone": "investigate", "count": 1 } }
+    ]
+  }
+}
+```
+
+---
+
+## How these fit App 4’s UX (so the dev knows what to do)
+
+* **Device cards** come from `devices[]`
+* **Zones** are the `networks[]` entries with ids `main/guest/iot/investigate`
+* **Control toggles** initialize from `initialControls`
+* When the learner moves a device card between zones, update `device.networkId` in state, re-run scoring.
+* When the learner flips a control, update control state, re-run scoring.
+* Show “Explain my score” from the rule ledger.
+
+---
+
+## If you want one extra thing that makes dev faster
+
+I can also provide a **second scenario** (`small_office_v1.json`) and a **starter UI copy pack** (tooltips + explain text) so they don’t have to invent language. **Want that too?**
+
+Confidence: **High** that these two files are usable immediately and align with your Mode A + OPSEC constraints.
