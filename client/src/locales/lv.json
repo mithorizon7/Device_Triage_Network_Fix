@@ -239,6 +239,9 @@
     "edit": "Rediģēt",
     "duplicate": "Dublēt",
     "export": "Eksportēt",
+    "copyTitle": "{title} (Kopija)",
+    "importError": "Neizdevās importēt scenāriju. Lūdzu, pārbaudiet faila formātu.",
+    "deviceDefaultName": "Ierīce {index}",
     "riskFlags": {
       "unknown_device": "nezināma ierīce",
       "iot_device": "IoT ierīce",

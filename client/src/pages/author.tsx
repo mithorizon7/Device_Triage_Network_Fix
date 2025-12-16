@@ -76,11 +76,11 @@ export default function AuthorPage() {
     const duplicate = {
       ...scenario,
       id: `${scenario.id}_copy_${Date.now()}`,
-      title: `${scenario.title} (Copy)`
+      title: t('author.copyTitle', { title: scenario.title })
     };
     saveCustomScenario(duplicate);
     setCustomScenarios(getCustomScenarios());
-  }, []);
+  }, [t]);
 
   const handleDelete = useCallback((scenarioId: string) => {
     deleteCustomScenario(scenarioId);
@@ -98,7 +98,7 @@ export default function AuthorPage() {
         const badge = recordCustomScenarioCreated();
         if (badge) {
           toast({
-            title: "Badge Earned!",
+            title: t('notifications.badgeEarned'),
             description: `${badge.name}: ${badge.description}`,
           });
         }
@@ -127,7 +127,7 @@ export default function AuthorPage() {
         setCustomScenarios(getCustomScenarios());
         setImportError(null);
       } catch {
-        setImportError("Failed to import scenario. Please check the file format.");
+        setImportError(t('author.importError'));
       }
     };
     reader.readAsText(file);
@@ -144,14 +144,14 @@ export default function AuthorPage() {
     const newDevice: Device = {
       id: generateDeviceId(),
       type: "laptop",
-      label: `Device ${newIndex + 1}`,
+      label: t('author.deviceDefaultName', { index: newIndex + 1 }),
       networkId: "main",
       ip: generateIp(newIndex),
       localId: generateMac(newIndex),
       riskFlags: []
     };
     updateScenarioField("devices", [...editingScenario.devices, newDevice]);
-  }, [editingScenario, updateScenarioField]);
+  }, [editingScenario, updateScenarioField, t]);
 
   const updateDevice = useCallback((deviceId: string, updates: Partial<Device>) => {
     if (!editingScenario) return;

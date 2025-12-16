@@ -239,6 +239,9 @@
     "edit": "Редактировать",
     "duplicate": "Дублировать",
     "export": "Экспорт",
+    "copyTitle": "{title} (Копия)",
+    "importError": "Не удалось импортировать сценарий. Проверьте формат файла.",
+    "deviceDefaultName": "Устройство {index}",
     "riskFlags": {
       "unknown_device": "неизвестное устройство",
       "iot_device": "устройство IoT",

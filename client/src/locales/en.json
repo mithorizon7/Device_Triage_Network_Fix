@@ -239,6 +239,9 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "export": "Export",
+    "copyTitle": "{title} (Copy)",
+    "importError": "Failed to import scenario. Please check the file format.",
+    "deviceDefaultName": "Device {index}",
     "riskFlags": {
       "unknown_device": "unknown device",
       "iot_device": "IoT device",
