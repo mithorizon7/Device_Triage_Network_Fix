@@ -1,0 +1,193 @@
+{
+  "id": "family_iot_sprawl_v1",
+  "title": "Family Home with IoT Sprawl",
+  "environment": {
+    "type": "home",
+    "isp": "FictionalNet Cable",
+    "publicIp": "203.0.113.12",
+    "notes": "All addresses and identifiers are fictional for training."
+  },
+  "networks": [
+    {
+      "id": "main",
+      "label": "Main Network",
+      "ssid": "MapleHouse_Main",
+      "security": "WPA2",
+      "subnet": "192.168.10.0/24",
+      "enabled": true
+    },
+    {
+      "id": "guest",
+      "label": "Guest Network",
+      "ssid": "MapleHouse_Guest",
+      "security": "WPA2",
+      "subnet": "192.168.20.0/24",
+      "enabled": false
+    },
+    {
+      "id": "iot",
+      "label": "IoT Network",
+      "ssid": "MapleHouse_IoT",
+      "security": "WPA2",
+      "subnet": "192.168.30.0/24",
+      "enabled": false
+    },
+    {
+      "id": "investigate",
+      "label": "Investigate / Quarantine",
+      "ssid": null,
+      "security": null,
+      "subnet": null,
+      "enabled": true
+    }
+  ],
+  "initialControls": {
+    "wifiSecurity": "WPA2",
+    "strongWifiPassword": false,
+    "guestNetworkEnabled": false,
+    "iotNetworkEnabled": false,
+    "mfaEnabled": false,
+    "autoUpdatesEnabled": false,
+    "defaultPasswordsAddressed": false
+  },
+  "devices": [
+    {
+      "id": "router",
+      "type": "router",
+      "label": "Home Router",
+      "networkId": "main",
+      "ip": "192.168.10.1",
+      "localId": "AA:AA:AA:AA:AA:01",
+      "riskFlags": []
+    },
+    {
+      "id": "work_laptop",
+      "type": "laptop",
+      "label": "Work Laptop",
+      "networkId": "main",
+      "ip": "192.168.10.14",
+      "localId": "AA:AA:AA:AA:AA:14",
+      "riskFlags": ["trusted_work_device"]
+    },
+    {
+      "id": "family_laptop",
+      "type": "laptop",
+      "label": "Family Laptop",
+      "networkId": "main",
+      "ip": "192.168.10.22",
+      "localId": "AA:AA:AA:AA:AA:22",
+      "riskFlags": []
+    },
+    {
+      "id": "parent_phone",
+      "type": "phone",
+      "label": "Parent Phone",
+      "networkId": "main",
+      "ip": "192.168.10.31",
+      "localId": "AA:AA:AA:AA:AA:31",
+      "riskFlags": []
+    },
+    {
+      "id": "teen_phone",
+      "type": "phone",
+      "label": "Teen Phone",
+      "networkId": "main",
+      "ip": "192.168.10.32",
+      "localId": "AA:AA:AA:AA:AA:32",
+      "riskFlags": []
+    },
+    {
+      "id": "smart_tv",
+      "type": "tv",
+      "label": "Smart TV",
+      "networkId": "main",
+      "ip": "192.168.10.40",
+      "localId": "AA:AA:AA:AA:AA:40",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "smart_speaker",
+      "type": "speaker",
+      "label": "Smart Speaker",
+      "networkId": "main",
+      "ip": "192.168.10.41",
+      "localId": "AA:AA:AA:AA:AA:41",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "thermostat",
+      "type": "thermostat",
+      "label": "Thermostat",
+      "networkId": "main",
+      "ip": "192.168.10.42",
+      "localId": "AA:AA:AA:AA:AA:42",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "printer",
+      "type": "printer",
+      "label": "Wi-Fi Printer",
+      "networkId": "main",
+      "ip": "192.168.10.50",
+      "localId": "AA:AA:AA:AA:AA:50",
+      "riskFlags": []
+    },
+    {
+      "id": "indoor_camera",
+      "type": "camera",
+      "label": "Indoor Camera",
+      "networkId": "main",
+      "ip": "192.168.10.60",
+      "localId": "AA:AA:AA:AA:AA:60",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "smart_plug",
+      "type": "iot",
+      "label": "Smart Plug",
+      "networkId": "main",
+      "ip": "192.168.10.61",
+      "localId": "AA:AA:AA:AA:AA:61",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "old_tablet",
+      "type": "tablet",
+      "label": "Old Tablet",
+      "networkId": "main",
+      "ip": "192.168.10.70",
+      "localId": "AA:AA:AA:AA:AA:70",
+      "riskFlags": []
+    },
+    {
+      "id": "guest_phone",
+      "type": "phone",
+      "label": "Guest Phone",
+      "networkId": "main",
+      "ip": "192.168.10.80",
+      "localId": "AA:AA:AA:AA:AA:80",
+      "riskFlags": ["visitor_device"]
+    },
+    {
+      "id": "mystery_device",
+      "type": "unknown",
+      "label": "Unrecognized Device",
+      "networkId": "main",
+      "ip": "192.168.10.90",
+      "localId": "AA:AA:AA:AA:AA:90",
+      "riskFlags": ["unknown_device"]
+    }
+  ],
+  "learningObjectives": [
+    "Separate devices into trust zones (Main, Guest, IoT, Investigate).",
+    "Enable high-impact controls (Wi-Fi security, guest/IoT networks, MFA, updates).",
+    "Interpret score changes using Explain panel."
+  ],
+  "suggestedWinConditions": {
+    "maxTotalRisk": 35,
+    "requires": [
+      { "control": "guestNetworkEnabled", "value": true },
+      { "control": "iotNetworkEnabled", "value": true }
+    ]
+  }
+}

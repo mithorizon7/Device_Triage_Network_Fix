@@ -1,0 +1,138 @@
+{
+  "id": "hotel_public_v1",
+  "title": "Hotel / Public Wi-Fi",
+  "environment": {
+    "type": "hotel",
+    "isp": "HotelNet Services",
+    "publicIp": "203.0.113.200",
+    "notes": "All addresses and identifiers are fictional for training. This scenario simulates connecting personal devices to a hotel or public Wi-Fi network."
+  },
+  "networks": [
+    {
+      "id": "main",
+      "label": "Hotel Wi-Fi (Shared)",
+      "ssid": "GrandHotel_WiFi",
+      "security": "WPA2",
+      "subnet": "172.16.0.0/16",
+      "enabled": true
+    },
+    {
+      "id": "guest",
+      "label": "Personal Hotspot",
+      "ssid": "MyPhone_Hotspot",
+      "security": "WPA3",
+      "subnet": "192.168.43.0/24",
+      "enabled": false
+    },
+    {
+      "id": "iot",
+      "label": "Isolated VPN",
+      "ssid": null,
+      "security": null,
+      "subnet": null,
+      "enabled": false
+    },
+    {
+      "id": "investigate",
+      "label": "Do Not Connect",
+      "ssid": null,
+      "security": null,
+      "subnet": null,
+      "enabled": true
+    }
+  ],
+  "initialControls": {
+    "wifiSecurity": "WPA2",
+    "strongWifiPassword": false,
+    "guestNetworkEnabled": false,
+    "iotNetworkEnabled": false,
+    "mfaEnabled": false,
+    "autoUpdatesEnabled": false,
+    "defaultPasswordsAddressed": false
+  },
+  "devices": [
+    {
+      "id": "work_laptop_travel",
+      "type": "laptop",
+      "label": "Work Laptop",
+      "networkId": "main",
+      "ip": "172.16.45.12",
+      "localId": "CC:CC:CC:CC:CC:01",
+      "riskFlags": ["trusted_work_device"]
+    },
+    {
+      "id": "personal_phone",
+      "type": "phone",
+      "label": "Personal Phone",
+      "networkId": "main",
+      "ip": "172.16.45.20",
+      "localId": "CC:CC:CC:CC:CC:02",
+      "riskFlags": []
+    },
+    {
+      "id": "personal_tablet",
+      "type": "tablet",
+      "label": "Personal Tablet",
+      "networkId": "main",
+      "ip": "172.16.45.21",
+      "localId": "CC:CC:CC:CC:CC:03",
+      "riskFlags": []
+    },
+    {
+      "id": "travel_speaker",
+      "type": "speaker",
+      "label": "Portable Speaker",
+      "networkId": "main",
+      "ip": "172.16.45.30",
+      "localId": "CC:CC:CC:CC:CC:04",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "hotel_tv",
+      "type": "tv",
+      "label": "Hotel Room TV",
+      "networkId": "main",
+      "ip": "172.16.100.5",
+      "localId": "DD:DD:DD:DD:DD:05",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "other_guest_1",
+      "type": "unknown",
+      "label": "Other Guest Device 1",
+      "networkId": "main",
+      "ip": "172.16.50.10",
+      "localId": "EE:EE:EE:EE:EE:01",
+      "riskFlags": ["unknown_device"]
+    },
+    {
+      "id": "other_guest_2",
+      "type": "unknown",
+      "label": "Other Guest Device 2",
+      "networkId": "main",
+      "ip": "172.16.50.11",
+      "localId": "EE:EE:EE:EE:EE:02",
+      "riskFlags": ["unknown_device"]
+    },
+    {
+      "id": "suspicious_device",
+      "type": "unknown",
+      "label": "Suspicious Network Device",
+      "networkId": "main",
+      "ip": "172.16.1.254",
+      "localId": "FF:FF:FF:FF:FF:01",
+      "riskFlags": ["unknown_device"]
+    }
+  ],
+  "learningObjectives": [
+    "Understand the risks of connecting to public/shared Wi-Fi networks.",
+    "Decide which devices should connect and which should stay off.",
+    "Consider using personal hotspot or VPN for sensitive activities."
+  ],
+  "suggestedWinConditions": {
+    "maxTotalRisk": 40,
+    "requires": [
+      { "control": "mfaEnabled", "value": true }
+    ]
+  }
+}

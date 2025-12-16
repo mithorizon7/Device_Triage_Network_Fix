@@ -1,0 +1,175 @@
+{
+  "id": "small_office_v1",
+  "title": "Small Office Network",
+  "environment": {
+    "type": "office",
+    "isp": "BusinessConnect Fiber",
+    "publicIp": "198.51.100.45",
+    "notes": "All addresses and identifiers are fictional for training."
+  },
+  "networks": [
+    {
+      "id": "main",
+      "label": "Corporate Network",
+      "ssid": "TechCorp_Secure",
+      "security": "WPA2",
+      "subnet": "10.0.1.0/24",
+      "enabled": true
+    },
+    {
+      "id": "guest",
+      "label": "Visitor Network",
+      "ssid": "TechCorp_Guest",
+      "security": "WPA2",
+      "subnet": "10.0.2.0/24",
+      "enabled": false
+    },
+    {
+      "id": "iot",
+      "label": "Device Network",
+      "ssid": "TechCorp_Devices",
+      "security": "WPA2",
+      "subnet": "10.0.3.0/24",
+      "enabled": false
+    },
+    {
+      "id": "investigate",
+      "label": "Quarantine Zone",
+      "ssid": null,
+      "security": null,
+      "subnet": null,
+      "enabled": true
+    }
+  ],
+  "initialControls": {
+    "wifiSecurity": "WPA2",
+    "strongWifiPassword": true,
+    "guestNetworkEnabled": false,
+    "iotNetworkEnabled": false,
+    "mfaEnabled": false,
+    "autoUpdatesEnabled": true,
+    "defaultPasswordsAddressed": false
+  },
+  "devices": [
+    {
+      "id": "office_router",
+      "type": "router",
+      "label": "Office Router",
+      "networkId": "main",
+      "ip": "10.0.1.1",
+      "localId": "BB:BB:BB:BB:BB:01",
+      "riskFlags": []
+    },
+    {
+      "id": "ceo_laptop",
+      "type": "laptop",
+      "label": "CEO Laptop",
+      "networkId": "main",
+      "ip": "10.0.1.10",
+      "localId": "BB:BB:BB:BB:BB:10",
+      "riskFlags": ["trusted_work_device"]
+    },
+    {
+      "id": "dev_laptop_1",
+      "type": "laptop",
+      "label": "Developer Laptop 1",
+      "networkId": "main",
+      "ip": "10.0.1.11",
+      "localId": "BB:BB:BB:BB:BB:11",
+      "riskFlags": ["trusted_work_device"]
+    },
+    {
+      "id": "dev_laptop_2",
+      "type": "laptop",
+      "label": "Developer Laptop 2",
+      "networkId": "main",
+      "ip": "10.0.1.12",
+      "localId": "BB:BB:BB:BB:BB:12",
+      "riskFlags": ["trusted_work_device"]
+    },
+    {
+      "id": "reception_pc",
+      "type": "laptop",
+      "label": "Reception Desktop",
+      "networkId": "main",
+      "ip": "10.0.1.20",
+      "localId": "BB:BB:BB:BB:BB:20",
+      "riskFlags": []
+    },
+    {
+      "id": "office_printer",
+      "type": "printer",
+      "label": "Network Printer",
+      "networkId": "main",
+      "ip": "10.0.1.50",
+      "localId": "BB:BB:BB:BB:BB:50",
+      "riskFlags": []
+    },
+    {
+      "id": "conference_tv",
+      "type": "tv",
+      "label": "Conference Room Display",
+      "networkId": "main",
+      "ip": "10.0.1.60",
+      "localId": "BB:BB:BB:BB:BB:60",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "smart_thermostat",
+      "type": "thermostat",
+      "label": "Office Thermostat",
+      "networkId": "main",
+      "ip": "10.0.1.70",
+      "localId": "BB:BB:BB:BB:BB:70",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "security_camera",
+      "type": "camera",
+      "label": "Security Camera",
+      "networkId": "main",
+      "ip": "10.0.1.80",
+      "localId": "BB:BB:BB:BB:BB:80",
+      "riskFlags": ["iot_device"]
+    },
+    {
+      "id": "client_phone_1",
+      "type": "phone",
+      "label": "Client Phone (Meeting)",
+      "networkId": "main",
+      "ip": "10.0.1.100",
+      "localId": "BB:BB:BB:BB:BB:A0",
+      "riskFlags": ["visitor_device"]
+    },
+    {
+      "id": "client_laptop",
+      "type": "laptop",
+      "label": "Client Laptop (Meeting)",
+      "networkId": "main",
+      "ip": "10.0.1.101",
+      "localId": "BB:BB:BB:BB:BB:A1",
+      "riskFlags": ["visitor_device"]
+    },
+    {
+      "id": "mystery_tablet",
+      "type": "unknown",
+      "label": "Unknown Tablet",
+      "networkId": "main",
+      "ip": "10.0.1.200",
+      "localId": "BB:BB:BB:BB:BB:C8",
+      "riskFlags": ["unknown_device"]
+    }
+  ],
+  "learningObjectives": [
+    "Separate work devices from visitor devices using network zones.",
+    "Isolate IoT devices from the corporate network.",
+    "Enable security controls appropriate for a business environment."
+  ],
+  "suggestedWinConditions": {
+    "maxTotalRisk": 30,
+    "requires": [
+      { "control": "guestNetworkEnabled", "value": true },
+      { "control": "mfaEnabled", "value": true }
+    ]
+  }
+}

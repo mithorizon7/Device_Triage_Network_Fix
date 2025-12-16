@@ -1,16 +1,73 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { readFileSync, readdirSync } from "fs";
+import { join } from "path";
+
+const scenariosDir = join(process.cwd(), "server", "scenarios");
+
+function loadScoringRules() {
+  const rulesPath = join(scenariosDir, "scoringRules.json");
+  const content = readFileSync(rulesPath, "utf-8");
+  return JSON.parse(content);
+}
+
+function loadScenarios() {
+  const files = readdirSync(scenariosDir).filter(
+    (f) => f.endsWith(".json") && f !== "scoringRules.json"
+  );
+  return files.map((file) => {
+    const content = readFileSync(join(scenariosDir, file), "utf-8");
+    return JSON.parse(content);
+  });
+}
+
+function loadScenarioById(id: string) {
+  const scenarios = loadScenarios();
+  return scenarios.find((s: { id: string }) => s.id === id);
+}
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // put application routes here
-  // prefix all routes with /api
+  app.get("/api/scenarios", (_req, res) => {
+    try {
+      const scenarios = loadScenarios();
+      const summaries = scenarios.map((s: { id: string; title: string; environment: { type: string } }) => ({
+        id: s.id,
+        title: s.title,
+        environment: { type: s.environment.type }
+      }));
+      res.json(summaries);
+    } catch (error) {
+      console.error("Error loading scenarios:", error);
+      res.status(500).json({ error: "Failed to load scenarios" });
+    }
+  });
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+  app.get("/api/scenarios/:id", (req, res) => {
+    try {
+      const scenario = loadScenarioById(req.params.id);
+      if (!scenario) {
+        res.status(404).json({ error: "Scenario not found" });
+        return;
+      }
+      res.json(scenario);
+    } catch (error) {
+      console.error("Error loading scenario:", error);
+      res.status(500).json({ error: "Failed to load scenario" });
+    }
+  });
+
+  app.get("/api/scoring-rules", (_req, res) => {
+    try {
+      const rules = loadScoringRules();
+      res.json(rules);
+    } catch (error) {
+      console.error("Error loading scoring rules:", error);
+      res.status(500).json({ error: "Failed to load scoring rules" });
+    }
+  });
 
   return httpServer;
 }

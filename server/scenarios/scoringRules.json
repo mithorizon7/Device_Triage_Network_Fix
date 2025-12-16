@@ -1,0 +1,188 @@
+{
+  "version": "1.0",
+  "scoreModel": {
+    "subscores": ["exposure", "credentialAccount", "hygiene"],
+    "weights": {
+      "exposure": 0.5,
+      "credentialAccount": 0.3,
+      "hygiene": 0.2
+    },
+    "caps": {
+      "exposure": { "min": 0, "max": 100 },
+      "credentialAccount": { "min": 0, "max": 100 },
+      "hygiene": { "min": 0, "max": 100 },
+      "total": { "min": 0, "max": 100 }
+    }
+  },
+
+  "defaults": {
+    "baseline": {
+      "exposure": 25,
+      "credentialAccount": 15,
+      "hygiene": 15
+    },
+    "allowedZones": ["main", "guest", "iot", "investigate"]
+  },
+
+  "zoneRules": [
+    {
+      "id": "unknown_not_in_investigate",
+      "when": { "deviceHasFlag": "unknown_device", "zoneNot": "investigate" },
+      "add": { "exposure": 35 },
+      "explain": "Unknown device is not quarantined for investigation."
+    },
+    {
+      "id": "unknown_in_investigate",
+      "when": { "deviceHasFlag": "unknown_device", "zoneIs": "investigate" },
+      "add": { "exposure": -15 },
+      "explain": "Unknown device quarantined for investigation reduces immediate exposure."
+    },
+    {
+      "id": "iot_on_main",
+      "when": { "deviceHasFlag": "iot_device", "zoneIs": "main" },
+      "add": { "exposure": 12 },
+      "explain": "IoT device placed on main network increases blast radius."
+    },
+    {
+      "id": "visitor_on_main",
+      "when": { "deviceHasFlag": "visitor_device", "zoneIs": "main" },
+      "add": { "exposure": 10 },
+      "explain": "Visitor device on main network increases exposure."
+    },
+    {
+      "id": "printer_on_guest_or_iot",
+      "when": { "deviceTypeIs": "printer", "zoneIn": ["guest", "iot"] },
+      "add": { "exposure": 6 },
+      "explain": "Printer placed off main network can create availability/workflow issues; keep justified."
+    },
+    {
+      "id": "trusted_work_device_on_guest",
+      "when": { "deviceHasFlag": "trusted_work_device", "zoneIs": "guest" },
+      "add": { "exposure": 6 },
+      "explain": "Trusted work device on guest network can reduce security controls/visibility depending on policy."
+    }
+  ],
+
+  "controlRules": [
+    {
+      "id": "wifi_security_open",
+      "when": { "controlIs": "wifiSecurity", "valueIs": "OPEN" },
+      "add": { "exposure": 25, "hygiene": 10 },
+      "explain": "Open Wi-Fi removes link-layer protection and is a high-risk default."
+    },
+    {
+      "id": "wifi_security_wpa2",
+      "when": { "controlIs": "wifiSecurity", "valueIs": "WPA2" },
+      "add": { "exposure": 6 },
+      "explain": "WPA2 is a solid baseline; better than open, not best-in-class."
+    },
+    {
+      "id": "wifi_security_wpa3",
+      "when": { "controlIs": "wifiSecurity", "valueIs": "WPA3" },
+      "add": { "exposure": -2 },
+      "explain": "WPA3 provides stronger Wi-Fi protections where supported."
+    },
+    {
+      "id": "strong_wifi_password_on",
+      "when": { "controlIs": "strongWifiPassword", "valueIs": true },
+      "add": { "hygiene": -10 },
+      "explain": "Strong Wi-Fi password reduces opportunistic access."
+    },
+    {
+      "id": "strong_wifi_password_off",
+      "when": { "controlIs": "strongWifiPassword", "valueIs": false },
+      "add": { "hygiene": 10 },
+      "explain": "Weak Wi-Fi passwords increase risk of unauthorized access."
+    },
+    {
+      "id": "guest_network_enabled_on",
+      "when": { "controlIs": "guestNetworkEnabled", "valueIs": true },
+      "add": { "exposure": -8 },
+      "explain": "Guest networks reduce exposure of main devices to visitors."
+    },
+    {
+      "id": "iot_network_enabled_on",
+      "when": { "controlIs": "iotNetworkEnabled", "valueIs": true },
+      "add": { "exposure": -6 },
+      "explain": "Dedicated IoT zone reduces exposure of primary devices."
+    },
+    {
+      "id": "mfa_on",
+      "when": { "controlIs": "mfaEnabled", "valueIs": true },
+      "add": { "credentialAccount": -12 },
+      "explain": "MFA reduces account takeover risk for device cloud accounts."
+    },
+    {
+      "id": "mfa_off",
+      "when": { "controlIs": "mfaEnabled", "valueIs": false },
+      "add": { "credentialAccount": 12 },
+      "explain": "No MFA increases account takeover risk."
+    },
+    {
+      "id": "auto_updates_on",
+      "when": { "controlIs": "autoUpdatesEnabled", "valueIs": true },
+      "add": { "hygiene": -8 },
+      "explain": "Updates reduce known-vulnerability exposure over time."
+    },
+    {
+      "id": "auto_updates_off",
+      "when": { "controlIs": "autoUpdatesEnabled", "valueIs": false },
+      "add": { "hygiene": 8 },
+      "explain": "No updates increases risk from known vulnerabilities."
+    },
+    {
+      "id": "default_passwords_addressed_on",
+      "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": true },
+      "add": { "credentialAccount": -10 },
+      "explain": "Changing default device/app passwords reduces easy compromise."
+    },
+    {
+      "id": "default_passwords_addressed_off",
+      "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": false },
+      "add": { "credentialAccount": 10 },
+      "explain": "Leaving defaults increases easy compromise risk."
+    }
+  ],
+
+  "synergyRules": [
+    {
+      "id": "iot_isolation_bonus",
+      "when": {
+        "all": [
+          { "controlIs": "iotNetworkEnabled", "valueIs": true },
+          { "pctOfDevicesWithFlagInZoneAtLeast": { "flag": "iot_device", "zone": "iot", "pct": 0.7 } }
+        ]
+      },
+      "add": { "exposure": -10 },
+      "explain": "Most IoT devices isolated into IoT zone materially reduces blast radius."
+    },
+    {
+      "id": "guest_network_used_bonus",
+      "when": {
+        "all": [
+          { "controlIs": "guestNetworkEnabled", "valueIs": true },
+          { "countDevicesWithFlagInZoneAtLeast": { "flag": "visitor_device", "zone": "guest", "count": 1 } }
+        ]
+      },
+      "add": { "exposure": -6 },
+      "explain": "Visitor devices actually placed on guest network reduces main exposure."
+    },
+    {
+      "id": "unknown_device_penalty_if_ignored",
+      "when": {
+        "all": [
+          { "countDevicesWithFlagAtLeast": { "flag": "unknown_device", "count": 1 } },
+          { "countDevicesWithFlagInZoneAtLeast": { "flag": "unknown_device", "zone": "investigate", "count": 0 } }
+        ]
+      },
+      "add": { "exposure": 10 },
+      "explain": "Unknown devices present with no quarantine action increases risk."
+    }
+  ],
+
+  "explainPanel": {
+    "maxItems": 8,
+    "sortOrder": "largestAbsoluteImpactFirst",
+    "include": ["baseline", "zoneRules", "controlRules", "synergyRules"]
+  }
+}

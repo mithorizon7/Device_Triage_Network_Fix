@@ -43,9 +43,19 @@
   --chart-3: 280 65% 28%;
   --chart-4: 35 80% 32%;
   --chart-5: 160 70% 30%;
-  --font-sans: Open Sans, sans-serif;
+  --font-sans: Inter, sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --risk-low: 160 70% 35%;
+  --risk-moderate: 45 90% 45%;
+  --risk-high: 25 90% 45%;
+  --risk-critical: 0 75% 45%;
+  
+  --zone-main: 212 85% 32%;
+  --zone-guest: 160 70% 35%;
+  --zone-iot: 280 65% 40%;
+  --zone-investigate: 35 80% 45%;
   --radius: .5rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(210 6% 88% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(210 6% 88% / 0.00);
@@ -99,6 +109,16 @@
   --card: 210 6% 10%;
   --card-foreground: 210 6% 90%;
   --card-border: 210 6% 14%;
+  
+  --risk-low: 160 70% 45%;
+  --risk-moderate: 45 90% 55%;
+  --risk-high: 25 90% 55%;
+  --risk-critical: 0 75% 55%;
+  
+  --zone-main: 212 85% 55%;
+  --zone-guest: 160 70% 45%;
+  --zone-iot: 280 65% 60%;
+  --zone-investigate: 35 80% 55%;
   --sidebar: 210 6% 12%;
   --sidebar-foreground: 210 6% 88%;
   --sidebar-border: 210 6% 16%;
