@@ -177,6 +177,11 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-16: Completed principal engineer code review fixes - 6 issues resolved
+- 2024-12-16: Fully internationalized BadgesPanel, BadgeNotification, CompletionBanner components
+- 2024-12-16: Added 7 new translation keys for badges system (234 total keys across all locales)
+- 2024-12-16: Optimized server-side loadScenarioById to read single file instead of all scenarios
+- 2024-12-16: Fixed badge key casing (zoneMaster vs zonemaster) and added persistent badge
 - 2024-12-16: Enhanced i18n with fallback chain (lv → en), dev mode missing key detection, and glossary
 - 2024-12-16: Added i18n validation script (scripts/i18n-validate.js) for key parity and ICU syntax checking
 - 2024-12-16: Fully internationalized author.tsx scenario authoring page with 35+ new translation keys
