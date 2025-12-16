@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "Device Triage Planner",
+    "loading": "Loading..."
+  },
+  "header": {
+    "reset": "Reset",
+    "author": "Author",
+    "tutorial": "Tutorial",
+    "gridView": "Grid view",
+    "listView": "List view"
+  },
+  "scenarios": {
+    "select": "Select scenario",
+    "familyIoT": "Family Home with IoT Sprawl",
+    "smallOffice": "Small Office Network",
+    "hotelPublic": "Hotel / Public Wi-Fi"
+  },
+  "zones": {
+    "main": "Main Network",
+    "mainDescription": "Trusted personal devices with full access",
+    "guest": "Guest Network",
+    "guestDescription": "Visitor devices with internet-only access",
+    "iot": "IoT Network",
+    "iotDescription": "Smart devices isolated from main network",
+    "investigate": "Investigate",
+    "investigateDescription": "Unknown or suspicious devices for review"
+  },
+  "devices": {
+    "router": "Router",
+    "laptop": "Laptop",
+    "phone": "Phone",
+    "tablet": "Tablet",
+    "tv": "Smart TV",
+    "speaker": "Smart Speaker",
+    "thermostat": "Thermostat",
+    "camera": "Camera",
+    "printer": "Printer",
+    "iot": "IoT Device",
+    "unknown": "Unknown Device",
+    "moveToZone": "Move {device} to zone"
+  },
+  "controls": {
+    "title": "Security Controls",
+    "wifiSecurity": "Wi-Fi Security",
+    "wifiSecurityOpen": "Open",
+    "wifiSecurityWPA2": "WPA2",
+    "wifiSecurityWPA3": "WPA3",
+    "strongWifiPassword": "Strong Wi-Fi Password",
+    "guestNetworkEnabled": "Guest Network",
+    "iotNetworkEnabled": "IoT Network",
+    "mfaEnabled": "MFA on Accounts",
+    "autoUpdatesEnabled": "Auto Updates",
+    "defaultPasswordsAddressed": "Default Passwords Changed"
+  },
+  "riskMeter": {
+    "title": "Overall Risk Score",
+    "of100": "/100",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "exposure": "Exposure",
+    "credential": "Credential",
+    "hygiene": "Hygiene"
+  },
+  "goals": {
+    "title": "Goals",
+    "reduceRiskTo": "Reduce risk score to {target} or below",
+    "currentScore": "{current}/{target}",
+    "enable": "Enable {control}",
+    "disable": "Disable {control}",
+    "setTo": "Set {control} to {value}",
+    "allComplete": "All goals complete!"
+  },
+  "learningObjectives": {
+    "title": "Learning Objectives"
+  },
+  "explain": {
+    "title": "Explain My Score",
+    "showExplanations": "Show Explanations",
+    "hideExplanations": "Hide Explanations",
+    "noExplanations": "No explanations available"
+  },
+  "synergy": {
+    "title": "Control Synergies",
+    "activeCount": "{count, plural, one {# active} other {# active}}",
+    "iotIsolation": "IoT Isolation",
+    "iotIsolationDesc": "IoT network enabled with devices properly placed",
+    "guestSegmentation": "Guest Segmentation",
+    "guestSegmentationDesc": "Guest network with visitor devices",
+    "threatQuarantine": "Threat Quarantine",
+    "threatQuarantineDesc": "Unknown devices in Investigate zone",
+    "defenseInDepth": "Defense in Depth",
+    "defenseInDepthDesc": "WPA3 + Strong Password + MFA",
+    "activeMaintenance": "Active Maintenance",
+    "activeMaintenanceDesc": "Auto Updates + Changed Passwords"
+  },
+  "badges": {
+    "title": "Your Progress",
+    "earned": "earned",
+    "firstSteps": "First Steps",
+    "firstStepsDesc": "Complete your first scenario",
+    "iotWrangler": "IoT Wrangler",
+    "iotWranglerDesc": "Properly isolate IoT devices",
+    "zoneMaster": "Zone Master",
+    "zoneMasterDesc": "Complete all three built-in scenarios",
+    "perfectScore": "Perfect Score",
+    "perfectScoreDesc": "Achieve a risk score of 10 or below",
+    "speedDemon": "Speed Demon",
+    "speedDemonDesc": "Complete a scenario in under 2 minutes",
+    "securityExpert": "Security Expert",
+    "securityExpertDesc": "Complete 5 different scenarios",
+    "scenarioAuthor": "Scenario Author",
+    "scenarioAuthorDesc": "Create a custom scenario"
+  },
+  "export": {
+    "title": "Export",
+    "htmlReport": "HTML Report",
+    "jsonData": "JSON Data"
+  },
+  "notifications": {
+    "riskReduced": "Risk Reduced",
+    "riskIncreased": "Risk Increased",
+    "riskDelta": "{delta} risk: {reason}",
+    "riskDeltaGeneric": "{delta} risk from recent change",
+    "badgeEarned": "Badge Earned!",
+    "scenarioComplete": "Scenario Complete!"
+  },
+  "tutorial": {
+    "chooseScenario": "Choose a Scenario",
+    "chooseScenarioDesc": "Start by selecting a scenario. Each one simulates a different network environment with various devices that need to be organized.",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "skip": "Skip Tutorial",
+    "stepOf": "Step {current} of {total}"
+  },
+  "author": {
+    "title": "Scenario Author",
+    "scenarioTitle": "Scenario Title",
+    "environment": "Environment Type",
+    "devices": "Devices",
+    "addDevice": "Add Device",
+    "save": "Save Scenario",
+    "cancel": "Cancel"
+  },
+  "common": {
+    "start": "Start",
+    "continue": "Continue",
+    "learnMore": "Learn more",
+    "back": "Back",
+    "reset": "Reset",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  }
+}

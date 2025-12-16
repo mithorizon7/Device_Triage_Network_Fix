@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -18,16 +19,20 @@ interface DeviceListViewProps {
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
 }
 
-const riskFlagConfig: Record<RiskFlag, { label: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  unknown_device: { label: "Unknown", icon: AlertTriangle, variant: "destructive" },
-  iot_device: { label: "IoT", icon: Shield, variant: "secondary" },
-  visitor_device: { label: "Visitor", icon: User, variant: "outline" },
-  trusted_work_device: { label: "Work", icon: Briefcase, variant: "default" }
+const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  unknown_device: { labelKey: "devices.unknownFlag", icon: AlertTriangle, variant: "destructive" },
+  iot_device: { labelKey: "devices.iotFlag", icon: Shield, variant: "secondary" },
+  visitor_device: { labelKey: "devices.visitorFlag", icon: User, variant: "outline" },
+  trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "default" }
 };
 
 export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceListViewProps) {
+  const { t } = useTranslation();
+  
   const devicesByZone = zones.map(zone => ({
     zone,
+    label: t(zone.labelKey),
+    description: t(zone.descriptionKey),
     devices: devices.filter(d => deviceZones[d.id] === zone.id)
   }));
 
@@ -35,14 +40,14 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
     <div 
       className="space-y-4" 
       role="region" 
-      aria-label="Devices organized by network zone"
+      aria-label={t('devices.listViewLabel', { defaultValue: 'Devices organized by network zone' })}
       data-testid="device-list-view"
     >
       <p className="sr-only">
-        Screen reader friendly list view. Each device can be moved to a different zone using the dropdown selector.
+        {t('devices.listViewHint', { defaultValue: 'Screen reader friendly list view. Each device can be moved to a different zone using the dropdown selector.' })}
       </p>
       
-      {devicesByZone.map(({ zone, devices: zoneDevices }) => (
+      {devicesByZone.map(({ zone, label, description, devices: zoneDevices }) => (
         <Card key={zone.id} data-testid={`list-zone-${zone.id}`}>
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium flex items-center gap-2">
@@ -50,21 +55,21 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                 className={`w-3 h-3 rounded-full flex-shrink-0 ${zone.bgClass}`}
                 aria-hidden="true"
               />
-              {zone.label}
+              {label}
               <Badge variant="outline" className="ml-auto">
-                {zoneDevices.length} device{zoneDevices.length !== 1 ? 's' : ''}
+                {t('devices.count', { count: zoneDevices.length, defaultValue: `${zoneDevices.length} device${zoneDevices.length !== 1 ? 's' : ''}` })}
               </Badge>
             </CardTitle>
-            <p className="text-xs text-muted-foreground">{zone.description}</p>
+            <p className="text-xs text-muted-foreground">{description}</p>
           </CardHeader>
           <CardContent>
             {zoneDevices.length === 0 ? (
               <p className="text-sm text-muted-foreground italic py-2">
-                No devices in this zone
+                {t('devices.noDevices', { defaultValue: 'No devices in this zone' })}
               </p>
             ) : (
-              <ul className="divide-y divide-border" role="list" aria-label={`Devices in ${zone.label}`}>
-                {zoneDevices.map((device, index) => {
+              <ul className="divide-y divide-border" role="list" aria-label={`${t('devices.in', { defaultValue: 'Devices in' })} ${label}`}>
+                {zoneDevices.map((device) => {
                   const DeviceIcon = getDeviceIcon(device.type);
                   return (
                     <li 
@@ -86,7 +91,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                           {device.riskFlags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {device.riskFlags.map((flag) => {
-                                const config = riskFlagConfig[flag];
+                                const config = riskFlagKeys[flag];
                                 const FlagIcon = config.icon;
                                 return (
                                   <Badge
@@ -95,7 +100,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                                     className="text-xs px-1.5 py-0 gap-1"
                                   >
                                     <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                                    {config.label}
+                                    {t(config.labelKey, { defaultValue: flag.replace('_', ' ') })}
                                   </Badge>
                                 );
                               })}
@@ -105,7 +110,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                         
                         <div className="flex-shrink-0">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
-                            Move {device.label} to zone
+                            {t('devices.moveToZone', { device: device.label, defaultValue: `Move ${device.label} to zone` })}
                           </label>
                           <Select
                             value={deviceZones[device.id]}
@@ -124,7 +129,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                                   key={z.id}
                                   value={z.id}
                                 >
-                                  {z.label}
+                                  {t(z.labelKey)}
                                 </SelectItem>
                               ))}
                             </SelectContent>

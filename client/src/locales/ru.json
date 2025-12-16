@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "Планировщик сортировки устройств",
+    "loading": "Загрузка..."
+  },
+  "header": {
+    "reset": "Сбросить",
+    "author": "Автор",
+    "tutorial": "Обучение",
+    "gridView": "Сетка",
+    "listView": "Список"
+  },
+  "scenarios": {
+    "select": "Выберите сценарий",
+    "familyIoT": "Домашняя сеть с устройствами IoT",
+    "smallOffice": "Сеть небольшого офиса",
+    "hotelPublic": "Гостиничный / общедоступный Wi-Fi"
+  },
+  "zones": {
+    "main": "Основная сеть",
+    "mainDescription": "Доверенные личные устройства с полным доступом",
+    "guest": "Гостевая сеть",
+    "guestDescription": "Устройства гостей только с доступом в интернет",
+    "iot": "Сеть IoT",
+    "iotDescription": "Умные устройства, изолированные от основной сети",
+    "investigate": "Расследование",
+    "investigateDescription": "Неизвестные или подозрительные устройства для проверки"
+  },
+  "devices": {
+    "router": "Маршрутизатор",
+    "laptop": "Ноутбук",
+    "phone": "Телефон",
+    "tablet": "Планшет",
+    "tv": "Смарт-телевизор",
+    "speaker": "Умная колонка",
+    "thermostat": "Термостат",
+    "camera": "Камера",
+    "printer": "Принтер",
+    "iot": "Устройство IoT",
+    "unknown": "Неизвестное устройство",
+    "moveToZone": "Переместить {device} в зону"
+  },
+  "controls": {
+    "title": "Настройки безопасности",
+    "wifiSecurity": "Безопасность Wi-Fi",
+    "wifiSecurityOpen": "Открытый",
+    "wifiSecurityWPA2": "WPA2",
+    "wifiSecurityWPA3": "WPA3",
+    "strongWifiPassword": "Надёжный пароль Wi-Fi",
+    "guestNetworkEnabled": "Гостевая сеть",
+    "iotNetworkEnabled": "Сеть IoT",
+    "mfaEnabled": "MFA для аккаунтов",
+    "autoUpdatesEnabled": "Автообновления",
+    "defaultPasswordsAddressed": "Пароли по умолчанию изменены"
+  },
+  "riskMeter": {
+    "title": "Общая оценка риска",
+    "of100": "/100",
+    "low": "Низкий",
+    "medium": "Средний",
+    "high": "Высокий",
+    "exposure": "Уязвимость",
+    "credential": "Учётные данные",
+    "hygiene": "Гигиена"
+  },
+  "goals": {
+    "title": "Цели",
+    "reduceRiskTo": "Снизить оценку риска до {target} или ниже",
+    "currentScore": "{current}/{target}",
+    "enable": "Включить {control}",
+    "disable": "Отключить {control}",
+    "setTo": "Установить {control} на {value}",
+    "allComplete": "Все цели достигнуты!"
+  },
+  "learningObjectives": {
+    "title": "Учебные цели"
+  },
+  "explain": {
+    "title": "Объяснить мою оценку",
+    "showExplanations": "Показать объяснения",
+    "hideExplanations": "Скрыть объяснения",
+    "noExplanations": "Объяснения недоступны"
+  },
+  "synergy": {
+    "title": "Синергия настроек",
+    "activeCount": "{count, plural, one {# активна} few {# активны} many {# активных} other {# активных}}",
+    "iotIsolation": "Изоляция IoT",
+    "iotIsolationDesc": "Сеть IoT включена с правильно размещёнными устройствами",
+    "guestSegmentation": "Сегментация гостей",
+    "guestSegmentationDesc": "Гостевая сеть с устройствами гостей",
+    "threatQuarantine": "Карантин угроз",
+    "threatQuarantineDesc": "Неизвестные устройства в зоне расследования",
+    "defenseInDepth": "Глубокая защита",
+    "defenseInDepthDesc": "WPA3 + надёжный пароль + MFA",
+    "activeMaintenance": "Активное обслуживание",
+    "activeMaintenanceDesc": "Автообновления + изменённые пароли"
+  },
+  "badges": {
+    "title": "Ваш прогресс",
+    "earned": "получено",
+    "firstSteps": "Первые шаги",
+    "firstStepsDesc": "Завершите свой первый сценарий",
+    "iotWrangler": "Укротитель IoT",
+    "iotWranglerDesc": "Правильно изолируйте устройства IoT",
+    "zoneMaster": "Мастер зон",
+    "zoneMasterDesc": "Завершите все три встроенных сценария",
+    "perfectScore": "Идеальный результат",
+    "perfectScoreDesc": "Достигните оценки риска 10 или ниже",
+    "speedDemon": "Демон скорости",
+    "speedDemonDesc": "Завершите сценарий менее чем за 2 минуты",
+    "securityExpert": "Эксперт по безопасности",
+    "securityExpertDesc": "Завершите 5 разных сценариев",
+    "scenarioAuthor": "Автор сценария",
+    "scenarioAuthorDesc": "Создайте собственный сценарий"
+  },
+  "export": {
+    "title": "Экспорт",
+    "htmlReport": "Отчёт HTML",
+    "jsonData": "Данные JSON"
+  },
+  "notifications": {
+    "riskReduced": "Риск снижен",
+    "riskIncreased": "Риск повышен",
+    "riskDelta": "{delta} риск: {reason}",
+    "riskDeltaGeneric": "{delta} риск от недавнего изменения",
+    "badgeEarned": "Получен значок!",
+    "scenarioComplete": "Сценарий завершён!"
+  },
+  "tutorial": {
+    "chooseScenario": "Выберите сценарий",
+    "chooseScenarioDesc": "Начните с выбора сценария. Каждый из них моделирует различную сетевую среду с устройствами, которые нужно организовать.",
+    "back": "Назад",
+    "next": "Продолжить",
+    "close": "Закрыть",
+    "skip": "Пропустить обучение",
+    "stepOf": "Шаг {current} из {total}"
+  },
+  "author": {
+    "title": "Автор сценария",
+    "scenarioTitle": "Название сценария",
+    "environment": "Тип среды",
+    "devices": "Устройства",
+    "addDevice": "Добавить устройство",
+    "save": "Сохранить сценарий",
+    "cancel": "Отмена"
+  },
+  "common": {
+    "start": "Начать",
+    "continue": "Продолжить",
+    "learnMore": "Подробнее",
+    "back": "Назад",
+    "reset": "Сбросить",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "close": "Закрыть",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно"
+  }
+}

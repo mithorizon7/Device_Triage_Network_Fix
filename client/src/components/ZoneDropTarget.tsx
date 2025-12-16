@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Device, ZoneId } from "@shared/schema";
 import type { ZoneConfig } from "@/lib/zones";
 import { DeviceCard } from "./DeviceCard";
@@ -26,11 +27,14 @@ export function ZoneDropTarget({
   onDeviceDrop,
   onZoneChange
 }: ZoneDropTargetProps) {
+  const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
   const [draggingDeviceId, setDraggingDeviceId] = useState<string | null>(null);
 
   const devicesInZone = devices.filter(d => deviceZones[d.id] === zone.id);
   const ZoneIcon = zoneIcons[zone.id];
+  const label = t(zone.labelKey);
+  const description = t(zone.descriptionKey);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -69,7 +73,7 @@ export function ZoneDropTarget({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       role="region"
-      aria-label={`${zone.label} zone with ${devicesInZone.length} devices`}
+      aria-label={`${label} zone with ${devicesInZone.length} devices`}
       data-testid={`zone-${zone.id}`}
       className={`
         relative flex flex-col min-h-[200px] rounded-lg border-2 border-dashed
@@ -87,10 +91,10 @@ export function ZoneDropTarget({
         <ZoneIcon className={`h-5 w-5 ${zone.colorClass}`} aria-hidden="true" />
         <div className="flex-1">
           <h3 className={`text-sm font-semibold ${zone.colorClass}`}>
-            {zone.label}
+            {label}
           </h3>
           <p className="text-xs text-muted-foreground">
-            {zone.description}
+            {description}
           </p>
         </div>
         <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-full">
@@ -101,7 +105,7 @@ export function ZoneDropTarget({
       <div
         className="flex-1 p-3 overflow-auto"
         role="list"
-        aria-label={`Devices in ${zone.label}`}
+        aria-label={`Devices in ${label}`}
       >
         {devicesInZone.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-center">
@@ -109,7 +113,7 @@ export function ZoneDropTarget({
               <ZoneIcon className={`h-6 w-6 ${zone.colorClass} opacity-60`} aria-hidden="true" />
             </div>
             <p className="text-sm text-muted-foreground">
-              Drop devices here
+              {t('zones.dropHere', { defaultValue: 'Drop devices here' })}
             </p>
           </div>
         ) : (
@@ -132,7 +136,7 @@ export function ZoneDropTarget({
       {isDragOver && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg">
           <div className={`px-4 py-2 rounded-full ${zone.bgClass} ${zone.colorClass} font-medium text-sm`}>
-            Drop to move here
+            {t('zones.dropToMove', { defaultValue: 'Drop to move here' })}
           </div>
         </div>
       )}

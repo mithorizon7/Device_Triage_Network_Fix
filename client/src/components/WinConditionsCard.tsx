@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, CheckCircle2, Circle } from "lucide-react";
@@ -9,25 +10,18 @@ interface WinConditionsCardProps {
   controls: Controls;
 }
 
-const controlLabels: Record<string, string> = {
-  wifiSecurity: "Wi-Fi Security",
-  strongWifiPassword: "Strong Wi-Fi Password",
-  guestNetworkEnabled: "Guest Network",
-  iotNetworkEnabled: "IoT Network",
-  mfaEnabled: "MFA",
-  autoUpdatesEnabled: "Auto Updates",
-  defaultPasswordsAddressed: "Default Passwords Changed"
+const controlKeys: Record<string, string> = {
+  wifiSecurity: "controls.wifiSecurity",
+  strongWifiPassword: "controls.strongWifiPassword",
+  guestNetworkEnabled: "controls.guestNetworkEnabled",
+  iotNetworkEnabled: "controls.iotNetworkEnabled",
+  mfaEnabled: "controls.mfaEnabled",
+  autoUpdatesEnabled: "controls.autoUpdatesEnabled",
+  defaultPasswordsAddressed: "controls.defaultPasswordsAddressed"
 };
 
-function formatGoalText(control: string, requiredValue: boolean | string): string {
-  const label = controlLabels[control] || control;
-  if (typeof requiredValue === "boolean") {
-    return requiredValue ? `Enable ${label}` : `Disable ${label}`;
-  }
-  return `Set ${label} to ${requiredValue}`;
-}
-
 export function WinConditionsCard({ scenario, currentScore, controls }: WinConditionsCardProps) {
+  const { t } = useTranslation();
   const winConditions = scenario.suggestedWinConditions;
   
   if (!winConditions || (!winConditions.maxTotalRisk && !winConditions.requires?.length)) {
@@ -41,9 +35,20 @@ export function WinConditionsCard({ scenario, currentScore, controls }: WinCondi
   const controlsStatus = requiredControls.map(req => {
     const currentValue = controls[req.control as keyof Controls];
     const met = currentValue === req.value;
+    const controlLabel = t(controlKeys[req.control] || req.control);
+    
+    let goalText: string;
+    if (typeof req.value === "boolean") {
+      goalText = req.value 
+        ? t('goals.enable', { control: controlLabel })
+        : t('goals.disable', { control: controlLabel });
+    } else {
+      goalText = t('goals.setTo', { control: controlLabel, value: req.value });
+    }
+    
     return {
       control: req.control,
-      goalText: formatGoalText(req.control, req.value),
+      goalText,
       requiredValue: req.value,
       currentValue,
       met
@@ -60,10 +65,10 @@ export function WinConditionsCard({ scenario, currentScore, controls }: WinCondi
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Target className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          Goals
+          {t('goals.title')}
           {allRequirementsMet && (
             <Badge variant="default" className="ml-auto bg-emerald-500 hover:bg-emerald-600">
-              Complete
+              {t('goals.allComplete')}
             </Badge>
           )}
         </CardTitle>
@@ -77,10 +82,10 @@ export function WinConditionsCard({ scenario, currentScore, controls }: WinCondi
               <Circle className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
             )}
             <span className={`text-sm ${scoreAchieved ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"}`}>
-              Reduce risk score to {targetScore} or below
+              {t('goals.reduceRiskTo', { target: targetScore })}
             </span>
             <span className="ml-auto text-sm font-mono text-muted-foreground">
-              {Math.round(currentScore)}/{targetScore}
+              {t('goals.currentScore', { current: Math.round(currentScore), target: targetScore })}
             </span>
           </div>
         )}

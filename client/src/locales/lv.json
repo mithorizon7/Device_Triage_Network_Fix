@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "Ierīču šķirošanas plānotājs",
+    "loading": "Ielādē..."
+  },
+  "header": {
+    "reset": "Atiestatīt",
+    "author": "Autors",
+    "tutorial": "Pamācība",
+    "gridView": "Režģa skats",
+    "listView": "Saraksta skats"
+  },
+  "scenarios": {
+    "select": "Izvēlieties scenāriju",
+    "familyIoT": "Mājas tīkls ar IoT ierīcēm",
+    "smallOffice": "Maza biroja tīkls",
+    "hotelPublic": "Viesnīcas / publiskais Wi-Fi"
+  },
+  "zones": {
+    "main": "Galvenais tīkls",
+    "mainDescription": "Uzticamas personīgās ierīces ar pilnu piekļuvi",
+    "guest": "Viesu tīkls",
+    "guestDescription": "Viesu ierīces ar piekļuvi tikai internetam",
+    "iot": "IoT tīkls",
+    "iotDescription": "Viedierīces, kas izolētas no galvenā tīkla",
+    "investigate": "Izmeklēšana",
+    "investigateDescription": "Nezināmas vai aizdomīgas ierīces pārbaudei"
+  },
+  "devices": {
+    "router": "Maršrutētājs",
+    "laptop": "Klēpjdators",
+    "phone": "Tālrunis",
+    "tablet": "Planšetdators",
+    "tv": "Viedtelevizors",
+    "speaker": "Viedskaļrunis",
+    "thermostat": "Termostats",
+    "camera": "Kamera",
+    "printer": "Printeris",
+    "iot": "IoT ierīce",
+    "unknown": "Nezināma ierīce",
+    "moveToZone": "Pārvietot {device} uz zonu"
+  },
+  "controls": {
+    "title": "Drošības kontroles",
+    "wifiSecurity": "Wi-Fi drošība",
+    "wifiSecurityOpen": "Atvērts",
+    "wifiSecurityWPA2": "WPA2",
+    "wifiSecurityWPA3": "WPA3",
+    "strongWifiPassword": "Spēcīga Wi-Fi parole",
+    "guestNetworkEnabled": "Viesu tīkls",
+    "iotNetworkEnabled": "IoT tīkls",
+    "mfaEnabled": "MFA kontiem",
+    "autoUpdatesEnabled": "Automātiskie atjauninājumi",
+    "defaultPasswordsAddressed": "Noklusējuma paroles mainītas"
+  },
+  "riskMeter": {
+    "title": "Kopējais riska vērtējums",
+    "of100": "/100",
+    "low": "Zems",
+    "medium": "Vidējs",
+    "high": "Augsts",
+    "exposure": "Ekspozīcija",
+    "credential": "Akreditācijas dati",
+    "hygiene": "Higiēna"
+  },
+  "goals": {
+    "title": "Mērķi",
+    "reduceRiskTo": "Samazināt riska vērtējumu līdz {target} vai zemāk",
+    "currentScore": "{current}/{target}",
+    "enable": "Iespējot {control}",
+    "disable": "Atspējot {control}",
+    "setTo": "Iestatīt {control} uz {value}",
+    "allComplete": "Visi mērķi sasniegti!"
+  },
+  "learningObjectives": {
+    "title": "Mācību mērķi"
+  },
+  "explain": {
+    "title": "Paskaidrot manu vērtējumu",
+    "showExplanations": "Rādīt paskaidrojumus",
+    "hideExplanations": "Slēpt paskaidrojumus",
+    "noExplanations": "Nav pieejami paskaidrojumi"
+  },
+  "synergy": {
+    "title": "Kontroles sinerģijas",
+    "activeCount": "{count, plural, one {# aktīva} other {# aktīvas}}",
+    "iotIsolation": "IoT izolācija",
+    "iotIsolationDesc": "IoT tīkls iespējots ar pareizi izvietotām ierīcēm",
+    "guestSegmentation": "Viesu segmentācija",
+    "guestSegmentationDesc": "Viesu tīkls ar viesu ierīcēm",
+    "threatQuarantine": "Draudu karantīna",
+    "threatQuarantineDesc": "Nezināmas ierīces izmeklēšanas zonā",
+    "defenseInDepth": "Dziļā aizsardzība",
+    "defenseInDepthDesc": "WPA3 + spēcīga parole + MFA",
+    "activeMaintenance": "Aktīva uzturēšana",
+    "activeMaintenanceDesc": "Automātiskie atjauninājumi + mainītas paroles"
+  },
+  "badges": {
+    "title": "Jūsu progress",
+    "earned": "nopelnīts",
+    "firstSteps": "Pirmie soļi",
+    "firstStepsDesc": "Pabeidziet savu pirmo scenāriju",
+    "iotWrangler": "IoT pārvaldnieks",
+    "iotWranglerDesc": "Pareizi izolējiet IoT ierīces",
+    "zoneMaster": "Zonu meistars",
+    "zoneMasterDesc": "Pabeidziet visus trīs iebūvētos scenārijus",
+    "perfectScore": "Ideāls rezultāts",
+    "perfectScoreDesc": "Sasniedziet riska vērtējumu 10 vai zemāk",
+    "speedDemon": "Ātruma dēmons",
+    "speedDemonDesc": "Pabeidziet scenāriju mazāk nekā 2 minūtēs",
+    "securityExpert": "Drošības eksperts",
+    "securityExpertDesc": "Pabeidziet 5 dažādus scenārijus",
+    "scenarioAuthor": "Scenārija autors",
+    "scenarioAuthorDesc": "Izveidojiet pielāgotu scenāriju"
+  },
+  "export": {
+    "title": "Eksportēt",
+    "htmlReport": "HTML atskaite",
+    "jsonData": "JSON dati"
+  },
+  "notifications": {
+    "riskReduced": "Risks samazināts",
+    "riskIncreased": "Risks palielināts",
+    "riskDelta": "{delta} risks: {reason}",
+    "riskDeltaGeneric": "{delta} risks no nesenām izmaiņām",
+    "badgeEarned": "Nopelnīta nozīmīte!",
+    "scenarioComplete": "Scenārijs pabeigts!"
+  },
+  "tutorial": {
+    "chooseScenario": "Izvēlieties scenāriju",
+    "chooseScenarioDesc": "Sāciet, izvēloties scenāriju. Katrs simulē atšķirīgu tīkla vidi ar dažādām ierīcēm, kas jāorganizē.",
+    "back": "Atpakaļ",
+    "next": "Turpināt",
+    "close": "Aizvērt",
+    "skip": "Izlaist pamācību",
+    "stepOf": "{current}. solis no {total}"
+  },
+  "author": {
+    "title": "Scenārija autors",
+    "scenarioTitle": "Scenārija nosaukums",
+    "environment": "Vides tips",
+    "devices": "Ierīces",
+    "addDevice": "Pievienot ierīci",
+    "save": "Saglabāt scenāriju",
+    "cancel": "Atcelt"
+  },
+  "common": {
+    "start": "Sākt",
+    "continue": "Turpināt",
+    "learnMore": "Uzzināt vairāk",
+    "back": "Atpakaļ",
+    "reset": "Atiestatīt",
+    "save": "Saglabāt",
+    "cancel": "Atcelt",
+    "close": "Aizvērt",
+    "loading": "Ielādē...",
+    "error": "Kļūda",
+    "success": "Veiksmīgi"
+  }
+}

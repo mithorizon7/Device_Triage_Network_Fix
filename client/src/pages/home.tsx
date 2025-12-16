@@ -27,9 +27,12 @@ import {
 } from "@/lib/progressTracking";
 import { useToast } from "@/hooks/use-toast";
 import { RotateCcw, Target, BookOpen, FileText, LayoutGrid, List } from "lucide-react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
 
 export default function Home() {
+  const { t } = useTranslation();
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("");
   const [deviceZones, setDeviceZones] = useState<Record<string, ZoneId>>({});
   const [controls, setControls] = useState<Controls | null>(null);
@@ -236,7 +239,7 @@ export default function Home() {
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Target className="h-6 w-6 text-muted-foreground" />
-              <h1 className="text-lg font-semibold">Device Triage Planner</h1>
+              <h1 className="text-lg font-semibold">{t('app.title')}</h1>
             </div>
             <Skeleton className="h-9 w-[280px]" />
             <ThemeToggle />
@@ -264,7 +267,7 @@ export default function Home() {
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Target className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-            <h1 className="text-lg font-semibold">Device Triage Planner</h1>
+            <h1 className="text-lg font-semibold">{t('app.title')}</h1>
           </div>
           
           <div className="flex items-center gap-3">
@@ -279,15 +282,15 @@ export default function Home() {
               size="sm"
               onClick={handleReset}
               data-testid="button-reset"
-              aria-label="Reset scenario to initial state"
+              aria-label={t('header.reset')}
             >
               <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
-              Reset
+              {t('header.reset')}
             </Button>
             <Link href="/author">
               <Button variant="ghost" size="sm" data-testid="button-author">
                 <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
-                Author
+                {t('header.author')}
               </Button>
             </Link>
             <div className="flex items-center border rounded-md" role="group" aria-label="View mode">
@@ -315,6 +318,7 @@ export default function Home() {
               </Button>
             </div>
             <TutorialTrigger onStart={startTutorial} />
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>
@@ -326,7 +330,7 @@ export default function Home() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <BookOpen className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                Learning Objectives
+                {t('learningObjectives.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>

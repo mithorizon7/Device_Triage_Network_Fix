@@ -1,6 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -49,34 +49,36 @@ export function ControlsDrawer({
   guestNetworkAvailable,
   iotNetworkAvailable
 }: ControlsDrawerProps) {
+  const { t } = useTranslation();
+
   return (
     <Card data-testid="controls-drawer">
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold flex items-center gap-2">
           <Shield className="h-5 w-5 text-muted-foreground" />
-          Security Controls
+          {t('controls.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">
         <ControlItem
           icon={Wifi}
-          label="Wi-Fi Security"
-          description="Encryption standard for wireless traffic"
+          label={t('controls.wifiSecurity')}
+          description={t('controls.wifiSecurityDesc', { defaultValue: 'Encryption standard for wireless traffic' })}
         >
           <Select
             value={controls.wifiSecurity}
             onValueChange={(value) => onControlChange("wifiSecurity", value as Controls["wifiSecurity"])}
           >
             <SelectTrigger 
-              className="w-[100px] h-8 text-xs"
+              className="w-[100px] text-xs"
               data-testid="select-wifi-security"
             >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="OPEN">Open</SelectItem>
-              <SelectItem value="WPA2">WPA2</SelectItem>
-              <SelectItem value="WPA3">WPA3</SelectItem>
+              <SelectItem value="OPEN">{t('controls.wifiSecurityOpen')}</SelectItem>
+              <SelectItem value="WPA2">{t('controls.wifiSecurityWPA2')}</SelectItem>
+              <SelectItem value="WPA3">{t('controls.wifiSecurityWPA3')}</SelectItem>
             </SelectContent>
           </Select>
         </ControlItem>
@@ -85,14 +87,14 @@ export function ControlsDrawer({
 
         <ControlItem
           icon={Lock}
-          label="Strong Wi-Fi Password"
-          description="Complex password for network access"
+          label={t('controls.strongWifiPassword')}
+          description={t('controls.strongWifiPasswordDesc', { defaultValue: 'Complex password for network access' })}
         >
           <Switch
             checked={controls.strongWifiPassword}
             onCheckedChange={(checked) => onControlChange("strongWifiPassword", checked)}
-            data-testid="switch-strong-password"
-            aria-label="Toggle strong Wi-Fi password"
+            data-testid="switch-strongWifiPassword"
+            aria-label={t('controls.strongWifiPassword')}
           />
         </ControlItem>
 
@@ -100,15 +102,18 @@ export function ControlsDrawer({
 
         <ControlItem
           icon={Users}
-          label="Guest Network"
-          description={guestNetworkAvailable ? "Separate network for visitors" : "Enable in scenario settings"}
+          label={t('controls.guestNetworkEnabled')}
+          description={guestNetworkAvailable 
+            ? t('controls.guestNetworkDesc', { defaultValue: 'Separate network for visitors' })
+            : t('controls.enableInSettings', { defaultValue: 'Enable in scenario settings' })
+          }
         >
           <Switch
             checked={controls.guestNetworkEnabled}
             onCheckedChange={(checked) => onControlChange("guestNetworkEnabled", checked)}
             disabled={!guestNetworkAvailable}
-            data-testid="switch-guest-network"
-            aria-label="Toggle guest network"
+            data-testid="switch-guestNetworkEnabled"
+            aria-label={t('controls.guestNetworkEnabled')}
           />
         </ControlItem>
 
@@ -116,15 +121,18 @@ export function ControlsDrawer({
 
         <ControlItem
           icon={Shield}
-          label="IoT Network"
-          description={iotNetworkAvailable ? "Isolated network for smart devices" : "Enable in scenario settings"}
+          label={t('controls.iotNetworkEnabled')}
+          description={iotNetworkAvailable 
+            ? t('controls.iotNetworkDesc', { defaultValue: 'Isolated network for smart devices' })
+            : t('controls.enableInSettings', { defaultValue: 'Enable in scenario settings' })
+          }
         >
           <Switch
             checked={controls.iotNetworkEnabled}
             onCheckedChange={(checked) => onControlChange("iotNetworkEnabled", checked)}
             disabled={!iotNetworkAvailable}
-            data-testid="switch-iot-network"
-            aria-label="Toggle IoT network"
+            data-testid="switch-iotNetworkEnabled"
+            aria-label={t('controls.iotNetworkEnabled')}
           />
         </ControlItem>
 
@@ -132,14 +140,14 @@ export function ControlsDrawer({
 
         <ControlItem
           icon={Key}
-          label="MFA on Accounts"
-          description="Multi-factor auth for device accounts"
+          label={t('controls.mfaEnabled')}
+          description={t('controls.mfaDesc', { defaultValue: 'Multi-factor auth for device accounts' })}
         >
           <Switch
             checked={controls.mfaEnabled}
             onCheckedChange={(checked) => onControlChange("mfaEnabled", checked)}
-            data-testid="switch-mfa"
-            aria-label="Toggle MFA"
+            data-testid="switch-mfaEnabled"
+            aria-label={t('controls.mfaEnabled')}
           />
         </ControlItem>
 
@@ -147,14 +155,14 @@ export function ControlsDrawer({
 
         <ControlItem
           icon={RefreshCw}
-          label="Auto Updates"
-          description="Keep device firmware current"
+          label={t('controls.autoUpdatesEnabled')}
+          description={t('controls.autoUpdatesDesc', { defaultValue: 'Keep device firmware current' })}
         >
           <Switch
             checked={controls.autoUpdatesEnabled}
             onCheckedChange={(checked) => onControlChange("autoUpdatesEnabled", checked)}
-            data-testid="switch-auto-updates"
-            aria-label="Toggle auto updates"
+            data-testid="switch-autoUpdatesEnabled"
+            aria-label={t('controls.autoUpdatesEnabled')}
           />
         </ControlItem>
 
@@ -162,14 +170,14 @@ export function ControlsDrawer({
 
         <ControlItem
           icon={KeyRound}
-          label="Default Passwords Changed"
-          description="Replace factory default credentials"
+          label={t('controls.defaultPasswordsAddressed')}
+          description={t('controls.defaultPasswordsDesc', { defaultValue: 'Replace factory default credentials' })}
         >
           <Switch
             checked={controls.defaultPasswordsAddressed}
             onCheckedChange={(checked) => onControlChange("defaultPasswordsAddressed", checked)}
-            data-testid="switch-default-passwords"
-            aria-label="Toggle default passwords addressed"
+            data-testid="switch-defaultPasswordsAddressed"
+            aria-label={t('controls.defaultPasswordsAddressed')}
           />
         </ControlItem>
       </CardContent>
