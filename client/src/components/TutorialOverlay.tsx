@@ -11,6 +11,14 @@ import {
 } from "@/lib/tutorialSteps";
 import { ChevronLeft, ChevronRight, X, GraduationCap } from "lucide-react";
 
+interface SpotlightRect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  borderRadius: number;
+}
+
 interface TutorialOverlayProps {
   onComplete: () => void;
 }
@@ -19,21 +27,43 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const [spotlightRect, setSpotlightRect] = useState<SpotlightRect | null>(null);
   const [isVisible, setIsVisible] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const step = tutorialSteps[currentStep];
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === tutorialSteps.length - 1;
 
-  const updateTooltipPosition = useCallback(() => {
+  const SPOTLIGHT_PADDING = 12;
+
+  const calculateSpotlightRect = useCallback((targetElement: Element | null): SpotlightRect | null => {
+    if (!targetElement) return null;
+
+    const rect = targetElement.getBoundingClientRect();
+    const computedStyle = window.getComputedStyle(targetElement);
+    const borderRadius = parseFloat(computedStyle.borderRadius) || 8;
+
+    return {
+      top: rect.top - SPOTLIGHT_PADDING,
+      left: rect.left - SPOTLIGHT_PADDING,
+      width: rect.width + SPOTLIGHT_PADDING * 2,
+      height: rect.height + SPOTLIGHT_PADDING * 2,
+      borderRadius: borderRadius + 4
+    };
+  }, []);
+
+  const updatePositions = useCallback(() => {
     if (!step || !tooltipRef.current) return;
 
     const tooltipRect = tooltipRef.current.getBoundingClientRect();
     const tooltipWidth = tooltipRect.width || 400;
     const tooltipHeight = tooltipRect.height || 200;
 
+    // Handle center placement (no target element)
     if (step.placement === "center") {
+      setSpotlightRect(null);
       setTooltipPosition({
         top: window.innerHeight / 2 - tooltipHeight / 2,
         left: window.innerWidth / 2 - tooltipWidth / 2
@@ -42,7 +72,10 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     }
 
     const targetElement = document.querySelector(step.target);
+    
     if (!targetElement) {
+      // Fallback to center if target not found
+      setSpotlightRect(null);
       setTooltipPosition({
         top: window.innerHeight / 2 - tooltipHeight / 2,
         left: window.innerWidth / 2 - tooltipWidth / 2
@@ -50,6 +83,11 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
       return;
     }
 
+    // Calculate spotlight rectangle
+    const newSpotlightRect = calculateSpotlightRect(targetElement);
+    setSpotlightRect(newSpotlightRect);
+
+    // Calculate tooltip position relative to spotlight
     const targetRect = targetElement.getBoundingClientRect();
     const padding = 16;
 
@@ -58,44 +96,54 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
 
     switch (step.placement) {
       case "top":
-        top = targetRect.top - tooltipHeight - padding;
+        top = targetRect.top - tooltipHeight - padding - SPOTLIGHT_PADDING;
         left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2;
         break;
       case "bottom":
-        top = targetRect.bottom + padding;
+        top = targetRect.bottom + padding + SPOTLIGHT_PADDING;
         left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2;
         break;
       case "left":
         top = targetRect.top + targetRect.height / 2 - tooltipHeight / 2;
-        left = targetRect.left - tooltipWidth - padding;
+        left = targetRect.left - tooltipWidth - padding - SPOTLIGHT_PADDING;
         break;
       case "right":
         top = targetRect.top + targetRect.height / 2 - tooltipHeight / 2;
-        left = targetRect.right + padding;
+        left = targetRect.right + padding + SPOTLIGHT_PADDING;
         break;
     }
 
+    // Keep tooltip within viewport bounds
     top = Math.max(padding, Math.min(top, window.innerHeight - tooltipHeight - padding));
     left = Math.max(padding, Math.min(left, window.innerWidth - tooltipWidth - padding));
 
     setTooltipPosition({ top, left });
-  }, [step]);
+  }, [step, calculateSpotlightRect]);
 
+  // Update positions on mount, step change, resize, and scroll
   useEffect(() => {
-    updateTooltipPosition();
-    window.addEventListener("resize", updateTooltipPosition);
-    window.addEventListener("scroll", updateTooltipPosition);
+    updatePositions();
+    
+    const handleUpdate = () => updatePositions();
+    
+    window.addEventListener("resize", handleUpdate);
+    window.addEventListener("scroll", handleUpdate, true);
     
     return () => {
-      window.removeEventListener("resize", updateTooltipPosition);
-      window.removeEventListener("scroll", updateTooltipPosition);
+      window.removeEventListener("resize", handleUpdate);
+      window.removeEventListener("scroll", handleUpdate, true);
     };
-  }, [updateTooltipPosition, currentStep]);
+  }, [updatePositions, currentStep]);
 
+  // Delayed position update after step change for DOM settling
   useEffect(() => {
-    const timer = setTimeout(updateTooltipPosition, 100);
+    setIsTransitioning(true);
+    const timer = setTimeout(() => {
+      updatePositions();
+      setIsTransitioning(false);
+    }, 50);
     return () => clearTimeout(timer);
-  }, [currentStep, updateTooltipPosition]);
+  }, [currentStep, updatePositions]);
 
   const handleComplete = useCallback(() => {
     markTutorialComplete();
@@ -103,6 +151,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     onComplete();
   }, [onComplete]);
 
+  // Escape key handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -129,23 +178,76 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     handleComplete();
   };
 
+  // Click on backdrop (outside spotlight) dismisses tutorial
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Only close if clicking the actual backdrop, not the spotlight area
+    if (e.target === e.currentTarget) {
+      handleComplete();
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
     <>
+      {/* Full-screen backdrop for click handling */}
       <div 
-        className="fixed inset-0 bg-black/50 z-[100]"
-        onClick={handleComplete}
+        className="fixed inset-0 z-[100]"
+        onClick={handleBackdropClick}
         data-testid="tutorial-backdrop"
       />
       
+      {/* Spotlight overlay with cutout effect */}
+      {spotlightRect ? (
+        <div
+          className="fixed z-[100] pointer-events-none"
+          style={{
+            top: spotlightRect.top,
+            left: spotlightRect.left,
+            width: spotlightRect.width,
+            height: spotlightRect.height,
+            borderRadius: spotlightRect.borderRadius,
+            boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
+            transition: isTransitioning ? "none" : "all 0.3s ease-out"
+          }}
+          aria-hidden="true"
+        />
+      ) : (
+        /* No target - show full dark overlay for center placement */
+        <div 
+          className="fixed inset-0 bg-black/60 z-[100] pointer-events-none"
+          aria-hidden="true"
+        />
+      )}
+      
+      {/* Spotlight border ring for extra visibility */}
+      {spotlightRect && (
+        <div
+          className="fixed z-[100] pointer-events-none border-2 border-primary/50"
+          style={{
+            top: spotlightRect.top,
+            left: spotlightRect.left,
+            width: spotlightRect.width,
+            height: spotlightRect.height,
+            borderRadius: spotlightRect.borderRadius,
+            transition: isTransitioning ? "none" : "all 0.3s ease-out"
+          }}
+          aria-hidden="true"
+        />
+      )}
+      
+      {/* Tooltip card */}
       <div
         ref={tooltipRef}
-        className="fixed z-[101] w-[90vw] max-w-md animate-in fade-in-0 zoom-in-95 duration-200"
-        style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
+        className="fixed z-[101] w-[90vw] max-w-md"
+        style={{ 
+          top: tooltipPosition.top, 
+          left: tooltipPosition.left,
+          transition: isTransitioning ? "none" : "top 0.3s ease-out, left 0.3s ease-out"
+        }}
         data-testid="tutorial-tooltip"
       >
-        <Card className="shadow-lg border-2 border-primary/20">
+        <Card className="shadow-xl border-2 border-primary/30 bg-card/95 backdrop-blur-sm">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -156,7 +258,6 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 variant="ghost"
                 size="icon"
                 onClick={handleSkip}
-                className="h-8 w-8"
                 data-testid="button-tutorial-skip"
                 aria-label={t('tutorial.skipAriaLabel')}
               >
