@@ -378,6 +378,7 @@ export default function Home() {
                     deviceZones={deviceZones}
                     onDeviceDrop={handleDeviceDrop}
                     onZoneChange={handleZoneChange}
+                    scenarioId={selectedScenarioId}
                   />
                 ))}
               </div>
@@ -386,6 +387,7 @@ export default function Home() {
                 devices={currentScenario?.devices || []}
                 deviceZones={deviceZones}
                 onZoneChange={handleZoneChange}
+                scenarioId={selectedScenarioId}
               />
             )}
           </div>

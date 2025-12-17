@@ -17,6 +17,7 @@ interface DeviceListViewProps {
   devices: Device[];
   deviceZones: Record<string, ZoneId>;
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
+  scenarioId?: string;
 }
 
 const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -26,8 +27,15 @@ const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTrian
   trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "default" }
 };
 
-export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceListViewProps) {
+export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId }: DeviceListViewProps) {
   const { t } = useTranslation();
+  
+  const getDeviceLabel = (device: Device): string => {
+    if (!scenarioId) return device.label;
+    const key = `deviceLabels.${scenarioId}.${device.id}`;
+    const translated = t(key, { defaultValue: '' });
+    return translated || device.label;
+  };
   
   const devicesByZone = zones.map(zone => ({
     zone,
@@ -83,7 +91,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{device.label}</p>
+                          <p className="text-sm font-medium">{getDeviceLabel(device)}</p>
                           <p className="text-xs text-muted-foreground">
                             {t(`devices.${device.type}`, { defaultValue: device.type.charAt(0).toUpperCase() + device.type.slice(1) })}
                             {device.ip && ` - ${device.ip}`}
@@ -110,7 +118,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange }: DeviceLis
                         
                         <div className="flex-shrink-0">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
-                            {t('devices.moveToZone', { device: device.label })}
+                            {t('devices.moveToZone', { device: getDeviceLabel(device) })}
                           </label>
                           <Select
                             value={deviceZones[device.id]}

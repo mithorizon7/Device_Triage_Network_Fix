@@ -21,6 +21,7 @@ interface DeviceCardProps {
   isDragging?: boolean;
   onDragStart?: (e: React.DragEvent, deviceId: string) => void;
   onDragEnd?: (e: React.DragEvent) => void;
+  scenarioId?: string;
 }
 
 const riskFlagConfig: Record<RiskFlag, { label: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -36,11 +37,21 @@ export function DeviceCard({
   onZoneChange,
   isDragging = false,
   onDragStart,
-  onDragEnd
+  onDragEnd,
+  scenarioId
 }: DeviceCardProps) {
   const { t } = useTranslation();
   const cardRef = useRef<HTMLDivElement>(null);
   const DeviceIcon = getDeviceIcon(device.type);
+  
+  const getDeviceLabel = (): string => {
+    if (!scenarioId) return device.label;
+    const key = `deviceLabels.${scenarioId}.${device.id}`;
+    const translated = t(key, { defaultValue: '' });
+    return translated || device.label;
+  };
+  
+  const deviceLabel = getDeviceLabel();
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", device.id);
@@ -64,7 +75,7 @@ export function DeviceCard({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="listitem"
-      aria-label={`${device.label}, ${device.type} device${device.riskFlags.length > 0 ? `, flags: ${device.riskFlags.join(", ")}` : ""}`}
+      aria-label={`${deviceLabel}, ${device.type} device${device.riskFlags.length > 0 ? `, flags: ${device.riskFlags.join(", ")}` : ""}`}
       data-testid={`card-device-${device.id}`}
       className={`
         relative flex items-center gap-3 p-3 cursor-grab active:cursor-grabbing
@@ -84,7 +95,7 @@ export function DeviceCard({
 
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate" data-testid={`text-device-label-${device.id}`}>
-          {device.label}
+          {deviceLabel}
         </p>
         {device.ip && (
           <p className="text-xs font-mono text-muted-foreground truncate" data-testid={`text-device-ip-${device.id}`}>
@@ -121,7 +132,7 @@ export function DeviceCard({
           <SelectTrigger
             className="w-[110px] h-8 text-xs"
             data-testid={`select-zone-${device.id}`}
-            aria-label={`Move ${device.label} to zone`}
+            aria-label={`Move ${deviceLabel} to zone`}
           >
             <SelectValue />
           </SelectTrigger>

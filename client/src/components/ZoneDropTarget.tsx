@@ -11,6 +11,7 @@ interface ZoneDropTargetProps {
   deviceZones: Record<string, ZoneId>;
   onDeviceDrop: (deviceId: string, zoneId: ZoneId) => void;
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
+  scenarioId?: string;
 }
 
 const zoneIcons: Record<ZoneId, typeof Network> = {
@@ -25,7 +26,8 @@ export function ZoneDropTarget({
   devices,
   deviceZones,
   onDeviceDrop,
-  onZoneChange
+  onZoneChange,
+  scenarioId
 }: ZoneDropTargetProps) {
   const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
@@ -127,6 +129,7 @@ export function ZoneDropTarget({
                 isDragging={draggingDeviceId === device.id}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                scenarioId={scenarioId}
               />
             ))}
           </div>
