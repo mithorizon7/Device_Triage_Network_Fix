@@ -57,6 +57,48 @@
     "visitorFlag": "Гость",
     "workFlag": "Работа"
   },
+  "deviceLabels": {
+    "family_iot_sprawl_v1": {
+      "router": "Домашний маршрутизатор",
+      "work_laptop": "Рабочий ноутбук",
+      "family_laptop": "Семейный ноутбук",
+      "parent_phone": "Телефон родителя",
+      "teen_phone": "Телефон подростка",
+      "smart_tv": "Смарт-телевизор",
+      "smart_speaker": "Умная колонка",
+      "thermostat": "Термостат",
+      "printer": "Wi-Fi принтер",
+      "indoor_camera": "Внутренняя камера",
+      "smart_plug": "Умная розетка",
+      "old_tablet": "Старый планшет",
+      "guest_phone": "Телефон гостя",
+      "mystery_device": "Неопознанное устройство"
+    },
+    "small_office_v1": {
+      "office_router": "Офисный маршрутизатор",
+      "ceo_laptop": "Ноутбук директора",
+      "dev_laptop_1": "Ноутбук разработчика 1",
+      "dev_laptop_2": "Ноутбук разработчика 2",
+      "reception_pc": "Компьютер приёмной",
+      "office_printer": "Сетевой принтер",
+      "conference_tv": "Дисплей переговорной",
+      "smart_thermostat": "Офисный термостат",
+      "security_camera": "Камера безопасности",
+      "client_phone_1": "Телефон клиента (встреча)",
+      "client_laptop": "Ноутбук клиента (встреча)",
+      "mystery_tablet": "Неизвестный планшет"
+    },
+    "hotel_public_v1": {
+      "work_laptop_travel": "Рабочий ноутбук",
+      "personal_phone": "Личный телефон",
+      "personal_tablet": "Личный планшет",
+      "travel_speaker": "Портативная колонка",
+      "hotel_tv": "Телевизор в номере",
+      "other_guest_1": "Устройство другого гостя 1",
+      "other_guest_2": "Устройство другого гостя 2",
+      "suspicious_device": "Подозрительное сетевое устройство"
+    }
+  },
   "controls": {
     "title": "Настройки безопасности",
     "wifiSecurity": "Безопасность Wi-Fi",

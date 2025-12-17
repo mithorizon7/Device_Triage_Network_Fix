@@ -57,6 +57,48 @@
     "visitorFlag": "Visitor",
     "workFlag": "Work"
   },
+  "deviceLabels": {
+    "family_iot_sprawl_v1": {
+      "router": "Home Router",
+      "work_laptop": "Work Laptop",
+      "family_laptop": "Family Laptop",
+      "parent_phone": "Parent Phone",
+      "teen_phone": "Teen Phone",
+      "smart_tv": "Smart TV",
+      "smart_speaker": "Smart Speaker",
+      "thermostat": "Thermostat",
+      "printer": "Wi-Fi Printer",
+      "indoor_camera": "Indoor Camera",
+      "smart_plug": "Smart Plug",
+      "old_tablet": "Old Tablet",
+      "guest_phone": "Guest Phone",
+      "mystery_device": "Unrecognized Device"
+    },
+    "small_office_v1": {
+      "office_router": "Office Router",
+      "ceo_laptop": "CEO Laptop",
+      "dev_laptop_1": "Developer Laptop 1",
+      "dev_laptop_2": "Developer Laptop 2",
+      "reception_pc": "Reception Desktop",
+      "office_printer": "Network Printer",
+      "conference_tv": "Conference Room Display",
+      "smart_thermostat": "Office Thermostat",
+      "security_camera": "Security Camera",
+      "client_phone_1": "Client Phone (Meeting)",
+      "client_laptop": "Client Laptop (Meeting)",
+      "mystery_tablet": "Unknown Tablet"
+    },
+    "hotel_public_v1": {
+      "work_laptop_travel": "Work Laptop",
+      "personal_phone": "Personal Phone",
+      "personal_tablet": "Personal Tablet",
+      "travel_speaker": "Portable Speaker",
+      "hotel_tv": "Hotel Room TV",
+      "other_guest_1": "Other Guest Device 1",
+      "other_guest_2": "Other Guest Device 2",
+      "suspicious_device": "Suspicious Network Device"
+    }
+  },
   "controls": {
     "title": "Security Controls",
     "wifiSecurity": "Wi-Fi Security",

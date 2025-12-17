@@ -57,6 +57,48 @@
     "visitorFlag": "Viesis",
     "workFlag": "Darbs"
   },
+  "deviceLabels": {
+    "family_iot_sprawl_v1": {
+      "router": "Mājas maršrutētājs",
+      "work_laptop": "Darba klēpjdators",
+      "family_laptop": "Ģimenes klēpjdators",
+      "parent_phone": "Vecāka tālrunis",
+      "teen_phone": "Pusaudža tālrunis",
+      "smart_tv": "Viedtelevizors",
+      "smart_speaker": "Viedskaļrunis",
+      "thermostat": "Termostats",
+      "printer": "Wi-Fi printeris",
+      "indoor_camera": "Iekštelpu kamera",
+      "smart_plug": "Viedkontaktligzda",
+      "old_tablet": "Vecais planšetdators",
+      "guest_phone": "Viesa tālrunis",
+      "mystery_device": "Neatpazīta ierīce"
+    },
+    "small_office_v1": {
+      "office_router": "Biroja maršrutētājs",
+      "ceo_laptop": "Vadītāja klēpjdators",
+      "dev_laptop_1": "Izstrādātāja klēpjdators 1",
+      "dev_laptop_2": "Izstrādātāja klēpjdators 2",
+      "reception_pc": "Reģistratūras dators",
+      "office_printer": "Tīkla printeris",
+      "conference_tv": "Konferenču telpas displejs",
+      "smart_thermostat": "Biroja termostats",
+      "security_camera": "Drošības kamera",
+      "client_phone_1": "Klienta tālrunis (sapulce)",
+      "client_laptop": "Klienta klēpjdators (sapulce)",
+      "mystery_tablet": "Nezināms planšetdators"
+    },
+    "hotel_public_v1": {
+      "work_laptop_travel": "Darba klēpjdators",
+      "personal_phone": "Personīgais tālrunis",
+      "personal_tablet": "Personīgais planšetdators",
+      "travel_speaker": "Pārnēsājamais skaļrunis",
+      "hotel_tv": "Viesnīcas istabas TV",
+      "other_guest_1": "Cita viesa ierīce 1",
+      "other_guest_2": "Cita viesa ierīce 2",
+      "suspicious_device": "Aizdomīga tīkla ierīce"
+    }
+  },
   "controls": {
     "title": "Drošības kontroles",
     "wifiSecurity": "Wi-Fi drošība",
