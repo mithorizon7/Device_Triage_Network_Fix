@@ -178,6 +178,7 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 
 ## Recent Changes
 - 2024-12-17: Added spotlight effect to tutorial - highlights target elements with dark overlay cutout and smooth transitions
+- 2024-12-17: Enhanced tutorial accessibility - focus management, ARIA roles, viewport clamping for spotlight
 - 2024-12-16: Completed full i18n for tutorial steps (12 steps with titles and content in all 3 languages)
 - 2024-12-16: Added translated learning objectives for all 3 built-in scenarios (9 objectives per language)
 - 2024-12-16: Translated scenario titles in selector dropdown for built-in scenarios

@@ -6,8 +6,7 @@ import {
   tutorialSteps, 
   isTutorialComplete, 
   markTutorialComplete,
-  resetTutorial,
-  type TutorialStep 
+  resetTutorial
 } from "@/lib/tutorialSteps";
 import { ChevronLeft, ChevronRight, X, GraduationCap } from "lucide-react";
 
@@ -31,6 +30,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const step = tutorialSteps[currentStep];
   const isFirstStep = currentStep === 0;
@@ -38,18 +38,58 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
 
   const SPOTLIGHT_PADDING = 12;
 
+  // Focus the next button when tooltip appears or step changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      nextButtonRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [currentStep]);
+
   const calculateSpotlightRect = useCallback((targetElement: Element | null): SpotlightRect | null => {
     if (!targetElement) return null;
 
     const rect = targetElement.getBoundingClientRect();
+    
+    // Don't show spotlight if element is not visible in viewport
+    if (rect.width === 0 || rect.height === 0) return null;
+    
     const computedStyle = window.getComputedStyle(targetElement);
     const borderRadius = parseFloat(computedStyle.borderRadius) || 8;
 
+    // Clamp spotlight to viewport bounds
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    let top = rect.top - SPOTLIGHT_PADDING;
+    let left = rect.left - SPOTLIGHT_PADDING;
+    let width = rect.width + SPOTLIGHT_PADDING * 2;
+    let height = rect.height + SPOTLIGHT_PADDING * 2;
+    
+    // Ensure spotlight stays within viewport
+    if (top < 0) {
+      height += top;
+      top = 0;
+    }
+    if (left < 0) {
+      width += left;
+      left = 0;
+    }
+    if (top + height > viewportHeight) {
+      height = viewportHeight - top;
+    }
+    if (left + width > viewportWidth) {
+      width = viewportWidth - left;
+    }
+    
+    // Minimum size to be visible
+    if (width < 20 || height < 20) return null;
+
     return {
-      top: rect.top - SPOTLIGHT_PADDING,
-      left: rect.left - SPOTLIGHT_PADDING,
-      width: rect.width + SPOTLIGHT_PADDING * 2,
-      height: rect.height + SPOTLIGHT_PADDING * 2,
+      top,
+      left,
+      width,
+      height,
       borderRadius: borderRadius + 4
     };
   }, []);
@@ -195,6 +235,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
         className="fixed inset-0 z-[100]"
         onClick={handleBackdropClick}
         data-testid="tutorial-backdrop"
+        aria-hidden="true"
       />
       
       {/* Spotlight overlay with cutout effect */}
@@ -239,6 +280,10 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
       {/* Tooltip card */}
       <div
         ref={tooltipRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tutorial-title"
+        aria-describedby="tutorial-content"
         className="fixed z-[101] w-[90vw] max-w-md"
         style={{ 
           top: tooltipPosition.top, 
@@ -252,7 +297,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
-                <CardTitle className="text-base">{t(step.titleKey)}</CardTitle>
+                <CardTitle id="tutorial-title" className="text-base">{t(step.titleKey)}</CardTitle>
               </div>
               <Button
                 variant="ghost"
@@ -266,12 +311,12 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             </div>
           </CardHeader>
           <CardContent className="pb-3">
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p id="tutorial-content" className="text-sm text-muted-foreground leading-relaxed">
               {t(step.contentKey)}
             </p>
           </CardContent>
           <CardFooter className="flex items-center justify-between gap-2 pt-0">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" aria-label={t('tutorial.stepOf', { current: currentStep + 1, total: tutorialSteps.length })}>
               {tutorialSteps.map((_, index) => (
                 <div
                   key={index}
@@ -299,6 +344,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 </Button>
               )}
               <Button
+                ref={nextButtonRef}
                 size="sm"
                 onClick={handleNext}
                 data-testid="button-tutorial-next"
