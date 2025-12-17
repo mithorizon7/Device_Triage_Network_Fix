@@ -67,3 +67,15 @@ export function formatDate(date: Date, locale?: string): string {
     day: 'numeric'
   }).format(date);
 }
+
+export function getDeviceDisplayLabel(
+  deviceId: string,
+  deviceLabel: string,
+  scenarioId: string | null,
+  t: (key: string, options?: { defaultValue?: string }) => string
+): string {
+  if (!scenarioId) return deviceLabel;
+  const key = `deviceLabels.${scenarioId}.${deviceId}`;
+  const translated = t(key, { defaultValue: '' });
+  return translated || deviceLabel;
+}

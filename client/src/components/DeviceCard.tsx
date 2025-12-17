@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import { GripVertical, AlertTriangle, Shield, User, Briefcase } from "lucide-rea
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
 import { zones } from "@/lib/zones";
+import { getDeviceDisplayLabel } from "@/lib/i18n";
 
 interface DeviceCardProps {
   device: Device;
@@ -43,15 +44,10 @@ export function DeviceCard({
   const { t } = useTranslation();
   const cardRef = useRef<HTMLDivElement>(null);
   const DeviceIcon = getDeviceIcon(device.type);
-  
-  const getDeviceLabel = (): string => {
-    if (!scenarioId) return device.label;
-    const key = `deviceLabels.${scenarioId}.${device.id}`;
-    const translated = t(key, { defaultValue: '' });
-    return translated || device.label;
-  };
-  
-  const deviceLabel = getDeviceLabel();
+  const deviceLabel = useMemo(
+    () => getDeviceDisplayLabel(device.id, device.label, scenarioId || null, t),
+    [device.id, device.label, scenarioId, t]
+  );
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", device.id);

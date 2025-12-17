@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,6 +13,7 @@ import { AlertTriangle, Shield, User, Briefcase } from "lucide-react";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
 import { zones } from "@/lib/zones";
+import { getDeviceDisplayLabel } from "@/lib/i18n";
 
 interface DeviceListViewProps {
   devices: Device[];
@@ -30,12 +32,15 @@ const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTrian
 export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId }: DeviceListViewProps) {
   const { t } = useTranslation();
   
-  const getDeviceLabel = (device: Device): string => {
-    if (!scenarioId) return device.label;
-    const key = `deviceLabels.${scenarioId}.${device.id}`;
-    const translated = t(key, { defaultValue: '' });
-    return translated || device.label;
-  };
+  const deviceLabels = useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const device of devices) {
+      labels[device.id] = getDeviceDisplayLabel(device.id, device.label, scenarioId || null, t);
+    }
+    return labels;
+  }, [devices, scenarioId, t]);
+  
+  const getLabel = (device: Device): string => deviceLabels[device.id] || device.label;
   
   const devicesByZone = zones.map(zone => ({
     zone,
@@ -91,7 +96,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{getDeviceLabel(device)}</p>
+                          <p className="text-sm font-medium">{getLabel(device)}</p>
                           <p className="text-xs text-muted-foreground">
                             {t(`devices.${device.type}`, { defaultValue: device.type.charAt(0).toUpperCase() + device.type.slice(1) })}
                             {device.ip && ` - ${device.ip}`}
@@ -118,7 +123,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                         
                         <div className="flex-shrink-0">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
-                            {t('devices.moveToZone', { device: getDeviceLabel(device) })}
+                            {t('devices.moveToZone', { device: getLabel(device) })}
                           </label>
                           <Select
                             value={deviceZones[device.id]}

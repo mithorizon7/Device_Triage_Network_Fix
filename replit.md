@@ -149,10 +149,11 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - `zones.main.label` - Main zone label
 - `controls.wifiSecurity` - Wi-Fi security control
 - `notifications.badgeEarned` - Badge earned notification
+- `deviceLabels.{scenarioId}.{deviceId}` - Device label translations for built-in scenarios
 
 ### Files
-- `client/src/locales/{en,lv,ru}.json` - Translation files (235 keys each)
-- `client/src/lib/i18n.ts` - i18next configuration with ICU support
+- `client/src/locales/{en,lv,ru}.json` - Translation files (302 keys each)
+- `client/src/lib/i18n.ts` - i18next configuration with ICU support and getDeviceDisplayLabel() helper
 - `scripts/i18n-validate.js` - Validation script
 - `docs/i18n-glossary.md` - Terminology glossary for translators
 
@@ -177,6 +178,8 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-17: Added device label translations for all 34 devices across 3 built-in scenarios (302 total keys)
+- 2024-12-17: Created shared getDeviceDisplayLabel() helper in i18n.ts for consistent translation lookup with fallback for custom scenarios
 - 2024-12-17: Added spotlight effect to tutorial - highlights target elements with dark overlay cutout and smooth transitions
 - 2024-12-17: Enhanced tutorial accessibility - focus management, ARIA roles, viewport clamping for spotlight
 - 2024-12-16: Completed full i18n for tutorial steps (12 steps with titles and content in all 3 languages)
