@@ -132,7 +132,7 @@
     "hygiene": "Higiēna"
   },
   "goals": {
-    "title": "Mērķi",
+    "title": "Jūsu mērķi",
     "reduceRiskTo": "Samazināt riska vērtējumu līdz {target} vai zemāk",
     "currentScore": "{current}/{target}",
     "enable": "Iespējot {control}",

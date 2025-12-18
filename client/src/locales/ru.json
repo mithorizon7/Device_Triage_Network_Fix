@@ -132,7 +132,7 @@
     "hygiene": "Гигиена"
   },
   "goals": {
-    "title": "Цели",
+    "title": "Ваши цели",
     "reduceRiskTo": "Снизить оценку риска до {target} или ниже",
     "currentScore": "{current}/{target}",
     "enable": "Включить {control}",

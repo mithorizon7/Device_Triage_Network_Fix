@@ -140,8 +140,10 @@
     "setTo": "Set {control} to {value}",
     "allComplete": "All goals complete!"
   },
+  "goals": {
+    "title": "Your Goals"
+  },
   "learningObjectives": {
-    "title": "Learning Objectives",
     "family_iot_sprawl_v1": {
       "0": "Separate devices into trust zones (Main, Guest, IoT, Investigate).",
       "1": "Enable high-impact controls (Wi-Fi security, guest/IoT networks, MFA, updates).",

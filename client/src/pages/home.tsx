@@ -26,7 +26,7 @@ import {
   type UserProgress
 } from "@/lib/progressTracking";
 import { useToast } from "@/hooks/use-toast";
-import { RotateCcw, Target, BookOpen, FileText, LayoutGrid, List } from "lucide-react";
+import { RotateCcw, Target, FileText, LayoutGrid, List } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
@@ -334,36 +334,27 @@ export default function Home() {
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {currentScenario?.learningObjectives && currentScenario.learningObjectives.length > 0 && (
-          <Card className="mb-6" data-testid="learning-objectives">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                {t('learningObjectives.title')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                {currentScenario.learningObjectives.map((objective, index) => {
-                  const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
-                  const translated = t(translationKey, { defaultValue: objective });
-                  const displayText = translated || objective;
-                  
-                  return (
-                    <li 
-                      key={index} 
-                      className="text-sm text-muted-foreground flex items-start gap-2"
-                      data-testid={`text-objective-${index}`}
-                    >
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+          <div className="mb-8 text-center" data-testid="goals-section">
+            <h2 className="text-2xl font-semibold mb-6">{t('goals.title')}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              {currentScenario.learningObjectives.map((objective, index) => {
+                const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
+                const translated = t(translationKey, { defaultValue: objective });
+                const displayText = translated || objective;
+                
+                return (
+                  <Card key={index} className="text-center" data-testid={`card-goal-${index}`}>
+                    <CardContent className="pt-6">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold mx-auto mb-3">
                         {index + 1}
-                      </span>
-                      {displayText}
-                    </li>
-                  );
-                })}
-              </ul>
-            </CardContent>
-          </Card>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{displayText}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
