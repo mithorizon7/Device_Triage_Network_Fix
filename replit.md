@@ -178,6 +178,13 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-18: Added comprehensive educational tooltip system with 25+ unique tooltips across all components
+- 2024-12-18: Device type icons now display educational tooltips explaining risk profiles (laptop, phone, IoT, smart home, etc.)
+- 2024-12-18: Risk flag badges show tooltips explaining their security significance (Unknown, IoT, Visitor, Work devices)
+- 2024-12-18: Wi-Fi security options (Open, WPA2, WPA3) have tooltips comparing encryption standards
+- 2024-12-18: All 7 security controls display tooltips explaining what each does and why it matters
+- 2024-12-18: Zone icons show tooltips explaining segmentation purposes (Main, Guest, IoT, Investigate)
+- 2024-12-18: All tooltips fully translated in all 3 languages (English, Latvian, Russian)
 - 2024-12-17: Added device label translations for all 34 devices across 3 built-in scenarios (302 total keys)
 - 2024-12-17: Created shared getDeviceDisplayLabel() helper in i18n.ts for consistent translation lookup with fallback for custom scenarios
 - 2024-12-17: Added spotlight effect to tutorial - highlights target elements with dark overlay cutout and smooth transitions

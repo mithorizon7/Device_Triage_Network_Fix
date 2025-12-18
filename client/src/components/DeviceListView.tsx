@@ -121,13 +121,15 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                                 return (
                                   <Tooltip key={flag}>
                                     <TooltipTrigger asChild>
-                                      <Badge
-                                        variant={config.variant}
-                                        className="text-xs px-1.5 py-0 gap-1 cursor-help"
-                                      >
-                                        <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                                        {t(config.labelKey)}
-                                      </Badge>
+                                      <span className="inline-flex">
+                                        <Badge
+                                          variant={config.variant}
+                                          className="text-xs px-1.5 py-0 gap-1 cursor-help"
+                                        >
+                                          <FlagIcon className="h-3 w-3" aria-hidden="true" />
+                                          {t(config.labelKey)}
+                                        </Badge>
+                                      </span>
                                     </TooltipTrigger>
                                     <TooltipContent side="top" className="max-w-[280px]">
                                       <p className="text-sm">{t(`tooltips.riskFlags.${flag}`)}</p>
