@@ -11,6 +11,7 @@ interface SynergyVisualizationProps {
   scenario: Scenario;
   deviceZones: Record<string, ZoneId>;
   controls: Controls;
+  embedded?: boolean;
 }
 
 interface Synergy {
@@ -33,7 +34,8 @@ interface PotentialImprovement {
 export function SynergyVisualization({
   scenario,
   deviceZones,
-  controls
+  controls,
+  embedded = false
 }: SynergyVisualizationProps) {
   const { t } = useTranslation();
 
@@ -234,20 +236,8 @@ export function SynergyVisualization({
     }
   };
 
-  return (
-    <Card data-testid="synergy-visualization">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center justify-between gap-2">
-          <span className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            {t('synergy.title')}
-          </span>
-          <Badge variant="secondary">
-            {t('synergy.activeCount', { active: activeSynergies.length, total: synergies.length })}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+  const content = (
+    <div className={embedded ? "space-y-4" : ""} data-testid="synergy-content">
         {activeSynergies.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -336,6 +326,28 @@ export function SynergyVisualization({
             </p>
           </div>
         )}
+    </div>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <Card data-testid="synergy-visualization">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium flex items-center justify-between gap-2">
+          <span className="flex items-center gap-2">
+            <Zap className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            {t('synergy.title')}
+          </span>
+          <Badge variant="secondary">
+            {t('synergy.activeCount', { active: activeSynergies.length, total: synergies.length })}
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {content}
       </CardContent>
     </Card>
   );

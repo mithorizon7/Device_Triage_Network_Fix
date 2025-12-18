@@ -248,6 +248,11 @@
       "2": "Consider using personal hotspot or VPN for sensitive activities."
     }
   },
+  "insights": {
+    "title": "Insights",
+    "synergiesTab": "Control Synergies",
+    "explainTab": "Explain Score"
+  },
   "explain": {
     "title": "Explain My Score",
     "showExplanations": "Show Explanations",

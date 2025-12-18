@@ -8,6 +8,7 @@ import type { ScoreResult } from "@shared/schema";
 interface ExplainScorePanelProps {
   explanations: ScoreResult["explanations"];
   maxItems?: number;
+  embedded?: boolean;
 }
 
 function getDeltaDisplay(delta: Record<string, number>, t: (key: string) => string): { 
@@ -35,7 +36,8 @@ function getDeltaDisplay(delta: Record<string, number>, t: (key: string) => stri
 
 export function ExplainScorePanel({ 
   explanations, 
-  maxItems = 8 
+  maxItems = 8,
+  embedded = false
 }: ExplainScorePanelProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -50,6 +52,83 @@ export function ExplainScorePanel({
 
   const hasPositiveImpact = sortedExplanations.some(e => e.totalDelta < 0);
   const hasNegativeImpact = sortedExplanations.some(e => e.totalDelta > 0);
+
+  const content = (
+    <div className="space-y-2" data-testid="explain-content">
+      {sortedExplanations.length === 0 ? (
+        <div className="text-sm text-muted-foreground text-center py-4">
+          {t('explain.noFactors')}
+        </div>
+      ) : (
+        <>
+          {sortedExplanations.map((exp, index) => {
+            const { total, breakdown } = getDeltaDisplay(exp.delta, t);
+            const isPositive = total < 0;
+            const isNegative = total > 0;
+            const Icon = isPositive ? TrendingDown : isNegative ? TrendingUp : Minus;
+            
+            return (
+              <div
+                key={exp.ruleId}
+                className="flex items-start gap-3 py-2 border-b border-border/50 last:border-0"
+                data-testid={`explain-item-${index}`}
+              >
+                <div className={`
+                  flex-shrink-0 p-1.5 rounded-md mt-0.5
+                  ${isPositive 
+                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" 
+                    : isNegative 
+                      ? "bg-red-500/10 text-red-600 dark:text-red-400" 
+                      : "bg-muted text-muted-foreground"
+                  }
+                `}>
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm" data-testid={`text-explain-${index}`}>
+                    {exp.explain}
+                  </p>
+                  {breakdown.length > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1 font-mono">
+                      {breakdown.join(", ")}
+                    </p>
+                  )}
+                </div>
+                <div className={`
+                  flex-shrink-0 text-sm font-semibold tabular-nums
+                  ${isPositive 
+                    ? "text-emerald-600 dark:text-emerald-400" 
+                    : isNegative 
+                      ? "text-red-600 dark:text-red-400" 
+                      : "text-muted-foreground"
+                  }
+                `}>
+                  {total > 0 ? "+" : ""}{total}
+                </div>
+              </div>
+            );
+          })}
+
+          {hasPositiveImpact && hasNegativeImpact && (
+            <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
+              <div className="flex items-center gap-1">
+                <TrendingDown className="h-3 w-3 text-emerald-500" />
+                <span>{t('explain.reducesRisk')}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <TrendingUp className="h-3 w-3 text-red-500" />
+                <span>{t('explain.increasesRisk')}</span>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  if (embedded) {
+    return content;
+  }
 
   return (
     <Card data-testid="explain-score-panel">
@@ -82,75 +161,8 @@ export function ExplainScorePanel({
       </CardHeader>
 
       {isExpanded && (
-        <CardContent className="space-y-2">
-          {sortedExplanations.length === 0 ? (
-            <div className="text-sm text-muted-foreground text-center py-4">
-              {t('explain.noFactors')}
-            </div>
-          ) : (
-            <>
-              {sortedExplanations.map((exp, index) => {
-                const { total, breakdown } = getDeltaDisplay(exp.delta, t);
-                const isPositive = total < 0;
-                const isNegative = total > 0;
-                const Icon = isPositive ? TrendingDown : isNegative ? TrendingUp : Minus;
-                
-                return (
-                  <div
-                    key={exp.ruleId}
-                    className="flex items-start gap-3 py-2 border-b border-border/50 last:border-0"
-                    data-testid={`explain-item-${index}`}
-                  >
-                    <div className={`
-                      flex-shrink-0 p-1.5 rounded-md mt-0.5
-                      ${isPositive 
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" 
-                        : isNegative 
-                          ? "bg-red-500/10 text-red-600 dark:text-red-400" 
-                          : "bg-muted text-muted-foreground"
-                      }
-                    `}>
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm" data-testid={`text-explain-${index}`}>
-                        {exp.explain}
-                      </p>
-                      {breakdown.length > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1 font-mono">
-                          {breakdown.join(", ")}
-                        </p>
-                      )}
-                    </div>
-                    <div className={`
-                      flex-shrink-0 text-sm font-semibold tabular-nums
-                      ${isPositive 
-                        ? "text-emerald-600 dark:text-emerald-400" 
-                        : isNegative 
-                          ? "text-red-600 dark:text-red-400" 
-                          : "text-muted-foreground"
-                      }
-                    `}>
-                      {total > 0 ? "+" : ""}{total}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {hasPositiveImpact && hasNegativeImpact && (
-                <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
-                  <div className="flex items-center gap-1">
-                    <TrendingDown className="h-3 w-3 text-emerald-500" />
-                    <span>{t('explain.reducesRisk')}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3 text-red-500" />
-                    <span>{t('explain.increasesRisk')}</span>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+        <CardContent>
+          {content}
         </CardContent>
       )}
     </Card>

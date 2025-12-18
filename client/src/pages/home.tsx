@@ -10,12 +10,11 @@ import { ZoneDropTarget } from "@/components/ZoneDropTarget";
 import { DeviceListView } from "@/components/DeviceListView";
 import { RiskMeter } from "@/components/RiskMeter";
 import { ControlsDrawer } from "@/components/ControlsDrawer";
-import { ExplainScorePanel } from "@/components/ExplainScorePanel";
 import { BadgesPanel, CompletionBanner } from "@/components/BadgesPanel";
 import { TutorialOverlay, TutorialTrigger, useTutorial } from "@/components/TutorialOverlay";
 import { ExportPanel } from "@/components/ExportPanel";
-import { SynergyVisualization } from "@/components/SynergyVisualization";
 import { WinConditionsCard } from "@/components/WinConditionsCard";
+import { InsightsCard } from "@/components/InsightsCard";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios } from "@/lib/customScenarios";
@@ -417,16 +416,12 @@ export default function Home() {
               />
             )}
 
-            <ExplainScorePanel
-              explanations={scoreResult.explanations}
-              maxItems={8}
-            />
-
             {currentScenario && controls && (
-              <SynergyVisualization
+              <InsightsCard
                 scenario={currentScenario}
                 deviceZones={deviceZones}
                 controls={controls}
+                explanations={scoreResult.explanations}
               />
             )}
 

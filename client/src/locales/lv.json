@@ -248,6 +248,11 @@
       "2": "Apsvērt personīgā hotspota vai VPN izmantošanu sensitīvām darbībām."
     }
   },
+  "insights": {
+    "title": "Ieskati",
+    "synergiesTab": "Kontroles sinerģijas",
+    "explainTab": "Paskaidrot vērtējumu"
+  },
   "explain": {
     "title": "Paskaidrot manu vērtējumu",
     "showExplanations": "Rādīt paskaidrojumus",
