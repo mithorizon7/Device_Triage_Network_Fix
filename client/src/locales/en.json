@@ -132,7 +132,7 @@
     "hygiene": "Hygiene"
   },
   "goals": {
-    "title": "Goals",
+    "title": "Your Goals",
     "reduceRiskTo": "Reduce risk score to {target} or below",
     "currentScore": "{current}/{target}",
     "enable": "Enable {control}",
@@ -140,8 +140,46 @@
     "setTo": "Set {control} to {value}",
     "allComplete": "All goals complete!"
   },
-  "goals": {
-    "title": "Your Goals"
+  "tooltips": {
+    "deviceTypes": {
+      "router": "Your network's gateway. Controls traffic between your devices and the internet. A compromised router affects everything connected to it.",
+      "laptop": "A personal computer. Contains valuable data and has full network capabilities. Keep it updated and protected.",
+      "phone": "A smartphone with access to personal accounts, photos, and location data. Usually well-maintained but can be a target for theft.",
+      "tablet": "Similar to a phone but often shared among family members. May have weaker security if not regularly updated.",
+      "tv": "Smart TVs connect to streaming services and may have microphones/cameras. Limited security updates and often forgotten about.",
+      "speaker": "Smart speakers are always listening for wake words. They connect to your accounts and control other smart devices.",
+      "thermostat": "Smart thermostats know when you're home. If compromised, attackers learn your schedule and may access other devices.",
+      "camera": "Security cameras should protect you, but if hacked, they let attackers watch your home. Keep firmware updated.",
+      "printer": "Network printers are often overlooked but can store copies of documents and provide network access to attackers.",
+      "iot": "IoT devices often have weak security, rarely get updates, and may use default passwords. Isolate them from main devices.",
+      "unknown": "An unrecognized device on your network. Could be a neighbor, a forgotten device, or an intruder. Investigate before trusting."
+    },
+    "riskFlags": {
+      "unknown_device": "This device wasn't expected on your network. It could be harmless (a guest's phone) or malicious. Keep it isolated until identified.",
+      "iot_device": "IoT devices often have poor security: weak passwords, no encryption, rare updates. Put them on a separate network.",
+      "visitor_device": "Visitor devices are outside your control. You don't know their security posture. Give them internet access but isolate from your main network.",
+      "trusted_work_device": "Work devices typically have corporate security policies, regular updates, and IT oversight. They need reliable network access."
+    },
+    "wifiSecurity": {
+      "open": "No encryption. Anyone nearby can see your traffic. Never use for anything private. Passwords, emails, and data are visible to attackers.",
+      "wpa2": "Good encryption from 2004. Still secure for most home use, but has known vulnerabilities. Use a strong password.",
+      "wpa3": "Latest standard (2018). Strongest protection against password guessing and eavesdropping. Use if all your devices support it."
+    },
+    "controls": {
+      "wifiSecurity": "Encryption protects data traveling over your wireless network. Stronger encryption = harder for attackers to intercept your traffic.",
+      "strongWifiPassword": "A weak password lets attackers join your network. Use 12+ characters with letters, numbers, and symbols. Avoid dictionary words.",
+      "guestNetworkEnabled": "Guest networks give visitors internet access without access to your main devices, files, or printers. Essential for parties or visitors.",
+      "iotNetworkEnabled": "IoT devices on a separate network can't attack your laptops if compromised. Even if your smart bulb is hacked, your files are safe.",
+      "mfaEnabled": "Multi-factor authentication means a stolen password isn't enough. Attackers also need your phone or security key.",
+      "autoUpdatesEnabled": "Updates patch security holes. Devices without updates are easy targets. Most attacks exploit known vulnerabilities in old software.",
+      "defaultPasswordsAddressed": "Many devices ship with 'admin/admin' or similar. Attackers try these first. Change them before connecting to your network."
+    },
+    "zones": {
+      "main": "Your trusted zone for personal devices you control and update regularly. These devices can see each other and share files/printers.",
+      "guest": "Internet-only access for visitors or untrusted devices. Can browse the web but can't access your main network devices.",
+      "iot": "Isolated network for smart home devices. They get internet access but can't communicate with your main devices if compromised.",
+      "investigate": "Quarantine zone for unknown or suspicious devices. Investigate before moving to another zone. When in doubt, put it here."
+    }
   },
   "learningObjectives": {
     "family_iot_sprawl_v1": {

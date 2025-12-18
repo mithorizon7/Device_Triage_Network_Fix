@@ -9,6 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { GripVertical, AlertTriangle, Shield, User, Briefcase } from "lucide-react";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
@@ -85,9 +90,16 @@ export function DeviceCard({
         <GripVertical className="h-4 w-4" aria-hidden="true" />
       </div>
 
-      <div className="flex-shrink-0 p-2 rounded-md bg-muted">
-        <DeviceIcon className="h-6 w-6 text-foreground" aria-hidden="true" />
-      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
+            <DeviceIcon className="h-6 w-6 text-foreground" aria-hidden="true" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[280px]">
+          <p className="text-sm">{t(`tooltips.deviceTypes.${device.type}`)}</p>
+        </TooltipContent>
+      </Tooltip>
 
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate" data-testid={`text-device-label-${device.id}`}>
@@ -106,15 +118,21 @@ export function DeviceCard({
             const config = riskFlagConfig[flag];
             const FlagIcon = config.icon;
             return (
-              <Badge
-                key={flag}
-                variant={config.variant}
-                className="text-xs px-1.5 py-0.5 gap-1"
-                data-testid={`badge-flag-${device.id}-${flag}`}
-              >
-                <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                <span className="sr-only">{config.label}</span>
-              </Badge>
+              <Tooltip key={flag}>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant={config.variant}
+                    className="text-xs px-1.5 py-0.5 gap-1 cursor-help"
+                    data-testid={`badge-flag-${device.id}-${flag}`}
+                  >
+                    <FlagIcon className="h-3 w-3" aria-hidden="true" />
+                    <span className="sr-only">{config.label}</span>
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[280px]">
+                  <p className="text-sm">{t(`tooltips.riskFlags.${flag}`)}</p>
+                </TooltipContent>
+              </Tooltip>
             );
           })}
         </div>

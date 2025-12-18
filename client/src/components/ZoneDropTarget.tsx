@@ -4,6 +4,11 @@ import type { Device, ZoneId } from "@shared/schema";
 import type { ZoneConfig } from "@/lib/zones";
 import { DeviceCard } from "./DeviceCard";
 import { Network, Shield, Users, Search } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ZoneDropTargetProps {
   zone: ZoneConfig;
@@ -90,7 +95,16 @@ export function ZoneDropTarget({
         flex items-center gap-2 px-4 py-3 border-b
         ${isDragOver ? "border-transparent" : "border-border"}
       `}>
-        <ZoneIcon className={`h-5 w-5 ${zone.colorClass}`} aria-hidden="true" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="cursor-help">
+              <ZoneIcon className={`h-5 w-5 ${zone.colorClass}`} aria-hidden="true" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[280px]">
+            <p className="text-sm">{t(`tooltips.zones.${zone.id}`)}</p>
+          </TooltipContent>
+        </Tooltip>
         <div className="flex-1">
           <h3 className={`text-sm font-semibold ${zone.colorClass}`}>
             {label}

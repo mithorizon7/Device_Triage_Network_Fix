@@ -140,8 +140,48 @@
     "setTo": "Iestatīt {control} uz {value}",
     "allComplete": "Visi mērķi sasniegti!"
   },
+  "tooltips": {
+    "deviceTypes": {
+      "router": "Jūsu tīkla vārti. Kontrolē datu plūsmu starp jūsu ierīcēm un internetu. Kompromitēts maršrutētājs ietekmē visu, kas tam pieslēgts.",
+      "laptop": "Personāls dators. Satur vērtīgus datus un pilnas tīkla iespējas. Uzturiet to atjauninātu un aizsargātu.",
+      "phone": "Viedtālrunis ar piekļuvi personīgiem kontiem, fotoattēliem un atrašanās vietas datiem. Parasti labi uzturēts, bet var būt zādzības mērķis.",
+      "tablet": "Līdzīgs tālrunim, bet bieži tiek dalīts ģimenes locekļu starpā. Var būt vājāka drošība, ja netiek regulāri atjaunināts.",
+      "tv": "Viedie televizori pieslēdzas straumēšanas pakalpojumiem un var būt ar mikrofoniem/kamerām. Reti drošības atjauninājumi un bieži aizmirsti.",
+      "speaker": "Viedie skaļruņi vienmēr klausās aktivizācijas vārdus. Tie pieslēdzas jūsu kontiem un kontrolē citas viedierīces.",
+      "thermostat": "Viedie termostati zina, kad esat mājās. Ja kompromitēti, uzbrucēji uzzina jūsu grafiku un var piekļūt citām ierīcēm.",
+      "camera": "Drošības kamerām būtu jāaizsargā jūs, bet ja uzlauztas, uzbrucēji var vērot jūsu māju. Uzturiet programmaparatūru atjauninātu.",
+      "printer": "Tīkla printeri bieži tiek ignorēti, bet var saglabāt dokumentu kopijas un nodrošināt tīkla piekļuvi uzbrucējiem.",
+      "iot": "IoT ierīcēm bieži ir vāja drošība, reti atjauninājumi un var izmantot noklusējuma paroles. Izolējiet tās no galvenajām ierīcēm.",
+      "unknown": "Neatpazīta ierīce jūsu tīklā. Varētu būt kaimiņš, aizmirsta ierīce vai ielauzējs. Izmeklējiet pirms uzticaties."
+    },
+    "riskFlags": {
+      "unknown_device": "Šī ierīce netika gaidīta jūsu tīklā. Tā varētu būt nekaitīga (viesa tālrunis) vai ļaunprātīga. Turiet izolētu līdz identificēta.",
+      "iot_device": "IoT ierīcēm bieži ir slikta drošība: vājas paroles, bez šifrēšanas, reti atjauninājumi. Ievietojiet tās atsevišķā tīklā.",
+      "visitor_device": "Apmeklētāju ierīces ir ārpus jūsu kontroles. Jūs nezināt to drošības stāvokli. Dodiet interneta piekļuvi, bet izolējiet no galvenā tīkla.",
+      "trusted_work_device": "Darba ierīcēm parasti ir korporatīvās drošības politikas, regulāri atjauninājumi un IT uzraudzība. Tām nepieciešama uzticama tīkla piekļuve."
+    },
+    "wifiSecurity": {
+      "open": "Nav šifrēšanas. Ikviens tuvumā var redzēt jūsu datu plūsmu. Nekad neizmantojiet privātam. Paroles, e-pasti un dati ir redzami uzbrucējiem.",
+      "wpa2": "Laba šifrēšana no 2004. gada. Joprojām droša mājas lietošanai, bet ir zināmas ievainojamības. Izmantojiet spēcīgu paroli.",
+      "wpa3": "Jaunākais standarts (2018). Spēcīgākā aizsardzība pret paroles minēšanu un noklausīšanos. Izmantojiet, ja visas ierīces to atbalsta."
+    },
+    "controls": {
+      "wifiSecurity": "Šifrēšana aizsargā datus, kas ceļo pa jūsu bezvadu tīklu. Spēcīgāka šifrēšana = grūtāk uzbrucējiem pārtvert jūsu datus.",
+      "strongWifiPassword": "Vāja parole ļauj uzbrucējiem pievienoties jūsu tīklam. Izmantojiet 12+ rakstzīmes ar burtiem, cipariem un simboliem.",
+      "guestNetworkEnabled": "Viesu tīkli dod apmeklētājiem interneta piekļuvi bez piekļuves jūsu galvenajām ierīcēm, failiem vai printeriem.",
+      "iotNetworkEnabled": "IoT ierīces atsevišķā tīklā nevar uzbrukt jūsu datoriem, ja kompromitētas. Pat ja jūsu viedā spuldze uzlauzta, faili ir drošībā.",
+      "mfaEnabled": "Daudzfaktoru autentifikācija nozīmē, ka nozagta parole nepietiek. Uzbrucējiem nepieciešams arī jūsu tālrunis vai drošības atslēga.",
+      "autoUpdatesEnabled": "Atjauninājumi labo drošības caurumus. Ierīces bez atjauninājumiem ir viegli mērķi. Vairums uzbrukumu izmanto zināmas ievainojamības.",
+      "defaultPasswordsAddressed": "Daudzas ierīces tiek piegādātas ar 'admin/admin' vai līdzīgi. Uzbrucēji to izmēģina vispirms. Nomainiet pirms pieslēgšanas tīklam."
+    },
+    "zones": {
+      "main": "Jūsu uzticamā zona personīgajām ierīcēm, kuras kontrolējat un regulāri atjaunināt. Šīs ierīces var redzēt viena otru un dalīties ar failiem/printeriem.",
+      "guest": "Tikai interneta piekļuve apmeklētājiem vai neuzticamām ierīcēm. Var pārlūkot tīmekli, bet nevar piekļūt jūsu galvenā tīkla ierīcēm.",
+      "iot": "Izolēts tīkls viedmājas ierīcēm. Tās saņem interneta piekļuvi, bet nevar sazināties ar jūsu galvenajām ierīcēm, ja kompromitētas.",
+      "investigate": "Karantīnas zona nezināmām vai aizdomīgām ierīcēm. Izmeklējiet pirms pārvietošanas uz citu zonu. Ja šaubāties, ievietojiet šeit."
+    }
+  },
   "learningObjectives": {
-    "title": "Mācību mērķi",
     "family_iot_sprawl_v1": {
       "0": "Sadalīt ierīces uzticamības zonās (Galvenā, Viesu, IoT, Izmeklēšana).",
       "1": "Iespējot augstas ietekmes kontroles (Wi-Fi drošība, viesu/IoT tīkli, MFA, atjauninājumi).",

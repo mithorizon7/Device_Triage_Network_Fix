@@ -8,8 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound } from "lucide-react";
+import { Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound, Info } from "lucide-react";
 import type { Controls } from "@shared/schema";
 
 interface ControlsDrawerProps {
@@ -23,15 +28,23 @@ interface ControlItemProps {
   icon: typeof Wifi;
   label: string;
   description: string;
+  tooltip: string;
   children: React.ReactNode;
 }
 
-function ControlItem({ icon: Icon, label, description, children }: ControlItemProps) {
+function ControlItem({ icon: Icon, label, description, tooltip, children }: ControlItemProps) {
   return (
     <div className="flex items-start gap-3 py-3">
-      <div className="flex-shrink-0 p-2 rounded-md bg-muted">
-        <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
-      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
+            <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="left" className="max-w-[280px]">
+          <p className="text-sm">{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{label}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
@@ -64,23 +77,60 @@ export function ControlsDrawer({
           icon={Wifi}
           label={t('controls.wifiSecurity')}
           description={t('controls.wifiSecurityDesc')}
+          tooltip={t('tooltips.controls.wifiSecurity')}
         >
-          <Select
-            value={controls.wifiSecurity}
-            onValueChange={(value) => onControlChange("wifiSecurity", value as Controls["wifiSecurity"])}
-          >
-            <SelectTrigger 
-              className="w-[100px] text-xs"
-              data-testid="select-wifi-security"
+          <div className="flex items-center gap-1">
+            <Select
+              value={controls.wifiSecurity}
+              onValueChange={(value) => onControlChange("wifiSecurity", value as Controls["wifiSecurity"])}
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="OPEN">{t('controls.wifiSecurityOpen')}</SelectItem>
-              <SelectItem value="WPA2">{t('controls.wifiSecurityWPA2')}</SelectItem>
-              <SelectItem value="WPA3">{t('controls.wifiSecurityWPA3')}</SelectItem>
-            </SelectContent>
-          </Select>
+              <SelectTrigger 
+                className="w-[100px] text-xs"
+                data-testid="select-wifi-security"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SelectItem value="OPEN">{t('controls.wifiSecurityOpen')}</SelectItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[280px]">
+                    <p className="text-sm">{t('tooltips.wifiSecurity.open')}</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SelectItem value="WPA2">{t('controls.wifiSecurityWPA2')}</SelectItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[280px]">
+                    <p className="text-sm">{t('tooltips.wifiSecurity.wpa2')}</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SelectItem value="WPA3">{t('controls.wifiSecurityWPA3')}</SelectItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[280px]">
+                    <p className="text-sm">{t('tooltips.wifiSecurity.wpa3')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </SelectContent>
+            </Select>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[280px]">
+                <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityOpen')}</p>
+                <p className="text-xs text-muted-foreground mb-2">{t('tooltips.wifiSecurity.open')}</p>
+                <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityWPA2')}</p>
+                <p className="text-xs text-muted-foreground mb-2">{t('tooltips.wifiSecurity.wpa2')}</p>
+                <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityWPA3')}</p>
+                <p className="text-xs text-muted-foreground">{t('tooltips.wifiSecurity.wpa3')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </ControlItem>
 
         <Separator />
@@ -89,6 +139,7 @@ export function ControlsDrawer({
           icon={Lock}
           label={t('controls.strongWifiPassword')}
           description={t('controls.strongWifiPasswordDesc')}
+          tooltip={t('tooltips.controls.strongWifiPassword')}
         >
           <Switch
             checked={controls.strongWifiPassword}
@@ -107,6 +158,7 @@ export function ControlsDrawer({
             ? t('controls.guestNetworkDesc')
             : t('controls.enableInSettings')
           }
+          tooltip={t('tooltips.controls.guestNetworkEnabled')}
         >
           <Switch
             checked={controls.guestNetworkEnabled}
@@ -126,6 +178,7 @@ export function ControlsDrawer({
             ? t('controls.iotNetworkDesc')
             : t('controls.enableInSettings')
           }
+          tooltip={t('tooltips.controls.iotNetworkEnabled')}
         >
           <Switch
             checked={controls.iotNetworkEnabled}
@@ -142,6 +195,7 @@ export function ControlsDrawer({
           icon={Key}
           label={t('controls.mfaEnabled')}
           description={t('controls.mfaDesc')}
+          tooltip={t('tooltips.controls.mfaEnabled')}
         >
           <Switch
             checked={controls.mfaEnabled}
@@ -157,6 +211,7 @@ export function ControlsDrawer({
           icon={RefreshCw}
           label={t('controls.autoUpdatesEnabled')}
           description={t('controls.autoUpdatesDesc')}
+          tooltip={t('tooltips.controls.autoUpdatesEnabled')}
         >
           <Switch
             checked={controls.autoUpdatesEnabled}
@@ -172,6 +227,7 @@ export function ControlsDrawer({
           icon={KeyRound}
           label={t('controls.defaultPasswordsAddressed')}
           description={t('controls.defaultPasswordsDesc')}
+          tooltip={t('tooltips.controls.defaultPasswordsAddressed')}
         >
           <Switch
             checked={controls.defaultPasswordsAddressed}

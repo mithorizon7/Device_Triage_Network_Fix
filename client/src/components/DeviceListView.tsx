@@ -8,6 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Shield, User, Briefcase } from "lucide-react";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
@@ -91,9 +96,16 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                       data-testid={`list-device-${device.id}`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 p-2 rounded-md bg-muted" aria-hidden="true">
-                          <DeviceIcon className="h-5 w-5 text-foreground" />
-                        </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
+                              <DeviceIcon className="h-5 w-5 text-foreground" aria-hidden="true" />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="left" className="max-w-[280px]">
+                            <p className="text-sm">{t(`tooltips.deviceTypes.${device.type}`)}</p>
+                          </TooltipContent>
+                        </Tooltip>
                         
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{getLabel(device)}</p>
@@ -107,14 +119,20 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                                 const config = riskFlagKeys[flag];
                                 const FlagIcon = config.icon;
                                 return (
-                                  <Badge
-                                    key={flag}
-                                    variant={config.variant}
-                                    className="text-xs px-1.5 py-0 gap-1"
-                                  >
-                                    <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                                    {t(config.labelKey)}
-                                  </Badge>
+                                  <Tooltip key={flag}>
+                                    <TooltipTrigger asChild>
+                                      <Badge
+                                        variant={config.variant}
+                                        className="text-xs px-1.5 py-0 gap-1 cursor-help"
+                                      >
+                                        <FlagIcon className="h-3 w-3" aria-hidden="true" />
+                                        {t(config.labelKey)}
+                                      </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="max-w-[280px]">
+                                      <p className="text-sm">{t(`tooltips.riskFlags.${flag}`)}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 );
                               })}
                             </div>
