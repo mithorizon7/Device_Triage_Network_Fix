@@ -181,6 +181,56 @@
       "investigate": "Karantīnas zona nezināmām vai aizdomīgām ierīcēm. Izmeklējiet pirms pārvietošanas uz citu zonu. Ja šaubāties, ievietojiet šeit."
     }
   },
+  "education": {
+    "dontShowAgain": "Nerādīt vēlreiz",
+    "keepEnabled": "Sapratu, saglabāt ieslēgtu",
+    "turnOff": "Izslēgt",
+    "whatIsThis": "Kas tas ir?",
+    "whyMatters": "Kāpēc tas ir svarīgi?",
+    "howToDo": "Kā to izdarīt?",
+    "strongWifiPassword": {
+      "title": "Spēcīga Wi-Fi parole",
+      "what": "Spēcīga Wi-Fi parole ir vismaz 12-16 rakstzīmes gara, apvieno lielos burtus, mazos burtus, ciparus un speciālus simbolus, un nesatur vārdnīcas vārdus, vārdus vai paredzamus modeļus kā '123456' vai 'password'.",
+      "why": "Vājas paroles ir #1 veids, kā uzbrucēji iegūst piekļuvi mājas tīkliem. Ar tiešsaistē brīvi pieejamiem rīkiem hakeri var uzminēt miljoniem bieži lietotu paroļu sekundē. Tiklīdz jūsu tīklā, viņi var pārtvert jūsu bankas darījumus, lasīt e-pastus un uzbrukt jūsu ierīcēm. Kaimiņš vai garāmgājējs varētu zagt jūsu interneta joslas platumu vai sliktāk - veikt noziegumus caur jūsu savienojumu, kas izsekojami pie jums.",
+      "how": "Izveidojiet paroles frāzi nevis paroli: savienojiet 4-5 nejauši vārdus kā 'pareizs-zirgs-baterija-skava'. Vai izmantojiet paroļu pārvaldnieku, lai ģenerētu un atcerētos sarežģītu paroli. Pierakstiet to un glabājiet drošā vietā mājās. Dalieties ar viesiem mutiski - nekad nenosūtiet īsziņā vai e-pastā."
+    },
+    "guestNetworkEnabled": {
+      "title": "Viesu tīkls",
+      "what": "Viesu tīkls ir atsevišķs Wi-Fi tīkls, kas nodrošina interneta piekļuvi, bet ir izolēts no jūsu galvenā tīkla. Ierīces viesu tīklā nevar redzēt vai sazināties ar jūsu datoriem, printeriem vai viedmājas ierīcēm.",
+      "why": "Kad apmeklētāji pieslēdzas jūsu galvenajam tīklam, viņu potenciāli inficētās ierīces var redzēt visu: jūsu koplietotās mapes, viedo TV, tīkla printeri. Pat labvēlīgi viesi var nezināt par ļaunprogrammatūru viņu ierīcēs. Līdz 2024. gadam vidējā māja ir 22 pieslēgtas ierīces - tas ir liels uzbrukumu laukums. Viesu tīkli uzliek sienu starp apmeklētājiem un jūsu digitālo dzīvi.",
+      "how": "Lielākā daļa maršrutētāju, kas ražoti pēc 2015. gada, atbalsta viesu tīklus. Piesakieties savā maršrutētājā (parasti 192.168.1.1 vai 192.168.0.1), meklējiet 'Guest Network' vai 'Guest Access' bezvadu iestatījumos. Iespējojiet to ar citu paroli nekā galvenajam tīklam. Daži maršrutētāji pat ļauj ierobežot joslas platumu vai iestatīt automātisku izslēgšanos."
+    },
+    "iotNetworkEnabled": {
+      "title": "IoT tīkls (viedo ierīču izolācija)",
+      "what": "IoT tīkls ir atsevišķs tīkla segments īpaši jūsu viedierīcēm - termostatiem, kamerām, viedajiem skaļruņiem, viedajām kontaktligzdām un citām 'lietu interneta' ierīcēm. Šīs ierīces var piekļūt internetam, bet nevar sazināties ar jūsu galvenajiem datoriem un tālruņiem.",
+      "why": "Viedierīces ir bēdīgi nedrošas. Daudzas izmanto novecojušu programmatūru, tām ir zināmas ievainojamības un reti saņem atjauninājumus. 2016. gadā Mirai botnets inficēja miljoniem IoT ierīču un nojauca lielas tīmekļa vietnes. Ja jūsu viedā spuldze tiek uzlauzta, uzbrucējs varētu to izmantot kā atspēriena punktu, lai piekļūtu jūsu portatīvajam datoram ar bankas informāciju. Izolācija novērš šo sānu kustību.",
+      "how": "Daudzi mūsdienu maršrutētāji atbalsta IoT VLAN vai otro tīklu. Dažas tīkla sistēmas (piemēram, Eero, Google Nest WiFi) to padara viegli ar vienu klikšķi. Vecākiem maršrutētājiem varat izmantot viesu tīklu IoT ierīcēm, ja jums nav bieži apmeklētāju. Galvenais ir turēt IoT ierīces prom no uzticamajiem datoriem."
+    },
+    "mfaEnabled": {
+      "title": "Daudzfaktoru autentifikācija (MFA)",
+      "what": "Daudzfaktoru autentifikācija pieprasa divus vai vairāk veidus, kā pierādīt savu identitāti, piesakoties: kaut ko, ko zināt (parole), kaut ko, kas jums ir (tālrunis vai drošības atslēga), vai kaut ko, kas jūs esat (pirkstu nospiedums). Pat ja kāds nozog jūsu paroli, viņi joprojām nevar iekļūt bez otrā faktora.",
+      "why": "Paroles tiek zagtas pastāvīgi - no datu noplūdēm, pikšķerēšanas e-pastiem vai apskatīšanas pāri plecam. Microsoft ziņo, ka MFA bloķē 99.9% automatizētu kontu uzbrukumu. Jūsu viedmājas ierīces, e-pasts un mākoņa konti visi ir aizsargāti ar parolēm. Ja uzbrucējs kompromitē jūsu e-pastu, viņi var atiestatīt paroles visam pārējam. MFA ir jūsu drošības tīkls.",
+      "how": "Vispirms iespējojiet MFA savos svarīgākajos kontos: e-pastā, bankā, sociālajos tīklos un jebkurās viedmājas lietotnēs (Ring, Nest utt.). Izmantojiet autentifikatora lietotni (Google Authenticator, Microsoft Authenticator, Authy) nevis SMS, kad iespējams. Lielākajai daļai pakalpojumu ir MFA iestatījumi zem 'Drošība' vai 'Konta aizsardzība'. Tas aizņem 5 minūtes katram kontam."
+    },
+    "autoUpdatesEnabled": {
+      "title": "Automātiskie atjauninājumi",
+      "what": "Automātiskie atjauninājumi ļauj jūsu ierīcēm un programmatūrai lejupielādēt un instalēt drošības ielāpus bez manuālas darbības. Tas ietver operētājsistēmas atjauninājumus, lietotņu atjauninājumus un programmaparatūras atjauninājumus maršrutētājiem un viedierīcēm.",
+      "why": "Lielākā daļa veiksmīgu kiberuzbrukumu izmanto zināmas ievainojamības - drošības caurumus, kas jau ir atklāti un laboti. 2017. gada WannaCry izspiedējvīruss inficēja 200 000 datoru visā pasaulē, bet tikai tos, kas nebija instalējuši mēnešus agrāk izlaisto ielāpu. Katra diena, kad aizkavējat atjauninājumu, ir vēl viena diena, kad uzbrucēji var izmantot šo ievainojamību pret jums.",
+      "how": "Tālrunī: Iestatījumi > Vispārīgi > Programmatūras atjauninājums > Automātiskie atjauninājumi. Windows: Iestatījumi > Atjauninājumi un drošība > Ieslēgt automātiskos atjauninājumus. Mac: Sistēmas preferences > Programmatūras atjauninājums > Automātiski uzturēt Mac atjauninātu. Maršrutētājiem un viedierīcēm pārbaudiet ražotāju lietotnes vai tīmekļa saskarnes 'Programmaparatūras atjauninājums' iestatījumus."
+    },
+    "defaultPasswordsAddressed": {
+      "title": "Noklusējuma paroles nomainītas",
+      "what": "Noklusējuma paroles ir rūpnīcā iestatītie akreditācijas dati, kas nāk līdzi ierīcēm - bieži 'admin/admin', 'admin/password', vai uzdrukāti uz uzlīmes. Šīs paroles ir publiski dokumentētas un identiskas miljoniem viena modeļa ierīcēm.",
+      "why": "Uzbrucēji uztur datubāzes ar noklusējuma parolēm katram ierīces modelim. Mirai botnets izplatījās vienkārši mēģinot noklusējuma akreditācijas datus miljoniem ierīču. Ja jūsu maršrutētājam joprojām ir noklusējuma parole, ikviens var pierakstīties, mainīt DNS iestatījumus (novirzot jūs uz viltotām banku vietnēm), vai atspējot jūsu drošību. Viedkamerām ar noklusējuma parolēm ir piekļuvuši svešinieki, kas skatās un pat runā caur tām.",
+      "how": "Sāciet ar maršrutētāju - tas ir vissvarīgākais. Piesakieties administratora saskarnē un nomainiet gan administratora paroli, gan Wi-Fi paroli. Tad pārbaudiet katras viedierīces lietotni paroles iestatījumiem. Izmantojiet unikālas paroles katrai ierīcei. Paroļu pārvaldnieks palīdz tās visas izsekot. Kad pērkat jaunas ierīces, nomainiet paroli sākotnējās iestatīšanas laikā."
+    },
+    "wifiSecurity": {
+      "title": "Wi-Fi šifrēšanas drošība",
+      "what": "Wi-Fi drošības protokoli (WPA2, WPA3) šifrē datus, kas ceļo starp jūsu ierīcēm un maršrutētāju. WPA3 ir jaunākais standarts (2018), piedāvājot spēcīgāku aizsardzību nekā WPA2 (2004). Atvērtiem tīkliem nav nekādas šifrēšanas.",
+      "why": "Bez šifrēšanas ikviens Wi-Fi diapazonā var uztvert jūsu tīkla datu plūsmu - paroles, e-pastus, pārlūkošanas vēsturi, visu. Pat WPA2, lai gan kopumā droša, ir zināmas ievainojamības (KRACK uzbrukums, 2017), ko WPA3 novērš. WPA3 arī ievērojami apgrūtina uzbrucējiem uzminēt jūsu paroli ar brutāla spēka uzbrukumiem.",
+      "how": "Piesakieties maršrutētāja administrācijas panelī (parasti 192.168.1.1). Meklējiet 'Bezvadu drošība' vai 'Wi-Fi iestatījumi'. Izvēlieties WPA3, ja pieejams, vai WPA2/WPA3 jaukto režīmu, ja jums ir vecākas ierīces. Izvairieties no WPA (ne WPA2) un nekad neizmantojiet 'Atvērts' vai WEP. Ja jūsu maršrutētājs neatbalsta WPA3 un ir vecāks par 5 gadiem, apsveriet atjaunināšanu labākai drošībai."
+    }
+  },
   "learningObjectives": {
     "family_iot_sprawl_v1": {
       "0": "Sadalīt ierīces uzticamības zonās (Galvenā, Viesu, IoT, Izmeklēšana).",

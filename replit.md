@@ -178,6 +178,10 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-18: Added educational popup dialogs when enabling security controls (what/why/how format)
+- 2024-12-18: Each of 7 security controls now shows detailed training on first enable
+- 2024-12-18: Educational dialogs include "Don't show again" option persisted per control
+- 2024-12-18: Educational content fully translated in all 3 languages (English, Latvian, Russian)
 - 2024-12-18: Added comprehensive educational tooltip system with 25+ unique tooltips across all components
 - 2024-12-18: Device type icons now display educational tooltips explaining risk profiles (laptop, phone, IoT, smart home, etc.)
 - 2024-12-18: Risk flag badges show tooltips explaining their security significance (Unknown, IoT, Visitor, Work devices)

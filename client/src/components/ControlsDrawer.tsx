@@ -16,6 +16,17 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound, Info } from "lucide-react";
 import type { Controls } from "@shared/schema";
+import { useControlEducation } from "@/hooks/useControlEducation";
+import { ControlEducationDialog } from "./ControlEducationDialog";
+
+type EducatableControlKey = 
+  | "strongWifiPassword"
+  | "guestNetworkEnabled"
+  | "iotNetworkEnabled"
+  | "mfaEnabled"
+  | "autoUpdatesEnabled"
+  | "defaultPasswordsAddressed"
+  | "wifiSecurity";
 
 interface ControlsDrawerProps {
   controls: Controls;
@@ -63,8 +74,54 @@ export function ControlsDrawer({
   iotNetworkAvailable
 }: ControlsDrawerProps) {
   const { t } = useTranslation();
+  const {
+    activeControl,
+    dontShowAgain,
+    setDontShowAgain,
+    showEducation,
+    closeEducation,
+    shouldShowEducation,
+  } = useControlEducation();
+
+  const handleBooleanControlChange = (controlKey: EducatableControlKey, checked: boolean) => {
+    onControlChange(controlKey as keyof Controls, checked as Controls[keyof Controls]);
+    if (checked && shouldShowEducation(controlKey)) {
+      showEducation(controlKey);
+    }
+  };
+
+  const handleWifiSecurityChange = (value: Controls["wifiSecurity"]) => {
+    const previousValue = controls.wifiSecurity;
+    onControlChange("wifiSecurity", value);
+    if ((previousValue === "OPEN" && value !== "OPEN") && shouldShowEducation("wifiSecurity")) {
+      showEducation("wifiSecurity");
+    }
+  };
+
+  const handleKeepEnabled = () => {
+    closeEducation();
+  };
+
+  const handleTurnOff = () => {
+    if (activeControl && activeControl !== "wifiSecurity") {
+      onControlChange(activeControl as keyof Controls, false as Controls[keyof Controls]);
+    } else if (activeControl === "wifiSecurity") {
+      onControlChange("wifiSecurity", "OPEN");
+    }
+    closeEducation();
+  };
 
   return (
+    <>
+    <ControlEducationDialog
+      controlKey={activeControl}
+      isOpen={activeControl !== null}
+      dontShowAgain={dontShowAgain}
+      onDontShowAgainChange={setDontShowAgain}
+      onKeepEnabled={handleKeepEnabled}
+      onTurnOff={handleTurnOff}
+      onClose={closeEducation}
+    />
     <Card data-testid="controls-drawer">
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -82,7 +139,7 @@ export function ControlsDrawer({
           <div className="flex items-center gap-1">
             <Select
               value={controls.wifiSecurity}
-              onValueChange={(value) => onControlChange("wifiSecurity", value as Controls["wifiSecurity"])}
+              onValueChange={handleWifiSecurityChange}
             >
               <SelectTrigger 
                 className="w-[100px] text-xs"
@@ -143,7 +200,7 @@ export function ControlsDrawer({
         >
           <Switch
             checked={controls.strongWifiPassword}
-            onCheckedChange={(checked) => onControlChange("strongWifiPassword", checked)}
+            onCheckedChange={(checked) => handleBooleanControlChange("strongWifiPassword", checked)}
             data-testid="switch-strongWifiPassword"
             aria-label={t('controls.strongWifiPassword')}
           />
@@ -162,7 +219,7 @@ export function ControlsDrawer({
         >
           <Switch
             checked={controls.guestNetworkEnabled}
-            onCheckedChange={(checked) => onControlChange("guestNetworkEnabled", checked)}
+            onCheckedChange={(checked) => handleBooleanControlChange("guestNetworkEnabled", checked)}
             disabled={!guestNetworkAvailable}
             data-testid="switch-guestNetworkEnabled"
             aria-label={t('controls.guestNetworkEnabled')}
@@ -182,7 +239,7 @@ export function ControlsDrawer({
         >
           <Switch
             checked={controls.iotNetworkEnabled}
-            onCheckedChange={(checked) => onControlChange("iotNetworkEnabled", checked)}
+            onCheckedChange={(checked) => handleBooleanControlChange("iotNetworkEnabled", checked)}
             disabled={!iotNetworkAvailable}
             data-testid="switch-iotNetworkEnabled"
             aria-label={t('controls.iotNetworkEnabled')}
@@ -199,7 +256,7 @@ export function ControlsDrawer({
         >
           <Switch
             checked={controls.mfaEnabled}
-            onCheckedChange={(checked) => onControlChange("mfaEnabled", checked)}
+            onCheckedChange={(checked) => handleBooleanControlChange("mfaEnabled", checked)}
             data-testid="switch-mfaEnabled"
             aria-label={t('controls.mfaEnabled')}
           />
@@ -215,7 +272,7 @@ export function ControlsDrawer({
         >
           <Switch
             checked={controls.autoUpdatesEnabled}
-            onCheckedChange={(checked) => onControlChange("autoUpdatesEnabled", checked)}
+            onCheckedChange={(checked) => handleBooleanControlChange("autoUpdatesEnabled", checked)}
             data-testid="switch-autoUpdatesEnabled"
             aria-label={t('controls.autoUpdatesEnabled')}
           />
@@ -231,12 +288,13 @@ export function ControlsDrawer({
         >
           <Switch
             checked={controls.defaultPasswordsAddressed}
-            onCheckedChange={(checked) => onControlChange("defaultPasswordsAddressed", checked)}
+            onCheckedChange={(checked) => handleBooleanControlChange("defaultPasswordsAddressed", checked)}
             data-testid="switch-defaultPasswordsAddressed"
             aria-label={t('controls.defaultPasswordsAddressed')}
           />
         </ControlItem>
       </CardContent>
     </Card>
+    </>
   );
 }

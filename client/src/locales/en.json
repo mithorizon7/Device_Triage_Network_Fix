@@ -181,6 +181,56 @@
       "investigate": "Quarantine zone for unknown or suspicious devices. Investigate before moving to another zone. When in doubt, put it here."
     }
   },
+  "education": {
+    "dontShowAgain": "Don't show this again",
+    "keepEnabled": "Got it, keep enabled",
+    "turnOff": "Turn off",
+    "whatIsThis": "What is this?",
+    "whyMatters": "Why does this matter?",
+    "howToDo": "How do I do this?",
+    "strongWifiPassword": {
+      "title": "Strong Wi-Fi Password",
+      "what": "A strong Wi-Fi password is at least 12-16 characters long, combines uppercase letters, lowercase letters, numbers, and special symbols, and doesn't contain dictionary words, names, or predictable patterns like '123456' or 'password'.",
+      "why": "Weak passwords are the #1 way attackers gain access to home networks. With tools freely available online, hackers can guess millions of common passwords per second. Once on your network, they can intercept your banking, read your emails, and attack your devices. A neighbor or passerby could steal your internet bandwidth or worse - commit crimes through your connection that trace back to you.",
+      "how": "Create a passphrase instead of a password: string together 4-5 random words like 'correct-horse-battery-staple'. Or use a password manager to generate and remember a complex password. Write it down and store it somewhere safe at home. Share it with guests verbally - never text or email it."
+    },
+    "guestNetworkEnabled": {
+      "title": "Guest Network",
+      "what": "A guest network is a separate Wi-Fi network that provides internet access but is isolated from your main network. Devices on the guest network cannot see or communicate with your computers, printers, or smart home devices.",
+      "why": "When visitors connect to your main network, their potentially infected devices can see everything: your shared folders, your smart TV, your network printer. Even well-meaning guests might have malware they don't know about. By 2024, the average home has 22 connected devices - that's a lot of attack surface. Guest networks put a wall between visitors and your digital life.",
+      "how": "Most routers made after 2015 support guest networks. Log into your router (usually 192.168.1.1 or 192.168.0.1), look for 'Guest Network' or 'Guest Access' in wireless settings. Enable it with a different password than your main network. Some routers even let you limit bandwidth or set automatic shutoff times."
+    },
+    "iotNetworkEnabled": {
+      "title": "IoT Network (Smart Device Isolation)",
+      "what": "An IoT network is a separate network segment specifically for your smart devices - thermostats, cameras, smart speakers, smart plugs, and other 'Internet of Things' devices. These devices can access the internet but cannot communicate with your main computers and phones.",
+      "why": "Smart devices are notoriously insecure. Many use outdated software, have known vulnerabilities, and rarely receive updates. In 2016, the Mirai botnet infected millions of IoT devices and took down major websites. If your smart lightbulb gets hacked, an attacker could use it as a stepping stone to access your laptop with your banking information. Isolation prevents this lateral movement.",
+      "how": "Many modern routers support IoT VLANs or a second network. Some mesh systems (like Eero, Google Nest WiFi) make this easy with one click. For older routers, you might use the guest network for IoT devices if you don't have visitors often. The key is keeping IoT devices away from your trusted computers."
+    },
+    "mfaEnabled": {
+      "title": "Multi-Factor Authentication (MFA)",
+      "what": "Multi-factor authentication requires two or more ways to prove your identity when logging in: something you know (password), something you have (phone or security key), or something you are (fingerprint). Even if someone steals your password, they still can't get in without the second factor.",
+      "why": "Passwords get stolen constantly - from data breaches, phishing emails, or shoulder surfing. Microsoft reports that MFA blocks 99.9% of automated account attacks. Your smart home devices, email, and cloud accounts are all protected by passwords. If an attacker compromises your email, they can reset passwords for everything else. MFA is your safety net.",
+      "how": "Enable MFA on your most important accounts first: email, banking, social media, and any smart home apps (Ring, Nest, etc.). Use an authenticator app (Google Authenticator, Microsoft Authenticator, Authy) rather than SMS when possible. Most services have MFA settings under 'Security' or 'Account Protection'. It takes 5 minutes per account."
+    },
+    "autoUpdatesEnabled": {
+      "title": "Automatic Updates",
+      "what": "Automatic updates allow your devices and software to download and install security patches without requiring manual action. This includes operating system updates, app updates, and firmware updates for routers and smart devices.",
+      "why": "Most successful cyberattacks exploit known vulnerabilities - security holes that have already been discovered and patched. The 2017 WannaCry ransomware infected 200,000 computers worldwide, but only those that hadn't installed a patch released months earlier. Every day you delay an update is another day attackers can use that vulnerability against you.",
+      "how": "On your phone: Settings > General > Software Update > Automatic Updates. On Windows: Settings > Update & Security > Turn on automatic updates. On Mac: System Preferences > Software Update > Automatically keep my Mac up to date. For routers and smart devices, check manufacturer apps or web interfaces for 'Firmware Update' settings."
+    },
+    "defaultPasswordsAddressed": {
+      "title": "Default Passwords Changed",
+      "what": "Default passwords are the factory-set credentials that come with devices - often 'admin/admin', 'admin/password', or printed on a sticker. These passwords are publicly documented and identical across millions of devices of the same model.",
+      "why": "Attackers maintain databases of default passwords for every device model. The Mirai botnet spread by simply trying default credentials on millions of devices. If your router still uses the default password, anyone can log in, change your DNS settings (redirecting you to fake banking sites), or disable your security. Smart cameras with default passwords have been accessed by strangers who watch and even talk through them.",
+      "how": "Start with your router - it's the most critical. Log into the admin interface and change both the admin password and the Wi-Fi password. Then check each smart device's app for password settings. Use unique passwords for each device. A password manager helps track them all. When you buy new devices, change the password during initial setup."
+    },
+    "wifiSecurity": {
+      "title": "Wi-Fi Encryption Security",
+      "what": "Wi-Fi security protocols (WPA2, WPA3) encrypt the data traveling between your devices and router. WPA3 is the latest standard (2018), offering stronger protection than WPA2 (2004). Open networks have no encryption at all.",
+      "why": "Without encryption, anyone within Wi-Fi range can capture your network traffic - passwords, emails, browsing history, everything. Even WPA2, while generally secure, has known vulnerabilities (KRACK attack, 2017) that WPA3 fixes. WPA3 also makes it much harder for attackers to guess your password through brute force attacks.",
+      "how": "Log into your router's admin panel (usually 192.168.1.1). Look for 'Wireless Security' or 'Wi-Fi Settings'. Select WPA3 if available, or WPA2/WPA3 mixed mode if you have older devices. Avoid WPA (not WPA2) and never use 'Open' or WEP. If your router doesn't support WPA3 and is more than 5 years old, consider upgrading for better security."
+    }
+  },
   "learningObjectives": {
     "family_iot_sprawl_v1": {
       "0": "Separate devices into trust zones (Main, Guest, IoT, Investigate).",
