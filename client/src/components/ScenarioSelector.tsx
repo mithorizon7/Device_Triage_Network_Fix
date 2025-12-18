@@ -65,9 +65,9 @@ export function ScenarioSelector({
               value={scenario.id}
               data-testid={`option-scenario-${scenario.id}`}
             >
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <span>{displayTitle}</span>
+              <div className="flex items-center gap-2 pr-2">
+                <Icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span className="truncate">{displayTitle}</span>
               </div>
             </SelectItem>
           );
