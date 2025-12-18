@@ -24,11 +24,12 @@ export const tutorialSteps: TutorialStep[] = [
     placement: "bottom"
   },
   {
-    id: "zones-overview",
-    target: "[data-testid='zones-container']",
-    titleKey: "tutorial.steps.zonesOverview.title",
-    contentKey: "tutorial.steps.zonesOverview.content",
-    placement: "top"
+    id: "the-problem",
+    target: "[data-testid='zone-main']",
+    titleKey: "tutorial.steps.theProblem.title",
+    contentKey: "tutorial.steps.theProblem.content",
+    placement: "right",
+    highlightZone: "main"
   },
   {
     id: "main-zone",
@@ -84,10 +85,10 @@ export const tutorialSteps: TutorialStep[] = [
     placement: "left"
   },
   {
-    id: "explain-panel",
-    target: "[data-testid='explain-score-panel']",
-    titleKey: "tutorial.steps.explainPanel.title",
-    contentKey: "tutorial.steps.explainPanel.content",
+    id: "insights-panel",
+    target: "[data-testid='insights-card']",
+    titleKey: "tutorial.steps.insightsPanel.title",
+    contentKey: "tutorial.steps.insightsPanel.content",
     placement: "left"
   },
   {

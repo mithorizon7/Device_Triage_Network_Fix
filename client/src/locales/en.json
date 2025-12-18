@@ -363,52 +363,52 @@
     "tutorial": "Tutorial",
     "steps": {
       "welcome": {
-        "title": "Welcome to Device Triage Planner",
-        "content": "This tool teaches you how to organize devices on your network for better security. We'll walk you through the key concepts step by step."
+        "title": "Your Network Has a Problem",
+        "content": "Most home networks have a dangerous flaw: every device connects to the same network. Your laptop, your smart TV, your kid's tablet, and that cheap security camera from overseas - all sharing the same connection. If one device gets compromised, attackers can reach everything. Let's fix that."
       },
       "scenarioSelector": {
-        "title": "Choose a Scenario",
-        "content": "Start by selecting a scenario. Each one simulates a different network environment with various devices that need to be organized."
+        "title": "Choose Your Challenge",
+        "content": "Each scenario represents a real-world network problem. The Family IoT Sprawl is typical - a home where devices accumulated over time with no organization. Sound familiar?"
       },
-      "zonesOverview": {
-        "title": "Understanding Trust Zones",
-        "content": "Your network is divided into four zones based on trust level. Each zone has different access permissions and security levels."
+      "theProblem": {
+        "title": "See the Problem?",
+        "content": "Look at the Main Network - it's overloaded with devices that shouldn't share the same access level. Smart speakers sitting next to your work laptop. A guest's phone with the same network access as your banking computer. This 'flat network' is exactly how most homes are set up, and it's a security nightmare."
       },
       "mainZone": {
-        "title": "Main Network Zone",
-        "content": "This is for your most trusted devices - personal computers, phones, and tablets that need full network access."
+        "title": "Main Network: Your Inner Circle",
+        "content": "The Main Network should ONLY contain devices you fully trust and that need to communicate with each other. Your personal laptop, phone, and tablet belong here. These are devices with regular security updates, accounts you control, and data you need to protect. Everything else? It needs to go somewhere safer."
       },
       "guestZone": {
-        "title": "Guest Network Zone",
-        "content": "Visitor devices belong here. They get internet access but can't see or reach your main devices."
+        "title": "Guest Network: Friendly but Separate",
+        "content": "When friends visit, their devices shouldn't access your file shares or smart home controls. The Guest Network provides internet access without seeing your internal network. This is a real feature on most routers - you can set it up today. Visitors get online, but their potentially infected devices can't spread to yours."
       },
       "iotZone": {
-        "title": "IoT Network Zone",
-        "content": "Smart home devices like cameras, thermostats, and speakers should be isolated here. These often have weaker security."
+        "title": "IoT Network: Contain the Risk",
+        "content": "Smart devices are convenient but often insecure. That smart doorbell may have unpatched vulnerabilities. That voice assistant is always listening. The IoT Network isolates these devices so even if one is compromised, attackers can't pivot to your main computers. Many routers support creating a separate IoT network - it's one of the highest-impact security changes you can make."
       },
       "investigateZone": {
-        "title": "Investigate Zone",
-        "content": "Unknown or suspicious devices go here for review. Keep them isolated until you determine what they are."
+        "title": "Investigate: When in Doubt, Quarantine",
+        "content": "Found an unknown device on your network? Don't just ignore it. The Investigate zone is your quarantine area. Devices here get minimal access until you determine what they are. It could be a forgotten gadget, or it could be an intruder. Figure it out before trusting it."
       },
       "deviceCards": {
-        "title": "Moving Devices",
-        "content": "You can drag devices between zones, or use the dropdown menu on each card to reassign them. Try organizing the devices based on their type and risk level."
+        "title": "Drag to Reorganize",
+        "content": "Now it's your turn to fix this network. Drag devices to their appropriate zones, or use the dropdown on each card. Think about each device: Do I fully trust it? Does it need to see my other devices? Could it be a risk if compromised?"
       },
       "riskMeter": {
-        "title": "Risk Score",
-        "content": "This meter shows your current network risk level. Lower is better! The goal is typically to get below 35 points."
+        "title": "Watch Your Risk Drop",
+        "content": "This score shows your network's current security risk. As you move devices to appropriate zones and enable security controls, watch the number drop. The goal is to get below 35 - that represents a well-segmented, properly secured network."
       },
       "controls": {
-        "title": "Security Controls",
-        "content": "Toggle these security controls to further reduce risk. Each control addresses different vulnerabilities in your network."
+        "title": "Security Controls: Defense in Depth",
+        "content": "Moving devices is just the start. These controls add additional layers of protection: encryption, multi-factor authentication, automatic updates. Each one addresses a different attack vector. Enable them to build a truly resilient network."
       },
-      "explainPanel": {
-        "title": "Understanding Your Score",
-        "content": "This panel explains why your score is what it is. Each item shows what's adding to your risk and hints at how to fix it."
+      "insightsPanel": {
+        "title": "Learn Why It Matters",
+        "content": "This panel shows powerful control combinations (synergies) and explains exactly what's affecting your score. Use it to understand the 'why' behind network security - knowledge you can apply to your real network at home."
       },
       "complete": {
-        "title": "You're Ready!",
-        "content": "That's the basics! Try to get the risk score as low as possible by organizing devices into appropriate zones and enabling security controls. Good luck!"
+        "title": "Fix Your Real Network",
+        "content": "You now understand network segmentation - the practice of separating devices by trust level. This isn't just a game; these are real techniques you can implement today. Check your router settings for Guest Network and IoT Network options. Move your smart devices to a separate network. Your future self will thank you."
       }
     }
   },
