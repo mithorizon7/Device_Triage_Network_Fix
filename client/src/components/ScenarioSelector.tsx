@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Home, Building2, Hotel, Check } from "lucide-react";
+import { Home, Building2, Hotel } from "lucide-react";
 import type { Scenario } from "@shared/schema";
 
 interface ScenarioSelectorProps {
@@ -51,24 +51,11 @@ export function ScenarioSelector({
         data-testid="select-scenario"
         aria-label={t('scenarios.select')}
       >
-        <div className="flex items-center gap-2">
-          {selectedScenario && (
-            <>
-              {(() => {
-                const Icon = environmentIcons[selectedScenario.environment.type] || Home;
-                return <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />;
-              })()}
-              <SelectValue placeholder={t('scenarios.selectPlaceholder')} />
-            </>
-          )}
-          {!selectedScenario && <SelectValue placeholder={t('scenarios.selectPlaceholder')} />}
-        </div>
+        <SelectValue placeholder={t('scenarios.selectPlaceholder')} />
       </SelectTrigger>
       <SelectContent>
         {scenarios.map((scenario) => {
           const Icon = environmentIcons[scenario.environment.type] || Home;
-          const isSelected = scenario.id === selectedId;
-          
           const titleKey = builtInScenarioTitleKeys[scenario.id];
           const displayTitle = titleKey ? t(titleKey) : scenario.title;
           
@@ -81,9 +68,6 @@ export function ScenarioSelector({
               <div className="flex items-center gap-2">
                 <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                 <span>{displayTitle}</span>
-                {isSelected && (
-                  <Check className="h-4 w-4 text-primary ml-auto" aria-hidden="true" />
-                )}
               </div>
             </SelectItem>
           );
