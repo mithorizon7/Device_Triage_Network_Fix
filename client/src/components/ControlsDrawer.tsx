@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -14,10 +16,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound, Info } from "lucide-react";
+import { Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound, Info, HelpCircle } from "lucide-react";
 import type { Controls } from "@shared/schema";
 import { useControlEducation } from "@/hooks/useControlEducation";
 import { ControlEducationDialog } from "./ControlEducationDialog";
+import { PasswordTrainingDialog } from "./PasswordTrainingDialog";
 
 type EducatableControlKey = 
   | "strongWifiPassword"
@@ -67,6 +70,24 @@ function ControlItem({ icon: Icon, label, description, tooltip, children }: Cont
   );
 }
 
+const STORAGE_KEY_PASSWORD_TRAINING = 'deviceTriage_dontShowPasswordTraining';
+
+function getPasswordTrainingDontShow(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY_PASSWORD_TRAINING) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function setPasswordTrainingDontShow(value: boolean): void {
+  try {
+    localStorage.setItem(STORAGE_KEY_PASSWORD_TRAINING, value ? 'true' : 'false');
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export function ControlsDrawer({
   controls,
   onControlChange,
@@ -74,6 +95,9 @@ export function ControlsDrawer({
   iotNetworkAvailable
 }: ControlsDrawerProps) {
   const { t } = useTranslation();
+  const [passwordTrainingOpen, setPasswordTrainingOpen] = useState(false);
+  const [passwordDontShowAgain, setPasswordDontShowAgain] = useState(getPasswordTrainingDontShow);
+  
   const {
     activeControl,
     dontShowAgain,
@@ -84,10 +108,40 @@ export function ControlsDrawer({
   } = useControlEducation();
 
   const handleBooleanControlChange = (controlKey: EducatableControlKey, checked: boolean) => {
+    if (controlKey === 'strongWifiPassword' && checked) {
+      onControlChange('strongWifiPassword', true);
+      if (!getPasswordTrainingDontShow()) {
+        setPasswordTrainingOpen(true);
+      }
+      return;
+    }
+    
     onControlChange(controlKey as keyof Controls, checked as Controls[keyof Controls]);
     if (checked && shouldShowEducation(controlKey)) {
       showEducation(controlKey);
     }
+  };
+
+  const handlePasswordTrainingComplete = (accepted: boolean) => {
+    if (passwordDontShowAgain) {
+      setPasswordTrainingDontShow(true);
+    }
+    if (!accepted) {
+      onControlChange('strongWifiPassword', false);
+    }
+    setPasswordTrainingOpen(false);
+  };
+
+  const handlePasswordTrainingClose = () => {
+    setPasswordTrainingOpen(false);
+  };
+
+  const handlePasswordDontShowChange = (checked: boolean) => {
+    setPasswordDontShowAgain(checked);
+  };
+
+  const openPasswordTraining = () => {
+    setPasswordTrainingOpen(true);
   };
 
   const handleWifiSecurityChange = (value: Controls["wifiSecurity"]) => {
@@ -113,6 +167,13 @@ export function ControlsDrawer({
 
   return (
     <>
+    <PasswordTrainingDialog
+      isOpen={passwordTrainingOpen}
+      dontShowAgain={passwordDontShowAgain}
+      onDontShowAgainChange={handlePasswordDontShowChange}
+      onComplete={handlePasswordTrainingComplete}
+      onClose={handlePasswordTrainingClose}
+    />
     <ControlEducationDialog
       controlKey={activeControl}
       isOpen={activeControl !== null}
@@ -198,12 +259,30 @@ export function ControlsDrawer({
           description={t('controls.strongWifiPasswordDesc')}
           tooltip={t('tooltips.controls.strongWifiPassword')}
         >
-          <Switch
-            checked={controls.strongWifiPassword}
-            onCheckedChange={(checked) => handleBooleanControlChange("strongWifiPassword", checked)}
-            data-testid="switch-strongWifiPassword"
-            aria-label={t('controls.strongWifiPassword')}
-          />
+          <div className="flex items-center gap-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={openPasswordTraining}
+                  data-testid="button-password-training"
+                >
+                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-sm">{t('passwordTraining.title')}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Switch
+              checked={controls.strongWifiPassword}
+              onCheckedChange={(checked) => handleBooleanControlChange("strongWifiPassword", checked)}
+              data-testid="switch-strongWifiPassword"
+              aria-label={t('controls.strongWifiPassword')}
+            />
+          </div>
         </ControlItem>
 
         <Separator />
