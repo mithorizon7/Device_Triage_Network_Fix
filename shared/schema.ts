@@ -30,14 +30,46 @@ export const networkSchema = z.object({
   enabled: z.boolean()
 });
 
-export const controlsSchema = z.object({
-  wifiSecurity: z.enum(["OPEN", "WPA2", "WPA3"]),
-  strongWifiPassword: z.boolean(),
-  guestNetworkEnabled: z.boolean(),
-  iotNetworkEnabled: z.boolean(),
-  mfaEnabled: z.boolean(),
-  autoUpdatesEnabled: z.boolean(),
-  defaultPasswordsAddressed: z.boolean()
+export const baseControlsSchema = z.object({
+  wifiSecurity: z.enum(["OPEN", "WPA2", "WPA3"]).optional(),
+  strongWifiPassword: z.boolean().optional(),
+  guestNetworkEnabled: z.boolean().optional(),
+  iotNetworkEnabled: z.boolean().optional(),
+  mfaEnabled: z.boolean().optional(),
+  autoUpdatesEnabled: z.boolean().optional(),
+  defaultPasswordsAddressed: z.boolean().optional(),
+  vpnEnabled: z.boolean().optional(),
+  personalHotspot: z.boolean().optional(),
+  firewallEnabled: z.boolean().optional(),
+  fileSharingDisabled: z.boolean().optional(),
+  bluetoothDisabled: z.boolean().optional(),
+  httpsOnly: z.boolean().optional(),
+  verifyNetworkAuthenticity: z.boolean().optional()
+});
+
+export const controlsSchema = baseControlsSchema;
+
+export const controlDefinitionSchema = z.object({
+  id: z.string(),
+  type: z.enum(["toggle", "select"]),
+  options: z.array(z.string()).optional(),
+  default: z.union([z.boolean(), z.string()]),
+  category: z.string(),
+  applicableScenarios: z.array(z.string()),
+  icon: z.string(),
+  labelKey: z.string(),
+  descriptionKey: z.string(),
+  educationKey: z.string(),
+  hasInteractiveTraining: z.boolean().optional()
+});
+
+export const controlsRegistrySchema = z.object({
+  version: z.string(),
+  controlCategories: z.record(z.object({
+    labelKey: z.string(),
+    order: z.number()
+  })),
+  controls: z.array(controlDefinitionSchema)
 });
 
 export const scenarioSchema = z.object({
@@ -84,6 +116,8 @@ export type ZoneId = z.infer<typeof zoneIdSchema>;
 export type Device = z.infer<typeof deviceSchema>;
 export type Network = z.infer<typeof networkSchema>;
 export type Controls = z.infer<typeof controlsSchema>;
+export type ControlDefinition = z.infer<typeof controlDefinitionSchema>;
+export type ControlsRegistry = z.infer<typeof controlsRegistrySchema>;
 export type Scenario = z.infer<typeof scenarioSchema>;
 export type Subscores = z.infer<typeof subscoreSchema>;
 export type ScoreResult = z.infer<typeof scoreResultSchema>;

@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "controlCategories": {
+    "network": {
+      "labelKey": "controls.category.network",
+      "order": 1
+    },
+    "device": {
+      "labelKey": "controls.category.device",
+      "order": 2
+    },
+    "account": {
+      "labelKey": "controls.category.account",
+      "order": 3
+    }
+  },
+  "controls": [
+    {
+      "id": "wifiSecurity",
+      "type": "select",
+      "options": ["OPEN", "WPA2", "WPA3"],
+      "default": "WPA2",
+      "category": "network",
+      "applicableScenarios": ["home", "office"],
+      "icon": "Wifi",
+      "labelKey": "controls.wifiSecurity",
+      "descriptionKey": "controls.wifiSecurityDesc",
+      "educationKey": "education.wifiSecurity"
+    },
+    {
+      "id": "strongWifiPassword",
+      "type": "toggle",
+      "default": false,
+      "category": "network",
+      "applicableScenarios": ["home", "office"],
+      "icon": "Lock",
+      "labelKey": "controls.strongWifiPassword",
+      "descriptionKey": "controls.strongWifiPasswordDesc",
+      "educationKey": "education.strongWifiPassword",
+      "hasInteractiveTraining": true
+    },
+    {
+      "id": "guestNetworkEnabled",
+      "type": "toggle",
+      "default": false,
+      "category": "network",
+      "applicableScenarios": ["home", "office"],
+      "icon": "Users",
+      "labelKey": "controls.guestNetwork",
+      "descriptionKey": "controls.guestNetworkDesc",
+      "educationKey": "education.guestNetwork"
+    },
+    {
+      "id": "iotNetworkEnabled",
+      "type": "toggle",
+      "default": false,
+      "category": "network",
+      "applicableScenarios": ["home", "office"],
+      "icon": "Cpu",
+      "labelKey": "controls.iotNetwork",
+      "descriptionKey": "controls.iotNetworkDesc",
+      "educationKey": "education.iotNetwork"
+    },
+    {
+      "id": "vpnEnabled",
+      "type": "toggle",
+      "default": false,
+      "category": "network",
+      "applicableScenarios": ["hotel"],
+      "icon": "Shield",
+      "labelKey": "controls.vpnEnabled",
+      "descriptionKey": "controls.vpnEnabledDesc",
+      "educationKey": "education.vpnEnabled"
+    },
+    {
+      "id": "personalHotspot",
+      "type": "toggle",
+      "default": false,
+      "category": "network",
+      "applicableScenarios": ["hotel"],
+      "icon": "Smartphone",
+      "labelKey": "controls.personalHotspot",
+      "descriptionKey": "controls.personalHotspotDesc",
+      "educationKey": "education.personalHotspot"
+    },
+    {
+      "id": "firewallEnabled",
+      "type": "toggle",
+      "default": false,
+      "category": "device",
+      "applicableScenarios": ["hotel"],
+      "icon": "ShieldCheck",
+      "labelKey": "controls.firewallEnabled",
+      "descriptionKey": "controls.firewallEnabledDesc",
+      "educationKey": "education.firewallEnabled"
+    },
+    {
+      "id": "fileSharingDisabled",
+      "type": "toggle",
+      "default": false,
+      "category": "device",
+      "applicableScenarios": ["hotel"],
+      "icon": "FolderX",
+      "labelKey": "controls.fileSharingDisabled",
+      "descriptionKey": "controls.fileSharingDisabledDesc",
+      "educationKey": "education.fileSharingDisabled"
+    },
+    {
+      "id": "bluetoothDisabled",
+      "type": "toggle",
+      "default": false,
+      "category": "device",
+      "applicableScenarios": ["hotel"],
+      "icon": "BluetoothOff",
+      "labelKey": "controls.bluetoothDisabled",
+      "descriptionKey": "controls.bluetoothDisabledDesc",
+      "educationKey": "education.bluetoothDisabled"
+    },
+    {
+      "id": "httpsOnly",
+      "type": "toggle",
+      "default": false,
+      "category": "device",
+      "applicableScenarios": ["hotel"],
+      "icon": "Lock",
+      "labelKey": "controls.httpsOnly",
+      "descriptionKey": "controls.httpsOnlyDesc",
+      "educationKey": "education.httpsOnly"
+    },
+    {
+      "id": "verifyNetworkAuthenticity",
+      "type": "toggle",
+      "default": false,
+      "category": "network",
+      "applicableScenarios": ["hotel"],
+      "icon": "Search",
+      "labelKey": "controls.verifyNetwork",
+      "descriptionKey": "controls.verifyNetworkDesc",
+      "educationKey": "education.verifyNetwork"
+    },
+    {
+      "id": "mfaEnabled",
+      "type": "toggle",
+      "default": false,
+      "category": "account",
+      "applicableScenarios": ["home", "office", "hotel"],
+      "icon": "Key",
+      "labelKey": "controls.mfaEnabled",
+      "descriptionKey": "controls.mfaEnabledDesc",
+      "educationKey": "education.mfaEnabled"
+    },
+    {
+      "id": "autoUpdatesEnabled",
+      "type": "toggle",
+      "default": false,
+      "category": "device",
+      "applicableScenarios": ["home", "office", "hotel"],
+      "icon": "RefreshCw",
+      "labelKey": "controls.autoUpdates",
+      "descriptionKey": "controls.autoUpdatesDesc",
+      "educationKey": "education.autoUpdates"
+    },
+    {
+      "id": "defaultPasswordsAddressed",
+      "type": "toggle",
+      "default": false,
+      "category": "account",
+      "applicableScenarios": ["home", "office"],
+      "icon": "KeyRound",
+      "labelKey": "controls.defaultPasswords",
+      "descriptionKey": "controls.defaultPasswordsDesc",
+      "educationKey": "education.defaultPasswords"
+    }
+  ]
+}

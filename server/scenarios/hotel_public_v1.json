@@ -42,13 +42,15 @@
     }
   ],
   "initialControls": {
-    "wifiSecurity": "WPA2",
-    "strongWifiPassword": false,
-    "guestNetworkEnabled": false,
-    "iotNetworkEnabled": false,
+    "vpnEnabled": false,
+    "personalHotspot": false,
+    "firewallEnabled": false,
+    "fileSharingDisabled": false,
+    "bluetoothDisabled": false,
+    "httpsOnly": false,
+    "verifyNetworkAuthenticity": false,
     "mfaEnabled": false,
-    "autoUpdatesEnabled": false,
-    "defaultPasswordsAddressed": false
+    "autoUpdatesEnabled": false
   },
   "devices": [
     {
@@ -130,8 +132,10 @@
     "Consider using personal hotspot or VPN for sensitive activities."
   ],
   "suggestedWinConditions": {
-    "maxTotalRisk": 40,
+    "maxTotalRisk": 35,
     "requires": [
+      { "control": "vpnEnabled", "value": true },
+      { "control": "firewallEnabled", "value": true },
       { "control": "mfaEnabled", "value": true }
     ]
   }

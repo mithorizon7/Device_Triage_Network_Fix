@@ -11,6 +11,12 @@ function loadScoringRules() {
   return JSON.parse(content);
 }
 
+function loadControlsRegistry() {
+  const registryPath = join(scenariosDir, "controlsRegistry.json");
+  const content = readFileSync(registryPath, "utf-8");
+  return JSON.parse(content);
+}
+
 function loadScenarios() {
   const files = readdirSync(scenariosDir).filter(
     (f) => f.endsWith(".json") && f !== "scoringRules.json"
@@ -75,6 +81,16 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error loading scoring rules:", error);
       res.status(500).json({ error: "Failed to load scoring rules" });
+    }
+  });
+
+  app.get("/api/controls-registry", (_req, res) => {
+    try {
+      const registry = loadControlsRegistry();
+      res.json(registry);
+    } catch (error) {
+      console.error("Error loading controls registry:", error);
+      res.status(500).json({ error: "Failed to load controls registry" });
     }
   });
 

@@ -118,7 +118,21 @@
     "autoUpdatesDesc": "Keep device firmware current",
     "defaultPasswordsAddressed": "Default Passwords Changed",
     "defaultPasswordsDesc": "Replace factory default credentials",
-    "enableInSettings": "Enable in scenario settings"
+    "enableInSettings": "Enable in scenario settings",
+    "vpnEnabled": "VPN Enabled",
+    "vpnEnabledDesc": "Encrypt all traffic through VPN",
+    "personalHotspot": "Personal Hotspot",
+    "personalHotspotDesc": "Use phone as secure hotspot instead",
+    "firewallEnabled": "Device Firewall",
+    "firewallEnabledDesc": "Block incoming connections",
+    "fileSharingDisabled": "File Sharing Off",
+    "fileSharingDisabledDesc": "Disable network file sharing",
+    "bluetoothDisabled": "Bluetooth Off",
+    "bluetoothDisabledDesc": "Disable Bluetooth in public",
+    "httpsOnly": "HTTPS Only",
+    "httpsOnlyDesc": "Use only encrypted websites",
+    "verifyNetwork": "Verify Network",
+    "verifyNetworkDesc": "Confirm network authenticity"
   },
   "riskMeter": {
     "title": "Overall Risk Score",
@@ -172,7 +186,14 @@
       "iotNetworkEnabled": "IoT devices on a separate network can't attack your laptops if compromised. Even if your smart bulb is hacked, your files are safe.",
       "mfaEnabled": "Multi-factor authentication means a stolen password isn't enough. Attackers also need your phone or security key.",
       "autoUpdatesEnabled": "Updates patch security holes. Devices without updates are easy targets. Most attacks exploit known vulnerabilities in old software.",
-      "defaultPasswordsAddressed": "Many devices ship with 'admin/admin' or similar. Attackers try these first. Change them before connecting to your network."
+      "defaultPasswordsAddressed": "Many devices ship with 'admin/admin' or similar. Attackers try these first. Change them before connecting to your network.",
+      "vpnEnabled": "A VPN encrypts all your internet traffic, hiding it from anyone else on the hotel network. Essential for sensitive activities on public Wi-Fi.",
+      "personalHotspot": "Using your phone as a hotspot creates your own private network. Much safer than connecting to unknown public Wi-Fi.",
+      "firewallEnabled": "Your device's firewall blocks incoming connection attempts from other devices on the network. Enable it before joining any public network.",
+      "fileSharingDisabled": "File sharing on public networks lets strangers browse your shared folders. Always disable it when traveling.",
+      "bluetoothDisabled": "Bluetooth can be exploited by nearby attackers. Disable it in crowded public places unless actively using it.",
+      "httpsOnly": "HTTPS encrypts your connection to websites. Look for the padlock icon and avoid sites without it on public Wi-Fi.",
+      "verifyNetwork": "Attackers create fake networks with similar names (evil twins). Always verify the exact network name with staff before connecting."
     },
     "zones": {
       "main": "Your trusted zone for personal devices you control and update regularly. These devices can see each other and share files/printers.",

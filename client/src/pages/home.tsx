@@ -407,12 +407,13 @@ export default function Home() {
               />
             )}
 
-            {controls && (
+            {controls && currentScenario && (
               <ControlsDrawer
                 controls={controls}
                 onControlChange={handleControlChange}
                 guestNetworkAvailable={guestNetworkAvailable}
                 iotNetworkAvailable={iotNetworkAvailable}
+                scenarioType={currentScenario.environment.type}
               />
             )}
 

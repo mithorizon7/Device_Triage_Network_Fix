@@ -141,6 +141,83 @@
       "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": false },
       "add": { "credentialAccount": 10 },
       "explain": "Leaving defaults increases easy compromise risk."
+    },
+    {
+      "id": "vpn_enabled_on",
+      "when": { "controlIs": "vpnEnabled", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -20 },
+      "explain": "VPN encrypts all traffic, protecting against eavesdropping on public networks."
+    },
+    {
+      "id": "vpn_enabled_off",
+      "when": { "controlIs": "vpnEnabled", "valueIs": false },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": 15 },
+      "explain": "Without VPN, traffic on public Wi-Fi can be intercepted by attackers."
+    },
+    {
+      "id": "personal_hotspot_on",
+      "when": { "controlIs": "personalHotspot", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -15 },
+      "explain": "Using personal hotspot avoids shared network risks entirely."
+    },
+    {
+      "id": "firewall_enabled_on",
+      "when": { "controlIs": "firewallEnabled", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -8 },
+      "explain": "Device firewall blocks unauthorized incoming connections."
+    },
+    {
+      "id": "firewall_enabled_off",
+      "when": { "controlIs": "firewallEnabled", "valueIs": false },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": 10 },
+      "explain": "Without firewall, device accepts connections from anyone on the network."
+    },
+    {
+      "id": "file_sharing_disabled_on",
+      "when": { "controlIs": "fileSharingDisabled", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -6 },
+      "explain": "Disabling file sharing prevents unauthorized access to your files."
+    },
+    {
+      "id": "file_sharing_disabled_off",
+      "when": { "controlIs": "fileSharingDisabled", "valueIs": false },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": 8 },
+      "explain": "File sharing on public networks exposes your files to strangers."
+    },
+    {
+      "id": "bluetooth_disabled_on",
+      "when": { "controlIs": "bluetoothDisabled", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -4 },
+      "explain": "Disabling Bluetooth prevents nearby device attacks."
+    },
+    {
+      "id": "https_only_on",
+      "when": { "controlIs": "httpsOnly", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -6 },
+      "explain": "HTTPS-only mode ensures encrypted connections to websites."
+    },
+    {
+      "id": "verify_network_on",
+      "when": { "controlIs": "verifyNetworkAuthenticity", "valueIs": true },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": -8 },
+      "explain": "Verifying network authenticity prevents evil twin attacks."
+    },
+    {
+      "id": "verify_network_off",
+      "when": { "controlIs": "verifyNetworkAuthenticity", "valueIs": false },
+      "scenarioTypes": ["hotel"],
+      "add": { "exposure": 10 },
+      "explain": "Without verification, you may connect to a fake network set up by attackers."
     }
   ],
 

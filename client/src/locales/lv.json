@@ -118,7 +118,21 @@
     "autoUpdatesDesc": "Uzturēt ierīces programmaparatūru aktuālu",
     "defaultPasswordsAddressed": "Noklusējuma paroles mainītas",
     "defaultPasswordsDesc": "Aizstāt rūpnīcas noklusējuma akreditācijas datus",
-    "enableInSettings": "Iespējot scenārija iestatījumos"
+    "enableInSettings": "Iespējot scenārija iestatījumos",
+    "vpnEnabled": "VPN iespējots",
+    "vpnEnabledDesc": "Šifrēt visu datu plūsmu caur VPN",
+    "personalHotspot": "Personīgais hotspots",
+    "personalHotspotDesc": "Izmantot tālruni kā drošu hotspotu",
+    "firewallEnabled": "Ierīces ugunsmūris",
+    "firewallEnabledDesc": "Bloķēt ienākošos savienojumus",
+    "fileSharingDisabled": "Failu koplietošana izslēgta",
+    "fileSharingDisabledDesc": "Atspējot tīkla failu koplietošanu",
+    "bluetoothDisabled": "Bluetooth izslēgts",
+    "bluetoothDisabledDesc": "Atspējot Bluetooth publiskās vietās",
+    "httpsOnly": "Tikai HTTPS",
+    "httpsOnlyDesc": "Izmantot tikai šifrētas vietnes",
+    "verifyNetwork": "Verificēt tīklu",
+    "verifyNetworkDesc": "Apstiprināt tīkla autentiskumu"
   },
   "riskMeter": {
     "title": "Kopējais riska vērtējums",
@@ -172,7 +186,14 @@
       "iotNetworkEnabled": "IoT ierīces atsevišķā tīklā nevar uzbrukt jūsu datoriem, ja kompromitētas. Pat ja jūsu viedā spuldze uzlauzta, faili ir drošībā.",
       "mfaEnabled": "Daudzfaktoru autentifikācija nozīmē, ka nozagta parole nepietiek. Uzbrucējiem nepieciešams arī jūsu tālrunis vai drošības atslēga.",
       "autoUpdatesEnabled": "Atjauninājumi labo drošības caurumus. Ierīces bez atjauninājumiem ir viegli mērķi. Vairums uzbrukumu izmanto zināmas ievainojamības.",
-      "defaultPasswordsAddressed": "Daudzas ierīces tiek piegādātas ar 'admin/admin' vai līdzīgi. Uzbrucēji to izmēģina vispirms. Nomainiet pirms pieslēgšanas tīklam."
+      "defaultPasswordsAddressed": "Daudzas ierīces tiek piegādātas ar 'admin/admin' vai līdzīgi. Uzbrucēji to izmēģina vispirms. Nomainiet pirms pieslēgšanas tīklam.",
+      "vpnEnabled": "VPN šifrē visu jūsu interneta datu plūsmu, slēpjot to no citiem viesnīcas tīklā. Būtiski sensitīvām darbībām publiskajā Wi-Fi.",
+      "personalHotspot": "Tālruņa izmantošana kā hotspots izveido jūsu privāto tīklu. Daudz drošāk nekā pieslēgties nezināmam publiskajam Wi-Fi.",
+      "firewallEnabled": "Jūsu ierīces ugunsmūris bloķē ienākošos savienojuma mēģinājumus no citām tīkla ierīcēm. Iespējojiet pirms pievienošanās publiskajam tīklam.",
+      "fileSharingDisabled": "Failu koplietošana publiskajos tīklos ļauj svešiniekiem pārlūkot jūsu koplietotās mapes. Vienmēr atspējojiet ceļojot.",
+      "bluetoothDisabled": "Bluetooth var izmantot tuvumā esošie uzbrucēji. Atspējojiet pārpildītās publiskās vietās, ja aktīvi neizmantojat.",
+      "httpsOnly": "HTTPS šifrē jūsu savienojumu ar vietnēm. Meklējiet slēdzenes ikonu un izvairieties no vietnēm bez tās publiskajā Wi-Fi.",
+      "verifyNetwork": "Uzbrucēji izveido viltotus tīklus ar līdzīgiem nosaukumiem (ļaunās dvīņu tīkli). Vienmēr pārbaudiet precīzu tīkla nosaukumu pie personāla."
     },
     "zones": {
       "main": "Jūsu uzticamā zona personīgajām ierīcēm, kuras kontrolējat un regulāri atjaunināt. Šīs ierīces var redzēt viena otru un dalīties ar failiem/printeriem.",
