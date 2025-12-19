@@ -52,63 +52,46 @@ function DynamicZoneGrid({
   flaggedDevices,
   onFlagToggle
 }: DynamicZoneGridProps) {
-  const zoneCounts = useMemo(() => {
-    const counts: Record<ZoneId, number> = { main: 0, guest: 0, iot: 0 };
-    devices.forEach(d => {
-      const zone = deviceZones[d.id];
-      if (zone && counts[zone] !== undefined) {
-        counts[zone]++;
-      }
-    });
-    return counts;
-  }, [devices, deviceZones]);
-
+  const guestZone = zones.find(z => z.id === "guest")!;
+  const iotZone = zones.find(z => z.id === "iot")!;
   const mainZone = zones.find(z => z.id === "main")!;
-  const otherZones = zones.filter(z => z.id !== "main");
-  const mainCount = zoneCounts.main;
-  const totalOtherCount = zoneCounts.guest + zoneCounts.iot;
-  const hasDevicesInOtherZones = totalOtherCount > 0;
 
   return (
     <div className="flex flex-col gap-4" data-testid="zones-container">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className={`${mainCount > 6 || !hasDevicesInOtherZones ? "md:col-span-2 md:row-span-2" : "md:col-span-2"}`}>
-          <ZoneDropTarget
-            zone={mainZone}
-            devices={devices}
-            deviceZones={deviceZones}
-            onDeviceDrop={onDeviceDrop}
-            onZoneChange={onZoneChange}
-            scenarioId={scenarioId}
-            flaggedDevices={flaggedDevices}
-            onFlagToggle={onFlagToggle}
-          />
-        </div>
-        
-        {otherZones.map((zone) => {
-          const count = zoneCounts[zone.id];
-          const isExpanded = count > 3;
-          
-          return (
-            <div 
-              key={zone.id} 
-              className={`${isExpanded ? "md:col-span-2" : "md:col-span-2"}`}
-            >
-              <ZoneDropTarget
-                zone={zone}
-                devices={devices}
-                deviceZones={deviceZones}
-                onDeviceDrop={onDeviceDrop}
-                onZoneChange={onZoneChange}
-                scenarioId={scenarioId}
-                compact={count === 0}
-                flaggedDevices={flaggedDevices}
-                onFlagToggle={onFlagToggle}
-              />
-            </div>
-          );
-        })}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <ZoneDropTarget
+          zone={guestZone}
+          devices={devices}
+          deviceZones={deviceZones}
+          onDeviceDrop={onDeviceDrop}
+          onZoneChange={onZoneChange}
+          scenarioId={scenarioId}
+          flaggedDevices={flaggedDevices}
+          onFlagToggle={onFlagToggle}
+          minHeight={280}
+        />
+        <ZoneDropTarget
+          zone={iotZone}
+          devices={devices}
+          deviceZones={deviceZones}
+          onDeviceDrop={onDeviceDrop}
+          onZoneChange={onZoneChange}
+          scenarioId={scenarioId}
+          flaggedDevices={flaggedDevices}
+          onFlagToggle={onFlagToggle}
+          minHeight={280}
+        />
       </div>
+      <ZoneDropTarget
+        zone={mainZone}
+        devices={devices}
+        deviceZones={deviceZones}
+        onDeviceDrop={onDeviceDrop}
+        onZoneChange={onZoneChange}
+        scenarioId={scenarioId}
+        flaggedDevices={flaggedDevices}
+        onFlagToggle={onFlagToggle}
+      />
     </div>
   );
 }

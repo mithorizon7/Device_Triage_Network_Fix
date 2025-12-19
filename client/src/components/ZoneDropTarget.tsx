@@ -17,7 +17,7 @@ interface ZoneDropTargetProps {
   onDeviceDrop: (deviceId: string, zoneId: ZoneId) => void;
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
   scenarioId?: string;
-  compact?: boolean;
+  minHeight?: number;
   flaggedDevices?: Set<string>;
   onFlagToggle?: (deviceId: string) => void;
 }
@@ -35,7 +35,7 @@ export function ZoneDropTarget({
   onDeviceDrop,
   onZoneChange,
   scenarioId,
-  compact = false,
+  minHeight,
   flaggedDevices = new Set(),
   onFlagToggle
 }: ZoneDropTargetProps) {
@@ -49,7 +49,6 @@ export function ZoneDropTarget({
   const description = t(zone.descriptionKey);
   
   const isEmpty = devicesInZone.length === 0;
-  const isCompactDisplay = compact && isEmpty;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -90,12 +89,13 @@ export function ZoneDropTarget({
       role="region"
       aria-label={t('zones.zoneWithDevices', { zone: label, count: devicesInZone.length })}
       data-testid={`zone-${zone.id}`}
+      style={minHeight ? { minHeight: `${minHeight}px` } : undefined}
       className={`
         relative flex flex-col rounded-lg border-2 border-dashed
         transition-all duration-300 ease-out
-        ${isCompactDisplay ? "min-h-[80px]" : isEmpty ? "min-h-[120px]" : "min-h-0"}
+        ${!minHeight && (isEmpty ? "min-h-[120px]" : "min-h-0")}
         ${isDragOver 
-          ? `${zone.borderClass} ${zone.bgClass} border-solid min-h-[120px]` 
+          ? `${zone.borderClass} ${zone.bgClass} border-solid` 
           : "border-border bg-card/30"
         }
       `}
@@ -128,18 +128,16 @@ export function ZoneDropTarget({
       </div>
 
       <div
-        className={`flex-1 overflow-auto ${isCompactDisplay ? "p-2" : "p-3"}`}
+        className="flex-1 overflow-auto p-3"
         role="list"
         aria-label={t('devices.in', { zone: label })}
       >
         {devicesInZone.length === 0 ? (
-          <div className={`flex items-center justify-center h-full text-center ${isCompactDisplay ? "min-h-[32px] gap-2" : "flex-col min-h-[72px]"}`}>
-            {!isCompactDisplay && (
-              <div className={`p-2 rounded-full ${zone.bgClass} mb-1`}>
-                <ZoneIcon className={`h-5 w-5 ${zone.colorClass} opacity-60`} aria-hidden="true" />
-              </div>
-            )}
-            <p className={`text-muted-foreground ${isCompactDisplay ? "text-xs" : "text-sm"}`}>
+          <div className="flex items-center justify-center h-full text-center flex-col min-h-[72px]">
+            <div className={`p-2 rounded-full ${zone.bgClass} mb-1`}>
+              <ZoneIcon className={`h-5 w-5 ${zone.colorClass} opacity-60`} aria-hidden="true" />
+            </div>
+            <p className="text-muted-foreground text-sm">
               {t('zones.dropHere')}
             </p>
           </div>
