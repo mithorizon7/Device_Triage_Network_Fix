@@ -21,21 +21,21 @@
       "credentialAccount": 15,
       "hygiene": 15
     },
-    "allowedZones": ["main", "guest", "iot", "investigate"]
+    "allowedZones": ["main", "guest", "iot"]
   },
 
   "zoneRules": [
     {
-      "id": "unknown_not_in_investigate",
-      "when": { "deviceHasFlag": "unknown_device", "zoneNot": "investigate" },
+      "id": "unknown_not_flagged",
+      "when": { "deviceHasFlag": "unknown_device", "notFlaggedForInvestigation": true },
       "add": { "exposure": 35 },
-      "explain": "Unknown device is not quarantined for investigation."
+      "explain": "Unknown device not flagged for investigation poses high risk."
     },
     {
-      "id": "unknown_in_investigate",
-      "when": { "deviceHasFlag": "unknown_device", "zoneIs": "investigate" },
+      "id": "unknown_flagged",
+      "when": { "deviceHasFlag": "unknown_device", "flaggedForInvestigation": true },
       "add": { "exposure": -15 },
-      "explain": "Unknown device quarantined for investigation reduces immediate exposure."
+      "explain": "Flagging unknown device for investigation reduces immediate exposure."
     },
     {
       "id": "iot_on_main",
@@ -249,11 +249,11 @@
       "when": {
         "all": [
           { "countDevicesWithFlagAtLeast": { "flag": "unknown_device", "count": 1 } },
-          { "countDevicesWithFlagInZoneAtLeast": { "flag": "unknown_device", "zone": "investigate", "count": 0 } }
+          { "countUnflaggedDevicesWithFlag": { "flag": "unknown_device", "count": 1 } }
         ]
       },
       "add": { "exposure": 10 },
-      "explain": "Unknown devices present with no quarantine action increases risk."
+      "explain": "Unknown devices present without being flagged for investigation increases risk."
     }
   ],
 

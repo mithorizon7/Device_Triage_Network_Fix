@@ -33,14 +33,6 @@ export const zones: ZoneConfig[] = [
     colorClass: "text-purple-600 dark:text-purple-400",
     borderClass: "border-purple-500",
     bgClass: "bg-purple-500/10 dark:bg-purple-500/20"
-  },
-  {
-    id: "investigate",
-    labelKey: "zones.investigate",
-    descriptionKey: "zones.investigateDescription",
-    colorClass: "text-amber-600 dark:text-amber-400",
-    borderClass: "border-amber-500",
-    bgClass: "bg-amber-500/10 dark:bg-amber-500/20"
   }
 ];
 

@@ -31,14 +31,6 @@
       "security": "WPA2",
       "subnet": "10.0.3.0/24",
       "enabled": false
-    },
-    {
-      "id": "investigate",
-      "label": "Quarantine Zone",
-      "ssid": null,
-      "security": null,
-      "subnet": null,
-      "enabled": true
     }
   ],
   "initialControls": {

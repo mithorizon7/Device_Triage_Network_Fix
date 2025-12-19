@@ -49,7 +49,7 @@ function DynamicZoneGrid({
   scenarioId
 }: DynamicZoneGridProps) {
   const zoneCounts = useMemo(() => {
-    const counts: Record<ZoneId, number> = { main: 0, guest: 0, iot: 0, investigate: 0 };
+    const counts: Record<ZoneId, number> = { main: 0, guest: 0, iot: 0 };
     devices.forEach(d => {
       const zone = deviceZones[d.id];
       if (zone && counts[zone] !== undefined) {
@@ -62,7 +62,7 @@ function DynamicZoneGrid({
   const mainZone = zones.find(z => z.id === "main")!;
   const otherZones = zones.filter(z => z.id !== "main");
   const mainCount = zoneCounts.main;
-  const totalOtherCount = zoneCounts.guest + zoneCounts.iot + zoneCounts.investigate;
+  const totalOtherCount = zoneCounts.guest + zoneCounts.iot;
   const hasDevicesInOtherZones = totalOtherCount > 0;
 
   return (

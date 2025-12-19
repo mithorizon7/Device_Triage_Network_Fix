@@ -9,7 +9,7 @@ export const riskFlagSchema = z.enum([
   "unknown_device", "iot_device", "visitor_device", "trusted_work_device"
 ]);
 
-export const zoneIdSchema = z.enum(["main", "guest", "iot", "investigate"]);
+export const zoneIdSchema = z.enum(["main", "guest", "iot"]);
 
 export const deviceSchema = z.object({
   id: z.string(),

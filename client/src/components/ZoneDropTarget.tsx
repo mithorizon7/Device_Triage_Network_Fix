@@ -23,8 +23,7 @@ interface ZoneDropTargetProps {
 const zoneIcons: Record<ZoneId, typeof Network> = {
   main: Network,
   guest: Users,
-  iot: Shield,
-  investigate: Search
+  iot: Shield
 };
 
 export function ZoneDropTarget({

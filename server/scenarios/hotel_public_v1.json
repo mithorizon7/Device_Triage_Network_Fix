@@ -31,14 +31,6 @@
       "security": null,
       "subnet": null,
       "enabled": false
-    },
-    {
-      "id": "investigate",
-      "label": "Do Not Connect",
-      "ssid": null,
-      "security": null,
-      "subnet": null,
-      "enabled": true
     }
   ],
   "initialControls": {
