@@ -152,7 +152,7 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - `deviceLabels.{scenarioId}.{deviceId}` - Device label translations for built-in scenarios
 
 ### Files
-- `client/src/locales/{en,lv,ru}.json` - Translation files (302 keys each)
+- `client/src/locales/{en,lv,ru}.json` - Translation files (435 keys each)
 - `client/src/lib/i18n.ts` - i18next configuration with ICU support and getDeviceDisplayLabel() helper
 - `scripts/i18n-validate.js` - Validation script
 - `docs/i18n-glossary.md` - Terminology glossary for translators
@@ -178,6 +178,10 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-19: Updated tutorial to replace "Investigate zone" with "Flag Unknown Devices" step (reflects UI change to flag-based investigation)
+- 2024-12-19: Educational content review completed - verified accuracy of security best practices, WPA2/WPA3 dates, MFA statistics, and real-world attack references (WannaCry 2017, Mirai 2016, KRACK 2017)
+- 2024-12-19: Improved DeviceCard responsive layout - device names display fully without truncation, flex-wrap enabled for narrow screens
+- 2024-12-19: Updated zone layout - Main Network in left column, Guest/IoT stacked vertically in right column for better visibility
 - 2024-12-18: Added educational popup dialogs when enabling security controls (what/why/how format)
 - 2024-12-18: Each of 7 security controls now shows detailed training on first enable
 - 2024-12-18: Educational dialogs include "Don't show again" option persisted per control

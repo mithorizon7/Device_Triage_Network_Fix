@@ -56,19 +56,18 @@ export const tutorialSteps: TutorialStep[] = [
     highlightZone: "iot"
   },
   {
-    id: "investigate-zone",
-    target: "[data-testid='zone-investigate']",
-    titleKey: "tutorial.steps.investigateZone.title",
-    contentKey: "tutorial.steps.investigateZone.content",
-    placement: "left",
-    highlightZone: "investigate"
-  },
-  {
     id: "device-cards",
-    target: "[data-testid^='device-card-']",
+    target: "[data-testid^='card-device-']",
     titleKey: "tutorial.steps.deviceCards.title",
     contentKey: "tutorial.steps.deviceCards.content",
     placement: "bottom"
+  },
+  {
+    id: "flag-investigation",
+    target: "[data-testid^='button-flag-']",
+    titleKey: "tutorial.steps.flagInvestigation.title",
+    contentKey: "tutorial.steps.flagInvestigation.content",
+    placement: "left"
   },
   {
     id: "risk-meter",

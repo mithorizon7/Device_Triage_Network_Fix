@@ -458,13 +458,13 @@
         "title": "IoT Network: Contain the Risk",
         "content": "Smart devices are convenient but often insecure. That smart doorbell may have unpatched vulnerabilities. That voice assistant is always listening. The IoT Network isolates these devices so even if one is compromised, attackers can't pivot to your main computers. Many routers support creating a separate IoT network - it's one of the highest-impact security changes you can make."
       },
-      "investigateZone": {
-        "title": "Investigate: When in Doubt, Quarantine",
-        "content": "Found an unknown device on your network? Don't just ignore it. The Investigate zone is your quarantine area. Devices here get minimal access until you determine what they are. It could be a forgotten gadget, or it could be an intruder. Figure it out before trusting it."
-      },
       "deviceCards": {
         "title": "Drag to Reorganize",
         "content": "Now it's your turn to fix this network. Drag devices to their appropriate zones, or use the dropdown on each card. Think about each device: Do I fully trust it? Does it need to see my other devices? Could it be a risk if compromised?"
+      },
+      "flagInvestigation": {
+        "title": "Flag Unknown Devices",
+        "content": "See a device you don't recognize? Look for the flag button on devices marked as 'Unknown'. Flagging a suspicious device marks it for investigation - a critical first step when you spot something unexpected on your network. Don't trust unknown devices until you identify them. In the real world, this could be a neighbor piggybacking on your Wi-Fi or a forgotten gadget - but it could also be an intruder."
       },
       "riskMeter": {
         "title": "Watch Your Risk Drop",

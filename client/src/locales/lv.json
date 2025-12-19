@@ -458,13 +458,13 @@
         "title": "IoT tīkls: ierobežojiet risku",
         "content": "Viedās ierīces ir ērtas, bet bieži nedroši. Tam viedajam durvju zvanam var būt nelabotas ievainojamības. Tas balss asistents vienmēr klausās. IoT tīkls izolē šīs ierīces, tāpēc pat ja viena tiek kompromitēta, uzbrucēji nevar pāriet uz jūsu galvenajiem datoriem. Daudzi maršrutētāji atbalsta atsevišķa IoT tīkla izveidi - tā ir viena no augstākās ietekmes drošības izmaiņām, ko varat veikt."
       },
-      "investigateZone": {
-        "title": "Izmeklēšana: ja šaubāties, karantinējiet",
-        "content": "Atradāt nezināmu ierīci savā tīklā? Neignorējiet to. Izmeklēšanas zona ir jūsu karantīnas zona. Ierīces šeit iegūst minimālu piekļuvi, līdz noteikt, kas tās ir. Tā varētu būt aizmirsta ierīce, vai tas varētu būt iebrucējs. Noskaidrojiet, pirms uzticaties."
-      },
       "deviceCards": {
         "title": "Velciet, lai pārkārtotu",
         "content": "Tagad jūsu kārta labot šo tīklu. Velciet ierīces uz atbilstošajām zonām vai izmantojiet nolaižamo izvēlni katrā kartē. Padomājiet par katru ierīci: Vai es tai pilnībā uzticos? Vai tai jāredz manas citas ierīces? Vai tā varētu būt risks, ja tiktu kompromitēta?"
+      },
+      "flagInvestigation": {
+        "title": "Atzīmējiet nezināmās ierīces",
+        "content": "Redzat ierīci, kuru neatpazīstat? Meklējiet karodziņa pogu uz ierīcēm, kas atzīmētas kā 'Nezināmas'. Aizdomīgas ierīces atzīmēšana nozīmē to reģistrēšanu izmeklēšanai - kritisks pirmais solis, kad pamanāt kaut ko negaidītu savā tīklā. Neuzticieties nezināmām ierīcēm, kamēr neesat tās identificējuši. Reālajā pasaulē tā varētu būt kaimiņš, kas izmanto jūsu Wi-Fi, vai aizmirsta ierīce - bet tā varētu būt arī iebrucējs."
       },
       "riskMeter": {
         "title": "Vērojiet, kā krīt jūsu risks",
