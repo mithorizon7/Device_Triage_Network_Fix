@@ -57,31 +57,7 @@ function DynamicZoneGrid({
   const mainZone = zones.find(z => z.id === "main")!;
 
   return (
-    <div className="flex flex-col gap-4" data-testid="zones-container">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ZoneDropTarget
-          zone={guestZone}
-          devices={devices}
-          deviceZones={deviceZones}
-          onDeviceDrop={onDeviceDrop}
-          onZoneChange={onZoneChange}
-          scenarioId={scenarioId}
-          flaggedDevices={flaggedDevices}
-          onFlagToggle={onFlagToggle}
-          minHeight={280}
-        />
-        <ZoneDropTarget
-          zone={iotZone}
-          devices={devices}
-          deviceZones={deviceZones}
-          onDeviceDrop={onDeviceDrop}
-          onZoneChange={onZoneChange}
-          scenarioId={scenarioId}
-          flaggedDevices={flaggedDevices}
-          onFlagToggle={onFlagToggle}
-          minHeight={280}
-        />
-      </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" data-testid="zones-container">
       <ZoneDropTarget
         zone={mainZone}
         devices={devices}
@@ -92,6 +68,30 @@ function DynamicZoneGrid({
         flaggedDevices={flaggedDevices}
         onFlagToggle={onFlagToggle}
       />
+      <div className="flex flex-col gap-4">
+        <ZoneDropTarget
+          zone={guestZone}
+          devices={devices}
+          deviceZones={deviceZones}
+          onDeviceDrop={onDeviceDrop}
+          onZoneChange={onZoneChange}
+          scenarioId={scenarioId}
+          flaggedDevices={flaggedDevices}
+          onFlagToggle={onFlagToggle}
+          minHeight={200}
+        />
+        <ZoneDropTarget
+          zone={iotZone}
+          devices={devices}
+          deviceZones={deviceZones}
+          onDeviceDrop={onDeviceDrop}
+          onZoneChange={onZoneChange}
+          scenarioId={scenarioId}
+          flaggedDevices={flaggedDevices}
+          onFlagToggle={onFlagToggle}
+          minHeight={200}
+        />
+      </div>
     </div>
   );
 }
