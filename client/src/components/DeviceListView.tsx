@@ -14,7 +14,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Shield, User, Briefcase } from "lucide-react";
+import { AlertTriangle, Shield, User, Briefcase, Flag } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
 import { zones } from "@/lib/zones";
@@ -25,6 +26,8 @@ interface DeviceListViewProps {
   deviceZones: Record<string, ZoneId>;
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
   scenarioId?: string;
+  flaggedDevices?: Set<string>;
+  onFlagToggle?: (deviceId: string) => void;
 }
 
 const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -34,7 +37,14 @@ const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTrian
   trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "default" }
 };
 
-export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId }: DeviceListViewProps) {
+export function DeviceListView({ 
+  devices, 
+  deviceZones, 
+  onZoneChange, 
+  scenarioId,
+  flaggedDevices = new Set(),
+  onFlagToggle
+}: DeviceListViewProps) {
   const { t } = useTranslation();
   
   const deviceLabels = useMemo(() => {
@@ -92,7 +102,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                   return (
                     <li 
                       key={device.id}
-                      className="py-3 first:pt-0 last:pb-0"
+                      className={`py-3 first:pt-0 last:pb-0 ${flaggedDevices.has(device.id) ? "bg-amber-100/50 dark:bg-amber-900/20 -mx-4 px-4 rounded-md" : ""}`}
                       data-testid={`list-device-${device.id}`}
                     >
                       <div className="flex items-center gap-3">
@@ -141,7 +151,7 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                           )}
                         </div>
                         
-                        <div className="flex-shrink-0">
+                        <div className="flex-shrink-0 flex items-center gap-2">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
                             {t('devices.moveToZone', { device: getLabel(device) })}
                           </label>
@@ -167,6 +177,28 @@ export function DeviceListView({ devices, deviceZones, onZoneChange, scenarioId 
                               ))}
                             </SelectContent>
                           </Select>
+                          
+                          {device.riskFlags.includes("unknown_device") && onFlagToggle && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  size="icon"
+                                  variant={flaggedDevices.has(device.id) ? "default" : "outline"}
+                                  onClick={() => onFlagToggle(device.id)}
+                                  data-testid={`list-button-flag-${device.id}`}
+                                  aria-label={flaggedDevices.has(device.id) ? t("actions.unflagDevice") : t("actions.flagDevice")}
+                                  className={flaggedDevices.has(device.id) ? "bg-amber-500 hover:bg-amber-600 text-white" : ""}
+                                >
+                                  <Flag className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="max-w-[280px]">
+                                <p className="text-sm">
+                                  {flaggedDevices.has(device.id) ? t("tooltips.flagged") : t("tooltips.flagForInvestigation")}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
                         </div>
                       </div>
                     </li>

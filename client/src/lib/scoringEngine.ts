@@ -34,6 +34,8 @@ interface ZoneRule {
     zoneIs?: ZoneId;
     zoneNot?: ZoneId;
     zoneIn?: ZoneId[];
+    flaggedForInvestigation?: boolean;
+    notFlaggedForInvestigation?: boolean;
   };
   add: Partial<Subscores>;
   explain: string;
@@ -58,6 +60,7 @@ interface SynergyRule {
       pctOfDevicesWithFlagInZoneAtLeast?: { flag: RiskFlag; zone: ZoneId; pct: number };
       countDevicesWithFlagInZoneAtLeast?: { flag: RiskFlag; zone: ZoneId; count: number };
       countDevicesWithFlagAtLeast?: { flag: RiskFlag; count: number };
+      countUnflaggedDevicesWithFlag?: { flag: RiskFlag; count: number };
     }>;
   };
   add: Partial<Subscores>;
@@ -77,7 +80,8 @@ function clamp(value: number, min: number, max: number): number {
 function evaluateZoneCondition(
   condition: ZoneRule["when"],
   device: Device,
-  deviceZone: ZoneId
+  deviceZone: ZoneId,
+  isFlagged: boolean
 ): boolean {
   if (condition.deviceHasFlag && !device.riskFlags.includes(condition.deviceHasFlag)) {
     return false;
@@ -92,6 +96,12 @@ function evaluateZoneCondition(
     return false;
   }
   if (condition.zoneIn && !condition.zoneIn.includes(deviceZone)) {
+    return false;
+  }
+  if (condition.flaggedForInvestigation === true && !isFlagged) {
+    return false;
+  }
+  if (condition.notFlaggedForInvestigation === true && isFlagged) {
     return false;
   }
   return true;
@@ -109,7 +119,8 @@ function evaluateSynergyCondition(
   rule: SynergyRule,
   controls: Controls,
   devices: Device[],
-  deviceZones: Record<string, ZoneId>
+  deviceZones: Record<string, ZoneId>,
+  flaggedDevices: Set<string>
 ): boolean {
   if (!rule.when.all) return false;
 
@@ -140,6 +151,14 @@ function evaluateSynergyCondition(
       return devicesWithFlag.length >= count;
     }
 
+    if (condition.countUnflaggedDevicesWithFlag) {
+      const { flag, count } = condition.countUnflaggedDevicesWithFlag;
+      const unflaggedDevicesWithFlag = devices.filter(
+        d => d.riskFlags.includes(flag) && !flaggedDevices.has(d.id)
+      );
+      return unflaggedDevicesWithFlag.length >= count;
+    }
+
     return true;
   });
 }
@@ -148,7 +167,8 @@ export function calculateScore(
   rules: ScoringRules,
   devices: Device[],
   deviceZones: Record<string, ZoneId>,
-  controls: Controls
+  controls: Controls,
+  flaggedDevices: Set<string> = new Set()
 ): ScoreResult {
   const explanations: Explanation[] = [];
   
@@ -180,7 +200,7 @@ export function calculateScore(
     if (!deviceZone) continue;
 
     for (const rule of rules.zoneRules) {
-      if (evaluateZoneCondition(rule.when, device, deviceZone)) {
+      if (evaluateZoneCondition(rule.when, device, deviceZone, flaggedDevices.has(device.id))) {
         for (const [key, value] of Object.entries(rule.add)) {
           if (key in subscores) {
             (subscores as Record<string, number>)[key] += value as number;
@@ -196,7 +216,7 @@ export function calculateScore(
   }
 
   for (const rule of rules.synergyRules) {
-    if (evaluateSynergyCondition(rule, controls, devices, deviceZones)) {
+    if (evaluateSynergyCondition(rule, controls, devices, deviceZones, flaggedDevices)) {
       for (const [key, value] of Object.entries(rule.add)) {
         if (key in subscores) {
           (subscores as Record<string, number>)[key] += value as number;

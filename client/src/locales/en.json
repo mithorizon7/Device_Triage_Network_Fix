@@ -14,6 +14,10 @@
     "gridViewAriaLabel": "Grid view with drag and drop",
     "listViewAriaLabel": "Screen reader friendly list view"
   },
+  "actions": {
+    "flagDevice": "Flag for investigation",
+    "unflagDevice": "Remove investigation flag"
+  },
   "scenarios": {
     "select": "Select scenario",
     "selectPlaceholder": "Select a scenario",
@@ -28,8 +32,6 @@
     "guestDescription": "Visitor devices with internet-only access",
     "iot": "IoT Network",
     "iotDescription": "Smart devices isolated from main network",
-    "investigate": "Investigate",
-    "investigateDescription": "Unknown or suspicious devices for review",
     "dropHere": "Drop devices here",
     "dropToMove": "Drop to move here",
     "zoneWithDevices": "{zone} zone with {count, plural, one {# device} other {# devices}}"
@@ -198,9 +200,10 @@
     "zones": {
       "main": "Your trusted zone for personal devices you control and update regularly. These devices can see each other and share files/printers.",
       "guest": "Internet-only access for visitors or untrusted devices. Can browse the web but can't access your main network devices.",
-      "iot": "Isolated network for smart home devices. They get internet access but can't communicate with your main devices if compromised.",
-      "investigate": "Quarantine zone for unknown or suspicious devices. Investigate before moving to another zone. When in doubt, put it here."
-    }
+      "iot": "Isolated network for smart home devices. They get internet access but can't communicate with your main devices if compromised."
+    },
+    "flagForInvestigation": "Click to flag this unknown device for investigation. Flagging devices you don't recognize reduces risk by ensuring they're reviewed before being trusted.",
+    "flagged": "This device is flagged for investigation. You've marked it as suspicious and it's being reviewed. Click to remove the flag if you've identified the device."
   },
   "education": {
     "dontShowAgain": "Don't show this again",

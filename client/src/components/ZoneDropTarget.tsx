@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { Device, ZoneId } from "@shared/schema";
 import type { ZoneConfig } from "@/lib/zones";
 import { DeviceCard } from "./DeviceCard";
-import { Network, Shield, Users, Search } from "lucide-react";
+import { Network, Shield, Users } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +18,8 @@ interface ZoneDropTargetProps {
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
   scenarioId?: string;
   compact?: boolean;
+  flaggedDevices?: Set<string>;
+  onFlagToggle?: (deviceId: string) => void;
 }
 
 const zoneIcons: Record<ZoneId, typeof Network> = {
@@ -33,7 +35,9 @@ export function ZoneDropTarget({
   onDeviceDrop,
   onZoneChange,
   scenarioId,
-  compact = false
+  compact = false,
+  flaggedDevices = new Set(),
+  onFlagToggle
 }: ZoneDropTargetProps) {
   const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
@@ -151,6 +155,8 @@ export function ZoneDropTarget({
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 scenarioId={scenarioId}
+                isFlagged={flaggedDevices.has(device.id)}
+                onFlagToggle={onFlagToggle}
               />
             ))}
           </div>

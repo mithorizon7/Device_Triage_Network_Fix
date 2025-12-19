@@ -14,6 +14,10 @@
     "gridViewAriaLabel": "Režģa skats ar vilkšanu un nomešanu",
     "listViewAriaLabel": "Ekrānlasītājam draudzīgs saraksta skats"
   },
+  "actions": {
+    "flagDevice": "Atzīmēt izmeklēšanai",
+    "unflagDevice": "Noņemt izmeklēšanas atzīmi"
+  },
   "scenarios": {
     "select": "Izvēlieties scenāriju",
     "selectPlaceholder": "Izvēlieties scenāriju",
@@ -28,8 +32,6 @@
     "guestDescription": "Viesu ierīces ar piekļuvi tikai internetam",
     "iot": "IoT tīkls",
     "iotDescription": "Viedierīces, kas izolētas no galvenā tīkla",
-    "investigate": "Izmeklēšana",
-    "investigateDescription": "Nezināmas vai aizdomīgas ierīces pārbaudei",
     "dropHere": "Nometiet ierīces šeit",
     "dropToMove": "Nometiet, lai pārvietotu šeit",
     "zoneWithDevices": "{zone} zona ar {count, plural, one {# ierīci} other {# ierīcēm}}"
@@ -198,9 +200,10 @@
     "zones": {
       "main": "Jūsu uzticamā zona personīgajām ierīcēm, kuras kontrolējat un regulāri atjaunināt. Šīs ierīces var redzēt viena otru un dalīties ar failiem/printeriem.",
       "guest": "Tikai interneta piekļuve apmeklētājiem vai neuzticamām ierīcēm. Var pārlūkot tīmekli, bet nevar piekļūt jūsu galvenā tīkla ierīcēm.",
-      "iot": "Izolēts tīkls viedmājas ierīcēm. Tās saņem interneta piekļuvi, bet nevar sazināties ar jūsu galvenajām ierīcēm, ja kompromitētas.",
-      "investigate": "Karantīnas zona nezināmām vai aizdomīgām ierīcēm. Izmeklējiet pirms pārvietošanas uz citu zonu. Ja šaubāties, ievietojiet šeit."
-    }
+      "iot": "Izolēts tīkls viedmājas ierīcēm. Tās saņem interneta piekļuvi, bet nevar sazināties ar jūsu galvenajām ierīcēm, ja kompromitētas."
+    },
+    "flagForInvestigation": "Noklikšķiniet, lai atzīmētu šo nezināmo ierīci izmeklēšanai. Atzīmējot ierīces, kuras neatpazīstat, samazinās risks, nodrošinot to pārskatīšanu pirms uzticēšanās.",
+    "flagged": "Šī ierīce ir atzīmēta izmeklēšanai. Jūs to atzīmējāt kā aizdomīgu un tā tiek pārskatīta. Noklikšķiniet, lai noņemtu atzīmi, ja ierīce ir identificēta."
   },
   "education": {
     "dontShowAgain": "Nerādīt vēlreiz",

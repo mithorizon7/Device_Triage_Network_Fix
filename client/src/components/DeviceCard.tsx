@@ -14,7 +14,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { GripVertical, AlertTriangle, Shield, User, Briefcase } from "lucide-react";
+import { GripVertical, AlertTriangle, Shield, User, Briefcase, Flag } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
 import { zones } from "@/lib/zones";
@@ -28,6 +29,8 @@ interface DeviceCardProps {
   onDragStart?: (e: React.DragEvent, deviceId: string) => void;
   onDragEnd?: (e: React.DragEvent) => void;
   scenarioId?: string;
+  isFlagged?: boolean;
+  onFlagToggle?: (deviceId: string) => void;
 }
 
 const riskFlagConfig: Record<RiskFlag, { label: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -44,7 +47,9 @@ export function DeviceCard({
   isDragging = false,
   onDragStart,
   onDragEnd,
-  scenarioId
+  scenarioId,
+  isFlagged = false,
+  onFlagToggle
 }: DeviceCardProps) {
   const { t } = useTranslation();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -67,6 +72,8 @@ export function DeviceCard({
     }
   };
 
+  const hasUnknownFlag = device.riskFlags.includes("unknown_device");
+
   return (
     <Card
       ref={cardRef}
@@ -76,7 +83,7 @@ export function DeviceCard({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="listitem"
-      aria-label={`${deviceLabel}, ${device.type} device${device.riskFlags.length > 0 ? `, flags: ${device.riskFlags.join(", ")}` : ""}`}
+      aria-label={`${deviceLabel}, ${device.type} device${device.riskFlags.length > 0 ? `, flags: ${device.riskFlags.join(", ")}` : ""}${isFlagged ? ", flagged for investigation" : ""}`}
       data-testid={`card-device-${device.id}`}
       className={`
         relative flex items-center gap-3 p-3 cursor-grab active:cursor-grabbing
@@ -84,6 +91,7 @@ export function DeviceCard({
         hover-elevate active-elevate-2
         focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
         ${isDragging ? "opacity-50 scale-95" : ""}
+        ${isFlagged ? "bg-amber-100 dark:bg-amber-900/30 border-amber-400 dark:border-amber-600" : ""}
       `}
     >
       <div className="flex-shrink-0 text-muted-foreground">
@@ -138,7 +146,7 @@ export function DeviceCard({
         </div>
       )}
 
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 flex items-center gap-2">
         <Select
           value={currentZone}
           onValueChange={(value) => onZoneChange(device.id, value as ZoneId)}
@@ -162,6 +170,31 @@ export function DeviceCard({
             ))}
           </SelectContent>
         </Select>
+        
+        {hasUnknownFlag && onFlagToggle && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant={isFlagged ? "default" : "outline"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFlagToggle(device.id);
+                }}
+                data-testid={`button-flag-${device.id}`}
+                aria-label={isFlagged ? t("actions.unflagDevice") : t("actions.flagDevice")}
+                className={isFlagged ? "bg-amber-500 hover:bg-amber-600 text-white" : ""}
+              >
+                <Flag className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[280px]">
+              <p className="text-sm">
+                {isFlagged ? t("tooltips.flagged") : t("tooltips.flagForInvestigation")}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </Card>
   );

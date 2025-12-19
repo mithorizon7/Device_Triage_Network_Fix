@@ -38,6 +38,8 @@ interface DynamicZoneGridProps {
   onDeviceDrop: (deviceId: string, zoneId: ZoneId) => void;
   onZoneChange: (deviceId: string, newZone: ZoneId) => void;
   scenarioId: string;
+  flaggedDevices: Set<string>;
+  onFlagToggle: (deviceId: string) => void;
 }
 
 function DynamicZoneGrid({
@@ -46,7 +48,9 @@ function DynamicZoneGrid({
   deviceZones,
   onDeviceDrop,
   onZoneChange,
-  scenarioId
+  scenarioId,
+  flaggedDevices,
+  onFlagToggle
 }: DynamicZoneGridProps) {
   const zoneCounts = useMemo(() => {
     const counts: Record<ZoneId, number> = { main: 0, guest: 0, iot: 0 };
@@ -76,6 +80,8 @@ function DynamicZoneGrid({
             onDeviceDrop={onDeviceDrop}
             onZoneChange={onZoneChange}
             scenarioId={scenarioId}
+            flaggedDevices={flaggedDevices}
+            onFlagToggle={onFlagToggle}
           />
         </div>
         
@@ -96,6 +102,8 @@ function DynamicZoneGrid({
                 onZoneChange={onZoneChange}
                 scenarioId={scenarioId}
                 compact={count === 0}
+                flaggedDevices={flaggedDevices}
+                onFlagToggle={onFlagToggle}
               />
             </div>
           );
@@ -113,6 +121,7 @@ export default function Home() {
   const [customScenarios, setCustomScenarios] = useState<Scenario[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
   const [isNewCompletion, setIsNewCompletion] = useState(false);
+  const [flaggedDevices, setFlaggedDevices] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
     try {
       const saved = localStorage.getItem("deviceTriage_viewMode");
@@ -211,6 +220,18 @@ export default function Home() {
     setControls(prev => prev ? { ...prev, [key]: value } : null);
   }, []);
 
+  const handleFlagToggle = useCallback((deviceId: string) => {
+    setFlaggedDevices(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(deviceId)) {
+        newSet.delete(deviceId);
+      } else {
+        newSet.add(deviceId);
+      }
+      return newSet;
+    });
+  }, []);
+
   const handleReset = useCallback(() => {
     if (currentScenario) {
       const initialZones: Record<string, ZoneId> = {};
@@ -219,6 +240,7 @@ export default function Home() {
       });
       setDeviceZones(initialZones);
       setControls({ ...currentScenario.initialControls });
+      setFlaggedDevices(new Set());
       resetTutorialState();
     }
   }, [currentScenario, resetTutorialState]);
@@ -231,8 +253,8 @@ export default function Home() {
         explanations: []
       };
     }
-    return calculateScore(scoringRules, currentScenario.devices, deviceZones, controls);
-  }, [scoringRules, currentScenario, deviceZones, controls]);
+    return calculateScore(scoringRules, currentScenario.devices, deviceZones, controls, flaggedDevices);
+  }, [scoringRules, currentScenario, deviceZones, controls, flaggedDevices]);
 
   const guestNetworkAvailable = currentScenario?.networks.some(n => n.id === "guest") ?? false;
   const iotNetworkAvailable = currentScenario?.networks.some(n => n.id === "iot") ?? false;
@@ -281,6 +303,7 @@ export default function Home() {
     lastRecordedScore.current = null;
     previousScore.current = null;
     setIsNewCompletion(false);
+    setFlaggedDevices(new Set());
   }, [selectedScenarioId]);
 
   useEffect(() => {
@@ -441,6 +464,8 @@ export default function Home() {
                 onDeviceDrop={handleDeviceDrop}
                 onZoneChange={handleZoneChange}
                 scenarioId={selectedScenarioId}
+                flaggedDevices={flaggedDevices}
+                onFlagToggle={handleFlagToggle}
               />
             ) : (
               <DeviceListView
@@ -448,6 +473,8 @@ export default function Home() {
                 deviceZones={deviceZones}
                 onZoneChange={handleZoneChange}
                 scenarioId={selectedScenarioId}
+                flaggedDevices={flaggedDevices}
+                onFlagToggle={handleFlagToggle}
               />
             )}
           </div>
