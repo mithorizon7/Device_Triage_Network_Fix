@@ -178,6 +178,12 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+- 2024-12-19: Interactive password brute-force estimator added to "Strong Password" control
+- 2024-12-19: Password training shows real-time crack time estimates using A^L log-space math
+- 2024-12-19: Two attack presets: Fast hash (300B guesses/sec GPU) vs Modern bcrypt (9K guesses/sec)
+- 2024-12-19: Character class detection (lowercase, uppercase, numbers, symbols) with alphabet size calculation
+- 2024-12-19: Scientific notation formatting for extremely large durations (>1 million in any time unit)
+- 2024-12-19: 35+ new translation keys for password training in all 3 languages
 - 2024-12-19: Updated tutorial to replace "Investigate zone" with "Flag Unknown Devices" step (reflects UI change to flag-based investigation)
 - 2024-12-19: Educational content review completed - verified accuracy of security best practices, WPA2/WPA3 dates, MFA statistics, and real-world attack references (WannaCry 2017, Mirai 2016, KRACK 2017)
 - 2024-12-19: Improved DeviceCard responsive layout - device names display fully without truncation, flex-wrap enabled for narrow screens
