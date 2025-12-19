@@ -81,23 +81,6 @@ function ControlItem({ icon: Icon, label, description, tooltip, children }: Cont
   );
 }
 
-const STORAGE_KEY_PASSWORD_TRAINING = 'deviceTriage_dontShowPasswordTraining';
-
-function getPasswordTrainingDontShow(): boolean {
-  try {
-    return localStorage.getItem(STORAGE_KEY_PASSWORD_TRAINING) === 'true';
-  } catch {
-    return false;
-  }
-}
-
-function setPasswordTrainingDontShow(value: boolean): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_PASSWORD_TRAINING, value ? 'true' : 'false');
-  } catch {
-  }
-}
-
 export function ControlsDrawer({
   controls,
   onControlChange,
@@ -107,7 +90,6 @@ export function ControlsDrawer({
 }: ControlsDrawerProps) {
   const { t } = useTranslation();
   const [passwordTrainingOpen, setPasswordTrainingOpen] = useState(false);
-  const [passwordDontShowAgain, setPasswordDontShowAgain] = useState(getPasswordTrainingDontShow);
   
   const {
     activeControl,
@@ -123,9 +105,7 @@ export function ControlsDrawer({
   const handleBooleanControlChange = (controlKey: EducatableControlKey, checked: boolean) => {
     if (controlKey === 'strongWifiPassword' && checked) {
       onControlChange('strongWifiPassword', true);
-      if (!getPasswordTrainingDontShow()) {
-        setPasswordTrainingOpen(true);
-      }
+      setPasswordTrainingOpen(true);
       return;
     }
     
@@ -136,9 +116,6 @@ export function ControlsDrawer({
   };
 
   const handlePasswordTrainingComplete = (accepted: boolean) => {
-    if (passwordDontShowAgain) {
-      setPasswordTrainingDontShow(true);
-    }
     if (!accepted) {
       onControlChange('strongWifiPassword', false);
     }
@@ -147,10 +124,6 @@ export function ControlsDrawer({
 
   const handlePasswordTrainingClose = () => {
     setPasswordTrainingOpen(false);
-  };
-
-  const handlePasswordDontShowChange = (checked: boolean) => {
-    setPasswordDontShowAgain(checked);
   };
 
   const openPasswordTraining = () => {
@@ -514,8 +487,6 @@ export function ControlsDrawer({
     <>
     <PasswordTrainingDialog
       isOpen={passwordTrainingOpen}
-      dontShowAgain={passwordDontShowAgain}
-      onDontShowAgainChange={handlePasswordDontShowChange}
       onComplete={handlePasswordTrainingComplete}
       onClose={handlePasswordTrainingClose}
     />

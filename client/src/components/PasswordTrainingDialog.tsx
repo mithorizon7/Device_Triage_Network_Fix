@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -32,8 +31,6 @@ import { analyzePassword, getWeakExamplePassword, type PasswordAnalysis, type Pa
 
 interface PasswordTrainingDialogProps {
   isOpen: boolean;
-  dontShowAgain: boolean;
-  onDontShowAgainChange: (checked: boolean) => void;
   onComplete: (passwordAccepted: boolean) => void;
   onClose: () => void;
 }
@@ -47,8 +44,6 @@ interface StrengthConfig {
 
 export function PasswordTrainingDialog({
   isOpen,
-  dontShowAgain,
-  onDontShowAgainChange,
   onComplete,
   onClose,
 }: PasswordTrainingDialogProps) {
@@ -352,21 +347,6 @@ export function PasswordTrainingDialog({
             )}
           </div>
         </ScrollArea>
-
-        <div className="flex items-center gap-2 pt-4 border-t">
-          <Checkbox
-            id="dont-show-password-training"
-            checked={dontShowAgain}
-            onCheckedChange={(checked) => onDontShowAgainChange(checked === true)}
-            data-testid="checkbox-dont-show-password"
-          />
-          <Label 
-            htmlFor="dont-show-password-training" 
-            className="text-sm text-muted-foreground cursor-pointer"
-          >
-            {t('education.dontShowAgain')}
-          </Label>
-        </div>
 
         <DialogFooter className="flex-shrink-0 gap-2 sm:gap-2">
           <Button 
