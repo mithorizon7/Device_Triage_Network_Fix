@@ -28,7 +28,82 @@ import { useToast } from "@/hooks/use-toast";
 import { RotateCcw, Target, FileText, LayoutGrid, List } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
-import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
+import type { Scenario, Controls, ZoneId, ScoreResult, Device } from "@shared/schema";
+import type { ZoneConfig } from "@/lib/zones";
+
+interface DynamicZoneGridProps {
+  zones: ZoneConfig[];
+  devices: Device[];
+  deviceZones: Record<string, ZoneId>;
+  onDeviceDrop: (deviceId: string, zoneId: ZoneId) => void;
+  onZoneChange: (deviceId: string, newZone: ZoneId) => void;
+  scenarioId: string;
+}
+
+function DynamicZoneGrid({
+  zones,
+  devices,
+  deviceZones,
+  onDeviceDrop,
+  onZoneChange,
+  scenarioId
+}: DynamicZoneGridProps) {
+  const zoneCounts = useMemo(() => {
+    const counts: Record<ZoneId, number> = { main: 0, guest: 0, iot: 0, investigate: 0 };
+    devices.forEach(d => {
+      const zone = deviceZones[d.id];
+      if (zone && counts[zone] !== undefined) {
+        counts[zone]++;
+      }
+    });
+    return counts;
+  }, [devices, deviceZones]);
+
+  const mainZone = zones.find(z => z.id === "main")!;
+  const otherZones = zones.filter(z => z.id !== "main");
+  const mainCount = zoneCounts.main;
+  const totalOtherCount = zoneCounts.guest + zoneCounts.iot + zoneCounts.investigate;
+  const hasDevicesInOtherZones = totalOtherCount > 0;
+
+  return (
+    <div className="flex flex-col gap-4" data-testid="zones-container">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className={`${mainCount > 6 || !hasDevicesInOtherZones ? "md:col-span-2 md:row-span-2" : "md:col-span-2"}`}>
+          <ZoneDropTarget
+            zone={mainZone}
+            devices={devices}
+            deviceZones={deviceZones}
+            onDeviceDrop={onDeviceDrop}
+            onZoneChange={onZoneChange}
+            scenarioId={scenarioId}
+          />
+        </div>
+        
+        {otherZones.map((zone) => {
+          const count = zoneCounts[zone.id];
+          const isExpanded = count > 3;
+          
+          return (
+            <div 
+              key={zone.id} 
+              className={`${isExpanded ? "md:col-span-2" : "md:col-span-2"}`}
+            >
+              <ZoneDropTarget
+                zone={zone}
+                devices={devices}
+                deviceZones={deviceZones}
+                onDeviceDrop={onDeviceDrop}
+                onZoneChange={onZoneChange}
+                scenarioId={scenarioId}
+                compact={count === 0}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const { t } = useTranslation();
@@ -359,19 +434,14 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8">
             {viewMode === "grid" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="zones-container">
-                {zones.map((zone) => (
-                  <ZoneDropTarget
-                    key={zone.id}
-                    zone={zone}
-                    devices={currentScenario?.devices || []}
-                    deviceZones={deviceZones}
-                    onDeviceDrop={handleDeviceDrop}
-                    onZoneChange={handleZoneChange}
-                    scenarioId={selectedScenarioId}
-                  />
-                ))}
-              </div>
+              <DynamicZoneGrid
+                zones={zones}
+                devices={currentScenario?.devices || []}
+                deviceZones={deviceZones}
+                onDeviceDrop={handleDeviceDrop}
+                onZoneChange={handleZoneChange}
+                scenarioId={selectedScenarioId}
+              />
             ) : (
               <DeviceListView
                 devices={currentScenario?.devices || []}
