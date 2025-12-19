@@ -110,8 +110,12 @@ export function ControlsDrawer({
     }
     
     onControlChange(controlKey as keyof Controls, checked as Controls[keyof Controls]);
-    if (checked && shouldShowEducation(controlKey)) {
-      showEducation(controlKey);
+    const educatableKeys = ['strongWifiPassword', 'guestNetworkEnabled', 'iotNetworkEnabled', 'mfaEnabled', 'autoUpdatesEnabled', 'defaultPasswordsAddressed', 'wifiSecurity'] as const;
+    type EducatableKey = typeof educatableKeys[number];
+    if (checked && educatableKeys.includes(controlKey as EducatableKey)) {
+      if (shouldShowEducation(controlKey as EducatableKey)) {
+        showEducation(controlKey as EducatableKey);
+      }
     }
   };
 
@@ -130,9 +134,10 @@ export function ControlsDrawer({
     setPasswordTrainingOpen(true);
   };
 
-  const handleWifiSecurityChange = (value: Controls["wifiSecurity"]) => {
+  const handleWifiSecurityChange = (value: string) => {
     const previousValue = controls.wifiSecurity;
-    onControlChange("wifiSecurity", value);
+    const typedValue = value as Controls["wifiSecurity"];
+    onControlChange("wifiSecurity", typedValue);
     if ((previousValue === "OPEN" && value !== "OPEN") && shouldShowEducation("wifiSecurity")) {
       showEducation("wifiSecurity");
     }

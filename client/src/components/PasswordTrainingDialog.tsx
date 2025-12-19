@@ -14,6 +14,13 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Lock, 
   Eye,
@@ -24,10 +31,20 @@ import {
   Zap,
   Clock,
   Shield,
-  Lightbulb
+  Lightbulb,
+  Info,
+  Timer,
+  Hash
 } from "lucide-react";
 
-import { analyzePassword, getWeakExamplePassword, type PasswordAnalysis, type PasswordStrength } from "@/lib/passwordStrength";
+import { 
+  analyzePassword, 
+  getWeakExamplePassword, 
+  ATTACK_PRESETS,
+  DEFAULT_PRESET_ID,
+  formatKeyspace,
+  type PasswordStrength 
+} from "@/lib/passwordStrength";
 
 interface PasswordTrainingDialogProps {
   isOpen: boolean;
@@ -51,13 +68,18 @@ export function PasswordTrainingDialog({
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showOriginal, setShowOriginal] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState(DEFAULT_PRESET_ID);
   
   const originalPassword = getWeakExamplePassword();
   
   const analysis = useMemo(() => {
     if (!password) return null;
-    return analyzePassword(password);
-  }, [password]);
+    return analyzePassword(password, selectedPreset);
+  }, [password, selectedPreset]);
+
+  const originalAnalysis = useMemo(() => {
+    return analyzePassword(originalPassword, selectedPreset);
+  }, [originalPassword, selectedPreset]);
 
   const strengthConfigs: Record<PasswordStrength, StrengthConfig> = {
     weak: { 
@@ -100,6 +122,14 @@ export function PasswordTrainingDialog({
 
   const currentStrengthConfig = analysis ? strengthConfigs[analysis.strength] : null;
 
+  const formatCrackTime = (formatted: { displayString: string; unitKey: string; isScientific: boolean }) => {
+    if (formatted.unitKey === 'instant') {
+      return t('passwordTraining.timeInstant');
+    }
+    const unitLabel = t(`passwordTraining.timeUnit_${formatted.unitKey}`);
+    return `${formatted.displayString} ${unitLabel}`;
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent 
@@ -123,46 +153,40 @@ export function PasswordTrainingDialog({
             <div className="space-y-3 p-4 rounded-md bg-muted/50">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Lightbulb className="h-4 w-4 text-amber-500" />
-                {t('passwordTraining.didYouKnow')}
+                {t('passwordTraining.howBruteForceWorks')}
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {t('passwordTraining.bruteForceInfo')}
+                {t('passwordTraining.bruteForceExplainer')}
               </p>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  <span>{t('passwordTraining.shortPasswordTime')}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Shield className="h-3 w-3 text-green-500" />
-                  <span>{t('passwordTraining.longPasswordTime')}</span>
-                </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 bg-background/50 p-2 rounded">
+                <Info className="h-3 w-3 flex-shrink-0" />
+                <span>{t('passwordTraining.exponentialGrowth')}</span>
               </div>
-            </div>
-
-            <div className="space-y-3 p-4 rounded-md border bg-card">
-              <div className="text-sm font-medium">{t('passwordTraining.bestPractices')}</div>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <span>{t('passwordTraining.tipLength')}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <span>{t('passwordTraining.tipMix')}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <span>{t('passwordTraining.tipAvoid')}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <span>{t('passwordTraining.tipPassphrase')}</span>
-                </li>
-              </ul>
             </div>
 
             <div className="space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                {t('passwordTraining.attackScenario')}
+              </Label>
+              <Select value={selectedPreset} onValueChange={setSelectedPreset}>
+                <SelectTrigger data-testid="select-attack-preset">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(ATTACK_PRESETS).map((preset) => (
+                    <SelectItem key={preset.id} value={preset.id}>
+                      {t(preset.labelKey)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {t(ATTACK_PRESETS[selectedPreset]?.notesKey || '')}
+              </p>
+            </div>
+
+            <div className="space-y-2 p-4 rounded-md border bg-card">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">
                   {t('passwordTraining.originalPassword')}
@@ -184,14 +208,21 @@ export function PasswordTrainingDialog({
                   {t('passwordTraining.veryWeak')}
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {t('passwordTraining.originalExplanation')}
-              </p>
+              <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground pt-2">
+                <div className="flex items-center gap-1">
+                  <Hash className="h-3 w-3" />
+                  <span>{t('passwordTraining.length')}: {originalAnalysis.length}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Timer className="h-3 w-3 text-red-500" />
+                  <span>{t('passwordTraining.crackTime')}: {formatCrackTime(originalAnalysis.crackTimeEstimate.avgTimeFormatted)}</span>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="new-password" className="text-sm font-medium">
-                {t('passwordTraining.createNew')}
+                {t('passwordTraining.tryPassword')}
               </Label>
               <div className="relative">
                 <Input
@@ -214,6 +245,10 @@ export function PasswordTrainingDialog({
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                {t('passwordTraining.privacyNote')}
+              </p>
             </div>
 
             {analysis && currentStrengthConfig && (
@@ -235,18 +270,35 @@ export function PasswordTrainingDialog({
                     data-testid="progress-password-strength"
                   />
                 </div>
-                
+
+                <div className="grid grid-cols-2 gap-3 p-3 rounded-md bg-muted/50">
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted-foreground">{t('passwordTraining.detectedLength')}</div>
+                    <div className="text-lg font-semibold">{analysis.length}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted-foreground">{t('passwordTraining.alphabetSize')}</div>
+                    <div className="text-lg font-semibold">{analysis.alphabetSize}</div>
+                  </div>
+                  <div className="col-span-2 space-y-1">
+                    <div className="text-xs text-muted-foreground">{t('passwordTraining.totalCombinations')}</div>
+                    <div className="text-sm font-mono font-semibold">
+                      {formatKeyspace(analysis.crackTimeEstimate.log10Keyspace)}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">{t('passwordTraining.requirements')}</div>
+                  <div className="text-sm font-medium">{t('passwordTraining.characterTypes')}</div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-2 text-sm">
-                      {analysis.length >= 12 ? (
+                      {analysis.hasLowercase ? (
                         <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
                       ) : (
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
-                      <span className={analysis.length >= 12 ? 'text-foreground' : 'text-muted-foreground'}>
-                        {t('passwordTraining.req12Chars')}
+                      <span className={analysis.hasLowercase ? 'text-foreground' : 'text-muted-foreground'}>
+                        {t('passwordTraining.reqLowercase')} (26)
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
@@ -256,17 +308,7 @@ export function PasswordTrainingDialog({
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
                       <span className={analysis.hasUppercase ? 'text-foreground' : 'text-muted-foreground'}>
-                        {t('passwordTraining.reqUppercase')}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      {analysis.hasLowercase ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      )}
-                      <span className={analysis.hasLowercase ? 'text-foreground' : 'text-muted-foreground'}>
-                        {t('passwordTraining.reqLowercase')}
+                        {t('passwordTraining.reqUppercase')} (26)
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
@@ -276,7 +318,7 @@ export function PasswordTrainingDialog({
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
                       <span className={analysis.hasNumbers ? 'text-foreground' : 'text-muted-foreground'}>
-                        {t('passwordTraining.reqNumbers')}
+                        {t('passwordTraining.reqNumbers')} (10)
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
@@ -286,18 +328,33 @@ export function PasswordTrainingDialog({
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
                       <span className={analysis.hasSymbols ? 'text-foreground' : 'text-muted-foreground'}>
-                        {t('passwordTraining.reqSymbols')}
+                        {t('passwordTraining.reqSymbols')} (33)
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      {!analysis.isCommonPassword ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      )}
-                      <span className={!analysis.isCommonPassword ? 'text-foreground' : 'text-muted-foreground'}>
-                        {t('passwordTraining.reqNotCommon')}
-                      </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-3 rounded-md bg-gradient-to-r from-primary/5 to-primary/10 border">
+                  <div className="text-sm font-medium flex items-center gap-2">
+                    <Timer className="h-4 w-4" />
+                    {t('passwordTraining.estimatedCrackTime')}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">{t('passwordTraining.averageCase')}</div>
+                      <div className={`text-lg font-bold ${
+                        analysis.strength === 'strong' ? 'text-green-600 dark:text-green-400' :
+                        analysis.strength === 'medium' ? 'text-amber-600 dark:text-amber-400' :
+                        'text-red-600 dark:text-red-400'
+                      }`}>
+                        {formatCrackTime(analysis.crackTimeEstimate.avgTimeFormatted)}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">{t('passwordTraining.worstCase')}</div>
+                      <div className="text-lg font-bold text-muted-foreground">
+                        {formatCrackTime(analysis.crackTimeEstimate.worstTimeFormatted)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -323,32 +380,47 @@ export function PasswordTrainingDialog({
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 pt-2 border-t text-sm">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">
-                    {t('passwordTraining.crackTime')}:
-                  </span>
-                  <span className="font-medium">
-                    {t(`passwordTraining.crackTime_${analysis.estimatedCrackTime}`)}
-                  </span>
+                <div className="p-3 rounded-md bg-amber-500/10 border border-amber-500/20">
+                  <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300">
+                    <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                    <span>{t('passwordTraining.dictionaryWarning')}</span>
+                  </div>
                 </div>
 
-                <div className="p-3 rounded-md bg-muted/50">
-                  <div className="text-sm font-medium mb-1">
-                    {t('passwordTraining.whyThisRating')}
+                {analysis.strength === 'strong' && (
+                  <div className="p-3 rounded-md bg-green-500/10 border border-green-500/20">
+                    <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
+                      <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                      <span>{t('passwordTraining.strongPasswordCongrats')}</span>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {analysis.strength === 'weak' && t('passwordTraining.explainWeak')}
-                    {analysis.strength === 'medium' && t('passwordTraining.explainMedium')}
-                    {analysis.strength === 'strong' && t('passwordTraining.explainStrong')}
-                  </p>
-                </div>
+                )}
+              </div>
+            )}
+
+            {!analysis && (
+              <div className="space-y-3 p-4 rounded-md border bg-card">
+                <div className="text-sm font-medium">{t('passwordTraining.bestPractices')}</div>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <span>{t('passwordTraining.tipLength')}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <span>{t('passwordTraining.tipMix')}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <span>{t('passwordTraining.tipPassphrase')}</span>
+                  </li>
+                </ul>
               </div>
             )}
           </div>
         </ScrollArea>
 
-        <DialogFooter className="flex-shrink-0 gap-2 sm:gap-2">
+        <DialogFooter className="flex-shrink-0 gap-2 sm:gap-2 pt-4 border-t">
           <Button 
             variant="outline" 
             onClick={handleDecline}
