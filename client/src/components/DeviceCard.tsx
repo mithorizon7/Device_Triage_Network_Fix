@@ -86,7 +86,7 @@ export function DeviceCard({
       aria-label={`${deviceLabel}, ${device.type} device${device.riskFlags.length > 0 ? `, flags: ${device.riskFlags.join(", ")}` : ""}${isFlagged ? ", flagged for investigation" : ""}`}
       data-testid={`card-device-${device.id}`}
       className={`
-        relative flex items-center gap-3 p-3 cursor-grab active:cursor-grabbing
+        relative flex flex-wrap items-center gap-2 p-3 cursor-grab active:cursor-grabbing
         transition-all duration-200 ease-out
         hover-elevate active-elevate-2
         focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
@@ -101,7 +101,7 @@ export function DeviceCard({
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
-            <DeviceIcon className="h-6 w-6 text-foreground" aria-hidden="true" />
+            <DeviceIcon className="h-5 w-5 text-foreground" aria-hidden="true" />
           </div>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[280px]">
@@ -109,19 +109,19 @@ export function DeviceCard({
         </TooltipContent>
       </Tooltip>
 
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate" data-testid={`text-device-label-${device.id}`}>
+      <div className="flex-1 min-w-[100px]">
+        <p className="text-sm font-medium leading-tight" data-testid={`text-device-label-${device.id}`}>
           {deviceLabel}
         </p>
         {device.ip && (
-          <p className="text-xs font-mono text-muted-foreground truncate" data-testid={`text-device-ip-${device.id}`}>
+          <p className="text-xs font-mono text-muted-foreground hidden sm:block" data-testid={`text-device-ip-${device.id}`}>
             {device.ip}
           </p>
         )}
       </div>
 
       {device.riskFlags.length > 0 && (
-        <div className="flex flex-wrap gap-1 justify-end max-w-[120px]">
+        <div className="flex flex-wrap gap-1 justify-end">
           {device.riskFlags.map((flag) => {
             const config = riskFlagConfig[flag];
             const FlagIcon = config.icon;
@@ -152,7 +152,7 @@ export function DeviceCard({
           onValueChange={(value) => onZoneChange(device.id, value as ZoneId)}
         >
           <SelectTrigger
-            className="w-[110px] h-8 text-xs"
+            className="w-auto min-w-[80px] h-8 text-xs"
             data-testid={`select-zone-${device.id}`}
             aria-label={`Move ${deviceLabel} to zone`}
           >
