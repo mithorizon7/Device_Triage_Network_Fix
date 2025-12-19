@@ -19,7 +19,7 @@ function loadControlsRegistry() {
 
 function loadScenarios() {
   const files = readdirSync(scenariosDir).filter(
-    (f) => f.endsWith(".json") && f !== "scoringRules.json"
+    (f) => f.endsWith(".json") && f !== "scoringRules.json" && f !== "controlsRegistry.json"
   );
   return files.map((file) => {
     const content = readFileSync(join(scenariosDir, file), "utf-8");
@@ -29,7 +29,7 @@ function loadScenarios() {
 
 function loadScenarioById(id: string) {
   const files = readdirSync(scenariosDir).filter(
-    (f) => f.endsWith(".json") && f !== "scoringRules.json"
+    (f) => f.endsWith(".json") && f !== "scoringRules.json" && f !== "controlsRegistry.json"
   );
   for (const file of files) {
     const content = readFileSync(join(scenariosDir, file), "utf-8");
