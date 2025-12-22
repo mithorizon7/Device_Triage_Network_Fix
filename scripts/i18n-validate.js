@@ -71,11 +71,44 @@ function getValue(obj, keyPath) {
 function extractICUPlaceholders(message) {
   if (typeof message !== 'string') return [];
   const placeholders = [];
-  const regex = /\{([^,}]+)(?:,[^}]+)?\}/g;
-  let match;
-  while ((match = regex.exec(message)) !== null) {
-    placeholders.push(match[1].trim());
+  
+  // Match top-level ICU placeholders like {name} or {count, plural, ...}
+  // We need to track brace depth to only capture top-level variable names
+  let depth = 0;
+  let currentVar = '';
+  let inVar = false;
+  
+  for (let i = 0; i < message.length; i++) {
+    const char = message[i];
+    
+    if (char === '{') {
+      if (depth === 0) {
+        inVar = true;
+        currentVar = '';
+      }
+      depth++;
+    } else if (char === '}') {
+      depth--;
+      if (depth === 0) {
+        inVar = false;
+      }
+    } else if (inVar && depth === 1) {
+      if (char === ',' || char === ' ') {
+        if (currentVar.trim()) {
+          placeholders.push(currentVar.trim());
+        }
+        inVar = false;
+      } else {
+        currentVar += char;
+      }
+    }
   }
+  
+  // Handle simple {variable} case where we hit closing brace
+  if (currentVar.trim() && !placeholders.includes(currentVar.trim())) {
+    placeholders.push(currentVar.trim());
+  }
+  
   return [...new Set(placeholders)].sort();
 }
 
@@ -155,14 +188,14 @@ function validatePlaceholderConsistency(baseData, targetLocale, targetData, keys
     const extraPlaceholders = targetPlaceholders.filter(p => !basePlaceholders.includes(p));
     
     if (missingPlaceholders.length > 0) {
-      log('warn', `[${targetLocale}] "${key}" missing placeholders: ${missingPlaceholders.join(', ')}`);
-      hasWarnings = true;
+      log('error', `[${targetLocale}] "${key}" missing placeholders: ${missingPlaceholders.join(', ')}`);
+      hasErrors = true;
       allMatch = false;
     }
     
     if (extraPlaceholders.length > 0) {
-      log('warn', `[${targetLocale}] "${key}" has extra placeholders: ${extraPlaceholders.join(', ')}`);
-      hasWarnings = true;
+      log('error', `[${targetLocale}] "${key}" has extra placeholders: ${extraPlaceholders.join(', ')}`);
+      hasErrors = true;
       allMatch = false;
     }
   }

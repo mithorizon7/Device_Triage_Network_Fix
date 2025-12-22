@@ -1,11 +1,14 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import { initReactI18next, useTranslation as useTranslationOriginal } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
+import type { TranslationKey } from './i18n-keys';
 
 import en from '../locales/en.json';
 import lv from '../locales/lv.json';
 import ru from '../locales/ru.json';
+
+export type { TranslationKey } from './i18n-keys';
 
 const resources = {
   en: { translation: en },
@@ -49,6 +52,26 @@ i18n
   });
 
 export default i18n;
+
+/**
+ * Type-safe translation function type.
+ * Use this when passing `t` as a prop or storing in a variable.
+ */
+export type TypedTFunction = (key: TranslationKey | (string & {}), options?: Record<string, unknown>) => string;
+
+/**
+ * Type-safe wrapper for useTranslation hook.
+ * The `t` function accepts any string but provides autocomplete for known keys.
+ * This allows compile-time checking while still supporting dynamic keys like deviceLabels.
+ */
+export function useTypedTranslation() {
+  const { t, i18n: i18nInstance, ready } = useTranslationOriginal();
+  return {
+    t: t as TypedTFunction,
+    i18n: i18nInstance,
+    ready
+  };
+}
 
 export const languages = [
   { code: 'en', name: 'English', nativeName: 'English' },

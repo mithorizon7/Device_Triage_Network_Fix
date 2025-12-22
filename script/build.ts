@@ -1,6 +1,26 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
+import { execSync } from "child_process";
+
+// Run i18n validation and type generation before build
+function runI18nChecks() {
+  console.log("Validating i18n translations...");
+  try {
+    execSync("node scripts/i18n-validate.js", { stdio: "inherit" });
+  } catch (error) {
+    console.error("i18n validation failed! Fix translation issues before building.");
+    process.exit(1);
+  }
+  
+  console.log("Generating i18n TypeScript types...");
+  try {
+    execSync("node scripts/generate-i18n-types.js", { stdio: "inherit" });
+  } catch (error) {
+    console.error("Failed to generate i18n types.");
+    process.exit(1);
+  }
+}
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -33,6 +53,9 @@ const allowlist = [
 ];
 
 async function buildAll() {
+  // Run i18n checks first - fails build if translations are missing
+  runI18nChecks();
+  
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");
