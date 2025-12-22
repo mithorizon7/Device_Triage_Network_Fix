@@ -159,9 +159,14 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 
 ### Tooling
 - **Validate**: `node scripts/i18n-validate.js`
-  - Fails on missing keys, empty values, invalid ICU syntax
-  - Warns on placeholder mismatches between locales
+  - Fails on missing keys, empty values, invalid ICU syntax, placeholder mismatches
+  - Runs automatically before every production build
+- **Type generation**: `node scripts/generate-i18n-types.js`
+  - Generates TypeScript types from en.json to `client/src/lib/i18n-keys.ts`
+  - Provides IDE autocomplete for translation keys
+  - Runs automatically during build
 - **Dev mode**: Missing keys display as `[MISSING:key]` in UI and console
+- **Type-safe hook**: `useTypedTranslation()` provides autocomplete for known keys
 
 ### Features
 - Language switcher in header (flag icons with dropdown)
