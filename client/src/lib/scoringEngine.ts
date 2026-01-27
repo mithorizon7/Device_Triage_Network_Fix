@@ -28,6 +28,7 @@ export interface ScoringRules {
 
 interface ZoneRule {
   id: string;
+  explainKey?: string;
   when: {
     deviceHasFlag?: RiskFlag;
     deviceTypeIs?: string;
@@ -43,6 +44,8 @@ interface ZoneRule {
 
 interface ControlRule {
   id: string;
+  explainKey?: string;
+  scenarioTypes?: string[];
   when: {
     controlIs: keyof Controls;
     valueIs: boolean | string;
@@ -53,6 +56,7 @@ interface ControlRule {
 
 interface SynergyRule {
   id: string;
+  explainKey?: string;
   when: {
     all?: Array<{
       controlIs?: keyof Controls;
@@ -71,7 +75,11 @@ interface Explanation {
   ruleId: string;
   delta: Record<string, number>;
   explain: string;
+  explainKey?: string;
+  explainParams?: Record<string, string | number>;
 }
+
+type ExplanationKind = "baseline" | "controlRules" | "zoneRules" | "synergyRules";
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
@@ -168,19 +176,26 @@ export function calculateScore(
   devices: Device[],
   deviceZones: Record<string, ZoneId>,
   controls: Controls,
-  flaggedDevices: Set<string> = new Set()
+  flaggedDevices: Set<string> = new Set(),
+  scenarioType?: string,
+  getDeviceLabel?: (device: Device) => string
 ): ScoreResult {
-  const explanations: Explanation[] = [];
+  const explanations: Array<Explanation & { kind: ExplanationKind }> = [];
   
   const subscores: Subscores = { ...rules.defaults.baseline };
 
   explanations.push({
     ruleId: "baseline",
     delta: { ...rules.defaults.baseline },
-    explain: "Starting baseline risk scores"
+    explain: "Starting baseline risk scores",
+    explainKey: "scoring.baseline",
+    kind: "baseline"
   });
 
   for (const rule of rules.controlRules) {
+    if (rule.scenarioTypes && (!scenarioType || !rule.scenarioTypes.includes(scenarioType))) {
+      continue;
+    }
     if (evaluateControlCondition(rule.when, controls)) {
       for (const [key, value] of Object.entries(rule.add)) {
         if (key in subscores) {
@@ -190,7 +205,9 @@ export function calculateScore(
       explanations.push({
         ruleId: rule.id,
         delta: rule.add as Record<string, number>,
-        explain: rule.explain
+        explain: rule.explain,
+        explainKey: rule.explainKey,
+        kind: "controlRules"
       });
     }
   }
@@ -201,6 +218,12 @@ export function calculateScore(
 
     for (const rule of rules.zoneRules) {
       if (evaluateZoneCondition(rule.when, device, deviceZone, flaggedDevices.has(device.id))) {
+        const deviceLabel = getDeviceLabel ? getDeviceLabel(device) : device.label;
+        const explainParams = rule.explainKey ? { device: deviceLabel } : undefined;
+        const explainFallback = rule.explain
+          ? `${deviceLabel}: ${rule.explain}`
+          : deviceLabel;
+
         for (const [key, value] of Object.entries(rule.add)) {
           if (key in subscores) {
             (subscores as Record<string, number>)[key] += value as number;
@@ -209,7 +232,10 @@ export function calculateScore(
         explanations.push({
           ruleId: `${rule.id}_${device.id}`,
           delta: rule.add as Record<string, number>,
-          explain: `${device.label}: ${rule.explain}`
+          explain: explainFallback,
+          explainKey: rule.explainKey,
+          explainParams,
+          kind: "zoneRules"
         });
       }
     }
@@ -225,7 +251,9 @@ export function calculateScore(
       explanations.push({
         ruleId: rule.id,
         delta: rule.add as Record<string, number>,
-        explain: rule.explain
+        explain: rule.explain,
+        explainKey: rule.explainKey,
+        kind: "synergyRules"
       });
     }
   }
@@ -258,10 +286,12 @@ export function calculateScore(
     rules.scoreModel.caps.total.max
   );
 
+  const includeSet = new Set(rules.explainPanel?.include || ["baseline", "zoneRules", "controlRules", "synergyRules"]);
   const filteredExplanations = explanations.filter(exp => {
+    if (!includeSet.has(exp.kind)) return false;
     const totalDelta = Object.values(exp.delta).reduce((sum, val) => sum + val, 0);
     return totalDelta !== 0 || exp.ruleId === "baseline";
-  });
+  }).map(({ kind, ...exp }) => exp);
 
   return {
     subscores,

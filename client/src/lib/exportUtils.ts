@@ -29,7 +29,6 @@ export interface ExportData {
     devicesInMainZone: number;
     devicesInGuestZone: number;
     devicesInIoTZone: number;
-    devicesInInvestigateZone: number;
     devicesMoved: number;
     controlsEnabled: number;
     controlsTotal: number;
@@ -40,7 +39,8 @@ export function generateExportData(
   scenario: Scenario,
   deviceZones: Record<string, ZoneId>,
   controls: Controls,
-  scoreResult: ScoreResult
+  scoreResult: ScoreResult,
+  formatExplanation?: (explanation: ScoreResult["explanations"][number]) => string
 ): ExportData {
   const devicePlacements = scenario.devices.map(device => ({
     deviceId: device.id,
@@ -55,8 +55,7 @@ export function generateExportData(
   const zoneCounts = {
     main: 0,
     guest: 0,
-    iot: 0,
-    investigate: 0
+    iot: 0
   };
 
   devicePlacements.forEach(d => {
@@ -67,18 +66,17 @@ export function generateExportData(
 
   const devicesMoved = devicePlacements.filter(d => d.wasMoved).length;
   
-  const booleanControls = [
-    controls.strongWifiPassword,
-    controls.guestNetworkEnabled,
-    controls.iotNetworkEnabled,
-    controls.mfaEnabled,
-    controls.autoUpdatesEnabled,
-    controls.defaultPasswordsAddressed
-  ];
-  
-  const booleanControlsEnabled = booleanControls.filter(Boolean).length;
-  const wifiSecurityScore = controls.wifiSecurity === "WPA3" ? 1 : controls.wifiSecurity === "WPA2" ? 0.5 : 0;
-  const controlsEnabled = booleanControlsEnabled + (wifiSecurityScore >= 0.5 ? 1 : 0);
+  const controlEntries = Object.entries(controls).filter(([, value]) => value !== undefined);
+  const controlsEnabled = controlEntries.reduce((count, [key, value]) => {
+    if (typeof value === "boolean") {
+      return count + (value ? 1 : 0);
+    }
+    if (key === "wifiSecurity") {
+      return count + (value === "OPEN" ? 0 : 1);
+    }
+    return count;
+  }, 0);
+  const controlsTotal = controlEntries.length;
 
   return {
     exportedAt: new Date().toISOString(),
@@ -94,17 +92,18 @@ export function generateExportData(
         credentialAccount: Math.round(scoreResult.subscores.credentialAccount * 10) / 10,
         hygiene: Math.round(scoreResult.subscores.hygiene * 10) / 10
       },
-      explanations: scoreResult.explanations.map(e => e.explain)
+      explanations: formatExplanation
+        ? scoreResult.explanations.map(formatExplanation)
+        : scoreResult.explanations.map(e => e.explain)
     },
     summary: {
       totalDevices: scenario.devices.length,
       devicesInMainZone: zoneCounts.main,
       devicesInGuestZone: zoneCounts.guest,
       devicesInIoTZone: zoneCounts.iot,
-      devicesInInvestigateZone: zoneCounts.investigate,
       devicesMoved,
       controlsEnabled,
-      controlsTotal: 7
+      controlsTotal
     }
   };
 }
@@ -126,8 +125,7 @@ export function exportAsJson(data: ExportData): void {
 const ZONE_NAMES: Record<ZoneId, string> = {
   main: "Main Network",
   guest: "Guest Network",
-  iot: "IoT Network",
-  investigate: "Investigate"
+  iot: "IoT Network"
 };
 
 function getZoneName(zoneId: ZoneId): string {

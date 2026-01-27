@@ -27,36 +27,42 @@
   "zoneRules": [
     {
       "id": "unknown_not_flagged",
+      "explainKey": "scoring.zone.unknown_not_flagged",
       "when": { "deviceHasFlag": "unknown_device", "notFlaggedForInvestigation": true },
       "add": { "exposure": 35 },
-      "explain": "Unknown device not flagged for investigation poses high risk."
+      "explain": "Unknown device not flagged for review poses high risk."
     },
     {
       "id": "unknown_flagged",
+      "explainKey": "scoring.zone.unknown_flagged",
       "when": { "deviceHasFlag": "unknown_device", "flaggedForInvestigation": true },
       "add": { "exposure": -15 },
-      "explain": "Flagging unknown device for investigation reduces immediate exposure."
+      "explain": "Flagging unknown device for review reduces immediate exposure."
     },
     {
       "id": "iot_on_main",
+      "explainKey": "scoring.zone.iot_on_main",
       "when": { "deviceHasFlag": "iot_device", "zoneIs": "main" },
       "add": { "exposure": 12 },
       "explain": "IoT device placed on main network increases blast radius."
     },
     {
       "id": "visitor_on_main",
+      "explainKey": "scoring.zone.visitor_on_main",
       "when": { "deviceHasFlag": "visitor_device", "zoneIs": "main" },
       "add": { "exposure": 10 },
       "explain": "Visitor device on main network increases exposure."
     },
     {
       "id": "printer_on_guest_or_iot",
+      "explainKey": "scoring.zone.printer_on_guest_or_iot",
       "when": { "deviceTypeIs": "printer", "zoneIn": ["guest", "iot"] },
       "add": { "exposure": 6 },
       "explain": "Printer placed off main network can create availability/workflow issues; keep justified."
     },
     {
       "id": "trusted_work_device_on_guest",
+      "explainKey": "scoring.zone.trusted_work_device_on_guest",
       "when": { "deviceHasFlag": "trusted_work_device", "zoneIs": "guest" },
       "add": { "exposure": 6 },
       "explain": "Trusted work device on guest network can reduce security controls/visibility depending on policy."
@@ -66,84 +72,98 @@
   "controlRules": [
     {
       "id": "wifi_security_open",
+      "explainKey": "scoring.control.wifi_security_open",
       "when": { "controlIs": "wifiSecurity", "valueIs": "OPEN" },
       "add": { "exposure": 25, "hygiene": 10 },
       "explain": "Open Wi-Fi removes link-layer protection and is a high-risk default."
     },
     {
       "id": "wifi_security_wpa2",
+      "explainKey": "scoring.control.wifi_security_wpa2",
       "when": { "controlIs": "wifiSecurity", "valueIs": "WPA2" },
       "add": { "exposure": 6 },
       "explain": "WPA2 is a solid baseline; better than open, not best-in-class."
     },
     {
       "id": "wifi_security_wpa3",
+      "explainKey": "scoring.control.wifi_security_wpa3",
       "when": { "controlIs": "wifiSecurity", "valueIs": "WPA3" },
       "add": { "exposure": -2 },
       "explain": "WPA3 provides stronger Wi-Fi protections where supported."
     },
     {
       "id": "strong_wifi_password_on",
+      "explainKey": "scoring.control.strong_wifi_password_on",
       "when": { "controlIs": "strongWifiPassword", "valueIs": true },
       "add": { "hygiene": -10 },
       "explain": "Strong Wi-Fi password reduces opportunistic access."
     },
     {
       "id": "strong_wifi_password_off",
+      "explainKey": "scoring.control.strong_wifi_password_off",
       "when": { "controlIs": "strongWifiPassword", "valueIs": false },
       "add": { "hygiene": 10 },
       "explain": "Weak Wi-Fi passwords increase risk of unauthorized access."
     },
     {
       "id": "guest_network_enabled_on",
+      "explainKey": "scoring.control.guest_network_enabled_on",
       "when": { "controlIs": "guestNetworkEnabled", "valueIs": true },
       "add": { "exposure": -8 },
       "explain": "Guest networks reduce exposure of main devices to visitors."
     },
     {
       "id": "iot_network_enabled_on",
+      "explainKey": "scoring.control.iot_network_enabled_on",
       "when": { "controlIs": "iotNetworkEnabled", "valueIs": true },
       "add": { "exposure": -6 },
       "explain": "Dedicated IoT zone reduces exposure of primary devices."
     },
     {
       "id": "mfa_on",
+      "explainKey": "scoring.control.mfa_on",
       "when": { "controlIs": "mfaEnabled", "valueIs": true },
       "add": { "credentialAccount": -12 },
       "explain": "MFA reduces account takeover risk for device cloud accounts."
     },
     {
       "id": "mfa_off",
+      "explainKey": "scoring.control.mfa_off",
       "when": { "controlIs": "mfaEnabled", "valueIs": false },
       "add": { "credentialAccount": 12 },
       "explain": "No MFA increases account takeover risk."
     },
     {
       "id": "auto_updates_on",
+      "explainKey": "scoring.control.auto_updates_on",
       "when": { "controlIs": "autoUpdatesEnabled", "valueIs": true },
       "add": { "hygiene": -8 },
       "explain": "Updates reduce known-vulnerability exposure over time."
     },
     {
       "id": "auto_updates_off",
+      "explainKey": "scoring.control.auto_updates_off",
       "when": { "controlIs": "autoUpdatesEnabled", "valueIs": false },
       "add": { "hygiene": 8 },
       "explain": "No updates increases risk from known vulnerabilities."
     },
     {
       "id": "default_passwords_addressed_on",
+      "explainKey": "scoring.control.default_passwords_addressed_on",
       "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": true },
       "add": { "credentialAccount": -10 },
       "explain": "Changing default device/app passwords reduces easy compromise."
     },
     {
       "id": "default_passwords_addressed_off",
+      "explainKey": "scoring.control.default_passwords_addressed_off",
       "when": { "controlIs": "defaultPasswordsAddressed", "valueIs": false },
       "add": { "credentialAccount": 10 },
       "explain": "Leaving defaults increases easy compromise risk."
     },
     {
       "id": "vpn_enabled_on",
+      "explainKey": "scoring.control.vpn_enabled_on",
       "when": { "controlIs": "vpnEnabled", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -20 },
@@ -151,6 +171,7 @@
     },
     {
       "id": "vpn_enabled_off",
+      "explainKey": "scoring.control.vpn_enabled_off",
       "when": { "controlIs": "vpnEnabled", "valueIs": false },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": 15 },
@@ -158,6 +179,7 @@
     },
     {
       "id": "personal_hotspot_on",
+      "explainKey": "scoring.control.personal_hotspot_on",
       "when": { "controlIs": "personalHotspot", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -15 },
@@ -165,6 +187,7 @@
     },
     {
       "id": "firewall_enabled_on",
+      "explainKey": "scoring.control.firewall_enabled_on",
       "when": { "controlIs": "firewallEnabled", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -8 },
@@ -172,6 +195,7 @@
     },
     {
       "id": "firewall_enabled_off",
+      "explainKey": "scoring.control.firewall_enabled_off",
       "when": { "controlIs": "firewallEnabled", "valueIs": false },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": 10 },
@@ -179,6 +203,7 @@
     },
     {
       "id": "file_sharing_disabled_on",
+      "explainKey": "scoring.control.file_sharing_disabled_on",
       "when": { "controlIs": "fileSharingDisabled", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -6 },
@@ -186,6 +211,7 @@
     },
     {
       "id": "file_sharing_disabled_off",
+      "explainKey": "scoring.control.file_sharing_disabled_off",
       "when": { "controlIs": "fileSharingDisabled", "valueIs": false },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": 8 },
@@ -193,6 +219,7 @@
     },
     {
       "id": "bluetooth_disabled_on",
+      "explainKey": "scoring.control.bluetooth_disabled_on",
       "when": { "controlIs": "bluetoothDisabled", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -4 },
@@ -200,6 +227,7 @@
     },
     {
       "id": "https_only_on",
+      "explainKey": "scoring.control.https_only_on",
       "when": { "controlIs": "httpsOnly", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -6 },
@@ -207,6 +235,7 @@
     },
     {
       "id": "verify_network_on",
+      "explainKey": "scoring.control.verify_network_on",
       "when": { "controlIs": "verifyNetworkAuthenticity", "valueIs": true },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": -8 },
@@ -214,6 +243,7 @@
     },
     {
       "id": "verify_network_off",
+      "explainKey": "scoring.control.verify_network_off",
       "when": { "controlIs": "verifyNetworkAuthenticity", "valueIs": false },
       "scenarioTypes": ["hotel"],
       "add": { "exposure": 10 },
@@ -224,6 +254,7 @@
   "synergyRules": [
     {
       "id": "iot_isolation_bonus",
+      "explainKey": "scoring.synergy.iot_isolation_bonus",
       "when": {
         "all": [
           { "controlIs": "iotNetworkEnabled", "valueIs": true },
@@ -235,6 +266,7 @@
     },
     {
       "id": "guest_network_used_bonus",
+      "explainKey": "scoring.synergy.guest_network_used_bonus",
       "when": {
         "all": [
           { "controlIs": "guestNetworkEnabled", "valueIs": true },
@@ -246,6 +278,7 @@
     },
     {
       "id": "unknown_device_penalty_if_ignored",
+      "explainKey": "scoring.synergy.unknown_device_penalty_if_ignored",
       "when": {
         "all": [
           { "countDevicesWithFlagAtLeast": { "flag": "unknown_device", "count": 1 } },
@@ -253,7 +286,7 @@
         ]
       },
       "add": { "exposure": 10 },
-      "explain": "Unknown devices present without being flagged for investigation increases risk."
+      "explain": "Unknown devices present without being flagged for review increases risk."
     }
   ],
 

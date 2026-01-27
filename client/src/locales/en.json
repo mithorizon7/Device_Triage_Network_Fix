@@ -15,8 +15,8 @@
     "listViewAriaLabel": "Screen reader friendly list view"
   },
   "actions": {
-    "flagDevice": "Flag for investigation",
-    "unflagDevice": "Remove investigation flag"
+    "flagDevice": "Flag for review",
+    "unflagDevice": "Remove review flag"
   },
   "scenarios": {
     "select": "Select scenario",
@@ -57,7 +57,9 @@
     "unknownFlag": "Unknown",
     "iotFlag": "IoT",
     "visitorFlag": "Visitor",
-    "workFlag": "Work"
+    "workFlag": "Work",
+    "flagsList": "Flags: {flags}",
+    "flaggedForReview": "Flagged for review"
   },
   "deviceLabels": {
     "family_iot_sprawl_v1": {
@@ -154,7 +156,10 @@
     "enable": "Enable {control}",
     "disable": "Disable {control}",
     "setTo": "Set {control} to {value}",
-    "allComplete": "All goals complete!"
+    "allComplete": "All goals complete!",
+    "missingScore": "Still missing: reduce risk to {target} or below.",
+    "missingControls": "Still missing: {count, plural, one {# required control} other {# required controls}}.",
+    "missingBoth": "Still missing: reduce risk to {target} or below and {count, plural, one {# required control} other {# required controls}}."
   },
   "tooltips": {
     "deviceTypes": {
@@ -168,10 +173,10 @@
       "camera": "Security cameras should protect you, but if hacked, they let attackers watch your home. Keep firmware updated.",
       "printer": "Network printers are often overlooked but can store copies of documents and provide network access to attackers.",
       "iot": "IoT devices often have weak security, rarely get updates, and may use default passwords. Isolate them from main devices.",
-      "unknown": "An unrecognized device on your network. Could be a neighbor, a forgotten device, or an intruder. Investigate before trusting."
+      "unknown": "An unrecognized device on your network. Could be a neighbor, a forgotten device, or an intruder. Flag and review before trusting."
     },
     "riskFlags": {
-      "unknown_device": "This device wasn't expected on your network. It could be harmless (a guest's phone) or malicious. Keep it isolated until identified.",
+      "unknown_device": "This device wasn't expected on your network. It could be harmless (a guest's phone) or malicious. Flag it for review until identified.",
       "iot_device": "IoT devices often have poor security: weak passwords, no encryption, rare updates. Put them on a separate network.",
       "visitor_device": "Visitor devices are outside your control. You don't know their security posture. Give them internet access but isolate from your main network.",
       "trusted_work_device": "Work devices typically have corporate security policies, regular updates, and IT oversight. They need reliable network access."
@@ -202,8 +207,8 @@
       "guest": "Internet-only access for visitors or untrusted devices. Can browse the web but can't access your main network devices.",
       "iot": "Isolated network for smart home devices. They get internet access but can't communicate with your main devices if compromised."
     },
-    "flagForInvestigation": "Click to flag this unknown device for investigation. Flagging devices you don't recognize reduces risk by ensuring they're reviewed before being trusted.",
-    "flagged": "This device is flagged for investigation. You've marked it as suspicious and it's being reviewed. Click to remove the flag if you've identified the device."
+    "flagForInvestigation": "Click to flag this unknown device for review. Flagging devices you don't recognize reduces risk by ensuring they're reviewed before being trusted.",
+    "flagged": "This device is flagged for review. You've marked it as suspicious and it's being reviewed. Click to remove the flag if you've identified the device."
   },
   "education": {
     "dontShowAgain": "Don't show this again",
@@ -308,7 +313,7 @@
   },
   "learningObjectives": {
     "family_iot_sprawl_v1": {
-      "0": "Separate devices into trust zones (Main, Guest, IoT, Investigate).",
+      "0": "Separate devices into trust zones (Main, Guest, IoT) and flag unknown devices for review.",
       "1": "Enable high-impact controls (Wi-Fi security, guest/IoT networks, MFA, updates).",
       "2": "Interpret score changes using Explain panel."
     },
@@ -340,6 +345,48 @@
     "reducesRisk": "Reduces risk",
     "increasesRisk": "Increases risk"
   },
+  "scoring": {
+    "baseline": "Starting baseline risk scores",
+    "zone": {
+      "unknown_not_flagged": "{device}: Unknown device not flagged for review poses high risk.",
+      "unknown_flagged": "{device}: Flagging unknown device for review reduces immediate exposure.",
+      "iot_on_main": "{device}: IoT device placed on main network increases blast radius.",
+      "visitor_on_main": "{device}: Visitor device on main network increases exposure.",
+      "printer_on_guest_or_iot": "{device}: Printer placed off main network can create availability/workflow issues; keep justified.",
+      "trusted_work_device_on_guest": "{device}: Trusted work device on guest network can reduce security controls/visibility depending on policy."
+    },
+    "control": {
+      "wifi_security_open": "Open Wi-Fi removes link-layer protection and is a high-risk default.",
+      "wifi_security_wpa2": "WPA2 is a solid baseline; better than open, not best-in-class.",
+      "wifi_security_wpa3": "WPA3 provides stronger Wi-Fi protections where supported.",
+      "strong_wifi_password_on": "Strong Wi-Fi password reduces opportunistic access.",
+      "strong_wifi_password_off": "Weak Wi-Fi passwords increase risk of unauthorized access.",
+      "guest_network_enabled_on": "Guest networks reduce exposure of main devices to visitors.",
+      "iot_network_enabled_on": "Dedicated IoT zone reduces exposure of primary devices.",
+      "mfa_on": "MFA reduces account takeover risk for device cloud accounts.",
+      "mfa_off": "No MFA increases account takeover risk.",
+      "auto_updates_on": "Updates reduce known-vulnerability exposure over time.",
+      "auto_updates_off": "No updates increases risk from known vulnerabilities.",
+      "default_passwords_addressed_on": "Changing default device/app passwords reduces easy compromise.",
+      "default_passwords_addressed_off": "Leaving defaults increases easy compromise risk.",
+      "vpn_enabled_on": "VPN encrypts all traffic, protecting against eavesdropping on public networks.",
+      "vpn_enabled_off": "Without VPN, traffic on public Wi-Fi can be intercepted by attackers.",
+      "personal_hotspot_on": "Using personal hotspot avoids shared network risks entirely.",
+      "firewall_enabled_on": "Device firewall blocks unauthorized incoming connections.",
+      "firewall_enabled_off": "Without firewall, device accepts connections from anyone on the network.",
+      "file_sharing_disabled_on": "Disabling file sharing prevents unauthorized access to your files.",
+      "file_sharing_disabled_off": "File sharing on public networks exposes your files to strangers.",
+      "bluetooth_disabled_on": "Disabling Bluetooth prevents nearby device attacks.",
+      "https_only_on": "HTTPS-only mode ensures encrypted connections to websites.",
+      "verify_network_on": "Verifying network authenticity prevents evil twin attacks.",
+      "verify_network_off": "Without verification, you may connect to a fake network set up by attackers."
+    },
+    "synergy": {
+      "iot_isolation_bonus": "Most IoT devices isolated into IoT zone materially reduces blast radius.",
+      "guest_network_used_bonus": "Visitor devices actually placed on guest network reduces main exposure.",
+      "unknown_device_penalty_if_ignored": "Unknown devices present without being flagged for review increases risk."
+    }
+  },
   "synergy": {
     "title": "Control Synergies",
     "activeCount": "{active}/{total} active",
@@ -352,8 +399,8 @@
     "iotIsolationDesc": "IoT network enabled with devices properly segregated",
     "guestSegmentation": "Guest Segmentation",
     "guestSegmentationDesc": "Guest network enabled with visitors properly isolated",
-    "threatQuarantine": "Threat Quarantine",
-    "threatQuarantineDesc": "All unknown devices isolated for investigation",
+    "threatQuarantine": "Unknown Device Review",
+    "threatQuarantineDesc": "All unknown devices flagged for review",
     "defenseInDepth": "Defense in Depth",
     "defenseInDepthDesc": "Strong Wi-Fi security with MFA and WPA3",
     "activeMaintenance": "Active Maintenance",
@@ -362,7 +409,7 @@
     "componentDevicePlacement": "Device Placement",
     "componentGuestNetwork": "Guest Network",
     "componentVisitorDevices": "Visitor Devices",
-    "componentInvestigateZone": "Investigate Zone",
+    "componentInvestigateZone": "Investigation Flag",
     "componentUnknownDevices": "Unknown Devices",
     "componentWPA3": "WPA3",
     "componentStrongPassword": "Strong Password",
@@ -373,7 +420,14 @@
     "actionMoveIot": "Move IoT devices to IoT zone ({placed}/{total} placed)",
     "actionEnableGuest": "Enable Guest Network",
     "actionMoveVisitors": "Move visitor devices to Guest zone",
-    "actionQuarantineUnknown": "Quarantine unknown devices",
+    "actionQuarantineUnknown": "Flag unknown devices",
+    "actionEnableVpn": "Enable VPN",
+    "actionUseHotspot": "Use personal hotspot",
+    "actionVerifyNetwork": "Verify network name and login",
+    "actionEnableFirewall": "Enable firewall",
+    "actionEnableHttpsOnly": "Enable HTTPS-only mode",
+    "actionDisableFileSharing": "Disable file sharing",
+    "actionDisableBluetooth": "Disable Bluetooth",
     "actionUpgradeWifi": "Upgrade to WPA3",
     "actionEnableMfa": "Enable MFA on accounts",
     "actionEnableUpdates": "Enable auto-updates",
@@ -381,7 +435,14 @@
     "impactCompleteIot": "Complete IoT isolation for full synergy bonus",
     "impactSeparateVisitors": "Separate visitor devices from main network",
     "impactGuestSynergy": "Activate guest segmentation synergy",
-    "impactQuarantine": "Reduce exposure from unidentified devices",
+    "impactQuarantine": "Reduce exposure from unknown devices",
+    "impactVpnProtection": "Encrypt traffic on public Wi-Fi",
+    "impactAvoidPublicWifi": "Avoid shared Wi-Fi risks entirely",
+    "impactAvoidEvilTwin": "Reduce risk of fake networks",
+    "impactBlockInbound": "Block unsolicited inbound connections",
+    "impactEncryptWeb": "Ensure web traffic stays encrypted",
+    "impactReduceFileExposure": "Reduce exposure of shared files",
+    "impactReduceNearbyAttack": "Reduce nearby device attack surface",
     "impactStrongerEncryption": "Stronger wireless encryption",
     "impactProtectAccounts": "Protect cloud-connected devices from account compromise",
     "impactReduceVulnerability": "Reduce vulnerability exposure over time"
@@ -467,7 +528,7 @@
       },
       "flagInvestigation": {
         "title": "Flag Unknown Devices",
-        "content": "See a device you don't recognize? Look for the flag button on devices marked as 'Unknown'. Flagging a suspicious device marks it for investigation - a critical first step when you spot something unexpected on your network. Don't trust unknown devices until you identify them. In the real world, this could be a neighbor piggybacking on your Wi-Fi or a forgotten gadget - but it could also be an intruder."
+        "content": "See a device you don't recognize? Look for the flag button on devices marked as 'Unknown'. Flagging a suspicious device marks it for review - a critical first step when you spot something unexpected on your network. Don't trust unknown devices until you identify them. In the real world, this could be a neighbor piggybacking on your Wi-Fi or a forgotten gadget - but it could also be an intruder."
       },
       "riskMeter": {
         "title": "Watch Your Risk Drop",
@@ -525,6 +586,8 @@
     "export": "Export",
     "copyTitle": "{title} (Copy)",
     "importError": "Failed to import scenario. Please check the file format.",
+    "importZoneWarningTitle": "Zones adjusted",
+    "importZoneWarning": "{count, plural, one {# device had} other {# devices had}} an unknown network zone and was moved to Main.",
     "deviceDefaultName": "Device {index}",
     "riskFlags": {
       "unknown_device": "unknown device",

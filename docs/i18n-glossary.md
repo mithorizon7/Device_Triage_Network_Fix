@@ -25,7 +25,7 @@ These terms are product/technical names and should remain in English across all 
 | Main Network | Galvenais tīkls | Основная сеть | Primary trusted network |
 | Guest Network | Viesu tīkls | Гостевая сеть | Visitor-only network |
 | IoT Network | IoT tīkls | Сеть IoT | Smart device network |
-| Investigate | Izmeklēt | Расследовать | Quarantine zone for unknowns |
+| Investigation Flag | Pārbaudes atzīme | Метка проверки | Flag unknown devices for review |
 | Device | Ierīce | Устройство | Any network-connected device |
 | Scenario | Scenārijs | Сценарий | Training exercise |
 | Controls | Kontroles | Настройки | Security settings |
@@ -71,7 +71,7 @@ These terms are product/technical names and should remain in English across all 
 |---------|---------|---------|
 | IoT Isolation | IoT izolācija | Изоляция IoT |
 | Guest Segmentation | Viesu segmentācija | Сегментация гостей |
-| Threat Quarantine | Draudu karantīna | Карантин угроз |
+| Unknown Device Review | Nezināmo ierīču pārbaude | Проверка неизвестных устройств |
 | Defense in Depth | Daudzslāņu aizsardzība | Глубокая защита |
 | Active Maintenance | Aktīva uzturēšana | Активное обслуживание |
 

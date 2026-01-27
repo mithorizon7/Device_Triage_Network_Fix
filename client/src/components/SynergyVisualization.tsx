@@ -11,6 +11,8 @@ interface SynergyVisualizationProps {
   scenario: Scenario;
   deviceZones: Record<string, ZoneId>;
   controls: Controls;
+  flaggedDevices?: Set<string>;
+  availableControlIds?: Set<string>;
   embedded?: boolean;
 }
 
@@ -29,15 +31,37 @@ interface PotentialImprovement {
   actionParams?: Record<string, number>;
   impactKey: string;
   priority: "high" | "medium" | "low";
+  order?: number;
 }
 
 export function SynergyVisualization({
   scenario,
   deviceZones,
   controls,
+  flaggedDevices = new Set(),
+  availableControlIds,
   embedded = false
 }: SynergyVisualizationProps) {
   const { t } = useTranslation();
+
+  const isControlAvailable = <K extends keyof Controls>(key: K) =>
+    availableControlIds
+      ? availableControlIds.has(key) && controls[key] !== undefined
+      : controls[key] !== undefined;
+  const supportsIotNetwork = isControlAvailable("iotNetworkEnabled");
+  const supportsGuestNetwork = isControlAvailable("guestNetworkEnabled");
+  const supportsWifiSecurity = isControlAvailable("wifiSecurity");
+  const supportsStrongWifiPassword = isControlAvailable("strongWifiPassword");
+  const supportsMfa = isControlAvailable("mfaEnabled");
+  const supportsUpdates = isControlAvailable("autoUpdatesEnabled");
+  const supportsDefaultPasswords = isControlAvailable("defaultPasswordsAddressed");
+  const supportsVpn = isControlAvailable("vpnEnabled");
+  const supportsHotspot = isControlAvailable("personalHotspot");
+  const supportsFirewall = isControlAvailable("firewallEnabled");
+  const supportsFileSharing = isControlAvailable("fileSharingDisabled");
+  const supportsBluetooth = isControlAvailable("bluetoothDisabled");
+  const supportsHttpsOnly = isControlAvailable("httpsOnly");
+  const supportsVerifyNetwork = isControlAvailable("verifyNetworkAuthenticity");
 
   const iotDevices = useMemo(() => 
     scenario.devices.filter(d => d.riskFlags.includes("iot_device")),
@@ -64,85 +88,114 @@ export function SynergyVisualization({
     [visitorDevices, deviceZones]
   );
 
-  const unknownsQuarantined = useMemo(() =>
-    unknownDevices.filter(d => deviceZones[d.id] === "investigate").length,
-    [unknownDevices, deviceZones]
+  const unknownsFlagged = useMemo(() =>
+    unknownDevices.filter(d => flaggedDevices.has(d.id)).length,
+    [unknownDevices, flaggedDevices]
   );
 
   const synergies: Synergy[] = useMemo(() => {
     const result: Synergy[] = [];
 
-    const iotIsolationActive = controls.iotNetworkEnabled && 
-      iotDevices.length > 0 && 
-      iotInIotZone >= iotDevices.length * 0.7;
-    
-    result.push({
-      id: "iot_isolation",
-      nameKey: "synergy.iotIsolation",
-      descriptionKey: "synergy.iotIsolationDesc",
-      isActive: iotIsolationActive,
-      impact: "high",
-      componentKeys: ["synergy.componentIotNetwork", "synergy.componentDevicePlacement"]
-    });
+    if (supportsIotNetwork) {
+      const iotIsolationActive = controls.iotNetworkEnabled && 
+        iotDevices.length > 0 && 
+        iotInIotZone >= iotDevices.length * 0.7;
+      
+      result.push({
+        id: "iot_isolation",
+        nameKey: "synergy.iotIsolation",
+        descriptionKey: "synergy.iotIsolationDesc",
+        isActive: iotIsolationActive,
+        impact: "high",
+        componentKeys: ["synergy.componentIotNetwork", "synergy.componentDevicePlacement"]
+      });
+    }
 
-    const guestSegmentationActive = controls.guestNetworkEnabled && 
-      visitorDevices.length > 0 && 
-      visitorsInGuest >= 1;
-    
-    result.push({
-      id: "guest_segmentation",
-      nameKey: "synergy.guestSegmentation",
-      descriptionKey: "synergy.guestSegmentationDesc",
-      isActive: guestSegmentationActive,
-      impact: "medium",
-      componentKeys: ["synergy.componentGuestNetwork", "synergy.componentVisitorDevices"]
-    });
+    if (supportsGuestNetwork) {
+      const guestSegmentationActive = controls.guestNetworkEnabled && 
+        visitorDevices.length > 0 && 
+        visitorsInGuest >= 1;
+      
+      result.push({
+        id: "guest_segmentation",
+        nameKey: "synergy.guestSegmentation",
+        descriptionKey: "synergy.guestSegmentationDesc",
+        isActive: guestSegmentationActive,
+        impact: "medium",
+        componentKeys: ["synergy.componentGuestNetwork", "synergy.componentVisitorDevices"]
+      });
+    }
 
-    const threatQuarantineActive = unknownDevices.length > 0 && 
-      unknownsQuarantined === unknownDevices.length;
-    
-    result.push({
-      id: "threat_quarantine",
-      nameKey: "synergy.threatQuarantine",
-      descriptionKey: "synergy.threatQuarantineDesc",
-      isActive: threatQuarantineActive,
-      impact: "high",
-      componentKeys: ["synergy.componentInvestigateZone", "synergy.componentUnknownDevices"]
-    });
+    if (unknownDevices.length > 0) {
+      const threatQuarantineActive = unknownsFlagged === unknownDevices.length;
+      
+      result.push({
+        id: "threat_quarantine",
+        nameKey: "synergy.threatQuarantine",
+        descriptionKey: "synergy.threatQuarantineDesc",
+        isActive: threatQuarantineActive,
+        impact: "high",
+        componentKeys: ["synergy.componentInvestigateZone", "synergy.componentUnknownDevices"]
+      });
+    }
 
-    const strongAuthActive = controls.strongWifiPassword && 
-      controls.mfaEnabled && 
-      controls.wifiSecurity === "WPA3";
-    
-    result.push({
-      id: "strong_auth",
-      nameKey: "synergy.defenseInDepth",
-      descriptionKey: "synergy.defenseInDepthDesc",
-      isActive: strongAuthActive,
-      impact: "high",
-      componentKeys: ["synergy.componentWPA3", "synergy.componentStrongPassword", "synergy.componentMFA"]
-    });
+    if (supportsWifiSecurity && supportsStrongWifiPassword && supportsMfa) {
+      const strongAuthActive = controls.strongWifiPassword && 
+        controls.mfaEnabled && 
+        controls.wifiSecurity === "WPA3";
+      
+      result.push({
+        id: "strong_auth",
+        nameKey: "synergy.defenseInDepth",
+        descriptionKey: "synergy.defenseInDepthDesc",
+        isActive: strongAuthActive,
+        impact: "high",
+        componentKeys: ["synergy.componentWPA3", "synergy.componentStrongPassword", "synergy.componentMFA"]
+      });
+    }
 
-    const maintenanceActive = controls.autoUpdatesEnabled && 
-      controls.defaultPasswordsAddressed;
-    
-    result.push({
-      id: "maintenance",
-      nameKey: "synergy.activeMaintenance",
-      descriptionKey: "synergy.activeMaintenanceDesc",
-      isActive: maintenanceActive,
-      impact: "medium",
-      componentKeys: ["synergy.componentAutoUpdates", "synergy.componentPasswordHygiene"]
-    });
+    if (supportsUpdates && supportsDefaultPasswords) {
+      const maintenanceActive = controls.autoUpdatesEnabled && 
+        controls.defaultPasswordsAddressed;
+      
+      result.push({
+        id: "maintenance",
+        nameKey: "synergy.activeMaintenance",
+        descriptionKey: "synergy.activeMaintenanceDesc",
+        isActive: maintenanceActive,
+        impact: "medium",
+        componentKeys: ["synergy.componentAutoUpdates", "synergy.componentPasswordHygiene"]
+      });
+    }
 
     return result;
-  }, [controls, iotDevices, visitorDevices, unknownDevices, iotInIotZone, visitorsInGuest, unknownsQuarantined]);
+  }, [
+    controls, 
+    iotDevices, 
+    visitorDevices, 
+    unknownDevices, 
+    iotInIotZone, 
+    visitorsInGuest, 
+    unknownsFlagged,
+    supportsIotNetwork,
+    supportsGuestNetwork,
+    supportsWifiSecurity,
+    supportsStrongWifiPassword,
+    supportsMfa,
+    supportsUpdates,
+    supportsDefaultPasswords
+  ]);
 
   const potentialImprovements: PotentialImprovement[] = useMemo(() => {
     const improvements: PotentialImprovement[] = [];
+    let order = 0;
 
-    if (!controls.iotNetworkEnabled && iotDevices.length > 0) {
-      improvements.push({
+    const addImprovement = (improvement: PotentialImprovement) => {
+      improvements.push({ ...improvement, order: order++ });
+    };
+
+    if (supportsIotNetwork && !controls.iotNetworkEnabled && iotDevices.length > 0) {
+      addImprovement({
         id: "enable_iot",
         actionKey: "synergy.actionEnableIot",
         impactKey: "synergy.impactIsolateIot",
@@ -150,8 +203,8 @@ export function SynergyVisualization({
       });
     }
 
-    if (controls.iotNetworkEnabled && iotDevices.length > 0 && iotInIotZone < iotDevices.length) {
-      improvements.push({
+    if (supportsIotNetwork && controls.iotNetworkEnabled && iotDevices.length > 0 && iotInIotZone < iotDevices.length) {
+      addImprovement({
         id: "move_iot",
         actionKey: "synergy.actionMoveIot",
         actionParams: { placed: iotInIotZone, total: iotDevices.length },
@@ -160,8 +213,8 @@ export function SynergyVisualization({
       });
     }
 
-    if (!controls.guestNetworkEnabled && visitorDevices.length > 0) {
-      improvements.push({
+    if (supportsGuestNetwork && !controls.guestNetworkEnabled && visitorDevices.length > 0) {
+      addImprovement({
         id: "enable_guest",
         actionKey: "synergy.actionEnableGuest",
         impactKey: "synergy.impactSeparateVisitors",
@@ -169,8 +222,8 @@ export function SynergyVisualization({
       });
     }
 
-    if (controls.guestNetworkEnabled && visitorDevices.length > visitorsInGuest) {
-      improvements.push({
+    if (supportsGuestNetwork && controls.guestNetworkEnabled && visitorDevices.length > visitorsInGuest) {
+      addImprovement({
         id: "move_visitors",
         actionKey: "synergy.actionMoveVisitors",
         impactKey: "synergy.impactGuestSynergy",
@@ -178,8 +231,8 @@ export function SynergyVisualization({
       });
     }
 
-    if (unknownDevices.length > unknownsQuarantined) {
-      improvements.push({
+    if (unknownDevices.length > unknownsFlagged) {
+      addImprovement({
         id: "quarantine_unknown",
         actionKey: "synergy.actionQuarantineUnknown",
         impactKey: "synergy.impactQuarantine",
@@ -187,8 +240,71 @@ export function SynergyVisualization({
       });
     }
 
-    if (controls.wifiSecurity !== "WPA3") {
-      improvements.push({
+    if (supportsVpn && !controls.vpnEnabled) {
+      addImprovement({
+        id: "enable_vpn",
+        actionKey: "synergy.actionEnableVpn",
+        impactKey: "synergy.impactVpnProtection",
+        priority: "high"
+      });
+    }
+
+    if (supportsHotspot && !controls.personalHotspot) {
+      addImprovement({
+        id: "use_hotspot",
+        actionKey: "synergy.actionUseHotspot",
+        impactKey: "synergy.impactAvoidPublicWifi",
+        priority: "high"
+      });
+    }
+
+    if (supportsVerifyNetwork && !controls.verifyNetworkAuthenticity) {
+      addImprovement({
+        id: "verify_network",
+        actionKey: "synergy.actionVerifyNetwork",
+        impactKey: "synergy.impactAvoidEvilTwin",
+        priority: "high"
+      });
+    }
+
+    if (supportsFirewall && !controls.firewallEnabled) {
+      addImprovement({
+        id: "enable_firewall",
+        actionKey: "synergy.actionEnableFirewall",
+        impactKey: "synergy.impactBlockInbound",
+        priority: "medium"
+      });
+    }
+
+    if (supportsHttpsOnly && !controls.httpsOnly) {
+      addImprovement({
+        id: "enable_https_only",
+        actionKey: "synergy.actionEnableHttpsOnly",
+        impactKey: "synergy.impactEncryptWeb",
+        priority: "medium"
+      });
+    }
+
+    if (supportsFileSharing && !controls.fileSharingDisabled) {
+      addImprovement({
+        id: "disable_file_sharing",
+        actionKey: "synergy.actionDisableFileSharing",
+        impactKey: "synergy.impactReduceFileExposure",
+        priority: "medium"
+      });
+    }
+
+    if (supportsBluetooth && !controls.bluetoothDisabled) {
+      addImprovement({
+        id: "disable_bluetooth",
+        actionKey: "synergy.actionDisableBluetooth",
+        impactKey: "synergy.impactReduceNearbyAttack",
+        priority: "low"
+      });
+    }
+
+    if (supportsWifiSecurity && controls.wifiSecurity !== "WPA3") {
+      addImprovement({
         id: "upgrade_wifi",
         actionKey: "synergy.actionUpgradeWifi",
         impactKey: "synergy.impactStrongerEncryption",
@@ -196,8 +312,8 @@ export function SynergyVisualization({
       });
     }
 
-    if (!controls.mfaEnabled) {
-      improvements.push({
+    if (supportsMfa && !controls.mfaEnabled) {
+      addImprovement({
         id: "enable_mfa",
         actionKey: "synergy.actionEnableMfa",
         impactKey: "synergy.impactProtectAccounts",
@@ -205,8 +321,8 @@ export function SynergyVisualization({
       });
     }
 
-    if (!controls.autoUpdatesEnabled) {
-      improvements.push({
+    if (supportsUpdates && !controls.autoUpdatesEnabled) {
+      addImprovement({
         id: "enable_updates",
         actionKey: "synergy.actionEnableUpdates",
         impactKey: "synergy.impactReduceVulnerability",
@@ -214,8 +330,40 @@ export function SynergyVisualization({
       });
     }
 
-    return improvements.slice(0, 4);
-  }, [controls, iotDevices, visitorDevices, unknownDevices, iotInIotZone, visitorsInGuest, unknownsQuarantined]);
+    const priorityOrder: Record<PotentialImprovement["priority"], number> = {
+      high: 0,
+      medium: 1,
+      low: 2
+    };
+
+    return improvements
+      .sort((a, b) => {
+        const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+        if (priorityDiff !== 0) return priorityDiff;
+        return (a.order ?? 0) - (b.order ?? 0);
+      })
+      .slice(0, 4);
+  }, [
+    controls, 
+    iotDevices, 
+    visitorDevices, 
+    unknownDevices, 
+    iotInIotZone, 
+    visitorsInGuest, 
+    unknownsFlagged,
+    supportsIotNetwork,
+    supportsGuestNetwork,
+    supportsWifiSecurity,
+    supportsMfa,
+    supportsUpdates,
+    supportsVpn,
+    supportsHotspot,
+    supportsFirewall,
+    supportsFileSharing,
+    supportsBluetooth,
+    supportsHttpsOnly,
+    supportsVerifyNetwork
+  ]);
 
   const activeSynergies = synergies.filter(s => s.isActive);
   const inactiveSynergies = synergies.filter(s => !s.isActive);

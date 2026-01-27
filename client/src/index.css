@@ -55,7 +55,6 @@
   --zone-main: 212 85% 32%;
   --zone-guest: 160 70% 35%;
   --zone-iot: 280 65% 40%;
-  --zone-investigate: 35 80% 45%;
   --radius: .5rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(210 6% 88% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(210 6% 88% / 0.00);
@@ -118,7 +117,6 @@
   --zone-main: 212 85% 55%;
   --zone-guest: 160 70% 45%;
   --zone-iot: 280 65% 60%;
-  --zone-investigate: 35 80% 55%;
   --sidebar: 210 6% 12%;
   --sidebar-foreground: 210 6% 88%;
   --sidebar-border: 210 6% 16%;

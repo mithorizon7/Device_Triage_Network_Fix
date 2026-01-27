@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -18,12 +18,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { 
   Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound, Info, HelpCircle,
-  Smartphone, ShieldCheck, FolderX, BluetoothOff, Search
+  Smartphone, ShieldCheck, FolderX, BluetoothOff, Search, Cpu
 } from "lucide-react";
-import type { Controls } from "@shared/schema";
+import type { ControlDefinition, Controls, ControlsRegistry } from "@shared/schema";
 import { useControlEducation } from "@/hooks/useControlEducation";
 import { ControlEducationDialog } from "./ControlEducationDialog";
 import { PasswordTrainingDialog } from "./PasswordTrainingDialog";
+import { getScenarioControlDefinitions } from "@/lib/controlsRegistry";
 
 type EducatableControlKey = 
   | "strongWifiPassword"
@@ -47,6 +48,7 @@ interface ControlsDrawerProps {
   guestNetworkAvailable: boolean;
   iotNetworkAvailable: boolean;
   scenarioType: string;
+  controlsRegistry?: ControlsRegistry;
 }
 
 interface ControlItemProps {
@@ -86,10 +88,15 @@ export function ControlsDrawer({
   onControlChange,
   guestNetworkAvailable,
   iotNetworkAvailable,
-  scenarioType
+  scenarioType,
+  controlsRegistry
 }: ControlsDrawerProps) {
   const { t } = useTranslation();
   const [passwordTrainingOpen, setPasswordTrainingOpen] = useState(false);
+  const controlDefinitions = useMemo(
+    () => getScenarioControlDefinitions(controlsRegistry, scenarioType),
+    [controlsRegistry, scenarioType]
+  );
   
   const {
     activeControl,
@@ -101,6 +108,7 @@ export function ControlsDrawer({
   } = useControlEducation();
 
   const isHotelScenario = scenarioType === 'hotel';
+  const shouldUseRegistry = controlDefinitions.length > 0;
 
   const handleBooleanControlChange = (controlKey: EducatableControlKey, checked: boolean) => {
     if (controlKey === 'strongWifiPassword' && checked) {
@@ -155,6 +163,163 @@ export function ControlsDrawer({
     }
     closeEducation();
   };
+
+  const iconMap: Record<string, typeof Wifi> = {
+    Wifi,
+    Lock,
+    Users,
+    Shield,
+    Key,
+    RefreshCw,
+    KeyRound,
+    Smartphone,
+    ShieldCheck,
+    FolderX,
+    BluetoothOff,
+    Search,
+    Cpu
+  };
+
+  const getTooltipKey = (controlId: string) =>
+    controlId === "verifyNetworkAuthenticity"
+      ? "tooltips.controls.verifyNetwork"
+      : `tooltips.controls.${controlId}`;
+
+  const getControlDescription = (control: ControlDefinition) => {
+    if (control.id === "guestNetworkEnabled") {
+      return guestNetworkAvailable
+        ? t(control.descriptionKey)
+        : t('controls.enableInSettings');
+    }
+    if (control.id === "iotNetworkEnabled") {
+      return iotNetworkAvailable
+        ? t(control.descriptionKey)
+        : t('controls.enableInSettings');
+    }
+    return t(control.descriptionKey);
+  };
+
+  const renderWifiSecurity = (control: ControlDefinition) => (
+    <ControlItem
+      icon={iconMap[control.icon] || Wifi}
+      label={t(control.labelKey)}
+      description={t(control.descriptionKey)}
+      tooltip={t(getTooltipKey(control.id))}
+    >
+      <div className="flex items-center gap-1">
+        <Select
+          value={controls.wifiSecurity || (control.default as Controls["wifiSecurity"]) || "WPA2"}
+          onValueChange={handleWifiSecurityChange}
+        >
+          <SelectTrigger 
+            className="w-[100px] text-xs"
+            data-testid="select-wifi-security"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectItem value="OPEN">{t('controls.wifiSecurityOpen')}</SelectItem>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[280px]">
+                <p className="text-sm">{t('tooltips.wifiSecurity.open')}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectItem value="WPA2">{t('controls.wifiSecurityWPA2')}</SelectItem>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[280px]">
+                <p className="text-sm">{t('tooltips.wifiSecurity.wpa2')}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectItem value="WPA3">{t('controls.wifiSecurityWPA3')}</SelectItem>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[280px]">
+                <p className="text-sm">{t('tooltips.wifiSecurity.wpa3')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </SelectContent>
+        </Select>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[280px]">
+            <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityOpen')}</p>
+            <p className="text-xs text-muted-foreground mb-2">{t('tooltips.wifiSecurity.open')}</p>
+            <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityWPA2')}</p>
+            <p className="text-xs text-muted-foreground mb-2">{t('tooltips.wifiSecurity.wpa2')}</p>
+            <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityWPA3')}</p>
+            <p className="text-xs text-muted-foreground">{t('tooltips.wifiSecurity.wpa3')}</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </ControlItem>
+  );
+
+  const renderToggleControl = (control: ControlDefinition) => {
+    const controlKey = control.id as EducatableControlKey;
+    const isStrongPassword = control.id === "strongWifiPassword";
+    const shouldDisable = control.id === "guestNetworkEnabled"
+      ? !guestNetworkAvailable
+      : control.id === "iotNetworkEnabled"
+        ? !iotNetworkAvailable
+        : false;
+
+    return (
+      <ControlItem
+        icon={iconMap[control.icon] || Shield}
+        label={t(control.labelKey)}
+        description={getControlDescription(control)}
+        tooltip={t(getTooltipKey(control.id))}
+      >
+        <div className="flex items-center gap-1">
+          {isStrongPassword && control.hasInteractiveTraining && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={openPasswordTraining}
+                  data-testid="button-password-training"
+                >
+                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-sm">{t('passwordTraining.title')}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          <Switch
+            checked={controls[control.id as keyof Controls] || false}
+            onCheckedChange={(checked) => handleBooleanControlChange(controlKey, checked)}
+            disabled={shouldDisable}
+            data-testid={`switch-${control.id}`}
+            aria-label={t(control.labelKey)}
+          />
+        </div>
+      </ControlItem>
+    );
+  };
+
+  const renderRegistryControls = () => (
+    <>
+      {controlDefinitions.map((control, index) => (
+        <div key={control.id}>
+          {control.type === "select" && control.id === "wifiSecurity"
+            ? renderWifiSecurity(control)
+            : renderToggleControl(control)}
+          {index < controlDefinitions.length - 1 && <Separator />}
+        </div>
+      ))}
+    </>
+  );
 
   const renderHomeOfficeControls = () => (
     <>
@@ -512,7 +677,11 @@ export function ControlsDrawer({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">
-        {isHotelScenario ? renderHotelControls() : renderHomeOfficeControls()}
+        {shouldUseRegistry
+          ? renderRegistryControls()
+          : isHotelScenario
+            ? renderHotelControls()
+            : renderHomeOfficeControls()}
       </CardContent>
     </Card>
     </>

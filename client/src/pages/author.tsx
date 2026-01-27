@@ -21,7 +21,8 @@ import {
   saveCustomScenario, 
   deleteCustomScenario,
   exportScenarioAsJson,
-  createEmptyScenario
+  createEmptyScenario,
+  sanitizeScenarioNetworkIds
 } from "@/lib/customScenarios";
 import { getDeviceIcon } from "@/lib/deviceIcons";
 import { recordCustomScenarioCreated } from "@/lib/progressTracking";
@@ -81,7 +82,7 @@ export default function AuthorPage() {
     };
     saveCustomScenario(duplicate);
     setCustomScenarios(getCustomScenarios());
-  }, [t]);
+  }, [t, toast]);
 
   const handleDelete = useCallback((scenarioId: string) => {
     deleteCustomScenario(scenarioId);
@@ -100,7 +101,7 @@ export default function AuthorPage() {
         if (badge) {
           toast({
             title: t('notifications.badgeEarned'),
-            description: `${badge.name}: ${badge.description}`,
+            description: `${t(badge.name)}: ${t(badge.description)}`,
           });
         }
       }
@@ -126,10 +127,17 @@ export default function AuthorPage() {
           throw new Error("Invalid scenario format");
         }
         const scenario = result.data;
-        scenario.id = `imported_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-        saveCustomScenario(scenario);
+        const { scenario: sanitizedScenario, invalidDeviceIds } = sanitizeScenarioNetworkIds(scenario);
+        sanitizedScenario.id = `imported_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+        saveCustomScenario(sanitizedScenario);
         setCustomScenarios(getCustomScenarios());
         setImportError(null);
+        if (invalidDeviceIds.length > 0) {
+          toast({
+            title: t('author.importZoneWarningTitle'),
+            description: t('author.importZoneWarning', { count: invalidDeviceIds.length })
+          });
+        }
       } catch {
         setImportError(t('author.importError'));
       }

@@ -2,12 +2,15 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, CheckCircle2, Circle } from "lucide-react";
-import type { Scenario, Controls } from "@shared/schema";
+import type { Scenario, Controls, ControlsRegistry } from "@shared/schema";
+import { getControlDefinition } from "@/lib/controlsRegistry";
 
 interface WinConditionsCardProps {
   scenario: Scenario;
   currentScore: number;
   controls: Controls;
+  requiredControls?: Array<{ control: string; value: boolean | string }>;
+  controlsRegistry?: ControlsRegistry;
 }
 
 const controlKeys: Record<string, string> = {
@@ -17,25 +20,44 @@ const controlKeys: Record<string, string> = {
   iotNetworkEnabled: "controls.iotNetworkEnabled",
   mfaEnabled: "controls.mfaEnabled",
   autoUpdatesEnabled: "controls.autoUpdatesEnabled",
-  defaultPasswordsAddressed: "controls.defaultPasswordsAddressed"
+  defaultPasswordsAddressed: "controls.defaultPasswordsAddressed",
+  vpnEnabled: "controls.vpnEnabled",
+  personalHotspot: "controls.personalHotspot",
+  firewallEnabled: "controls.firewallEnabled",
+  fileSharingDisabled: "controls.fileSharingDisabled",
+  bluetoothDisabled: "controls.bluetoothDisabled",
+  httpsOnly: "controls.httpsOnly",
+  verifyNetworkAuthenticity: "controls.verifyNetwork"
 };
 
-export function WinConditionsCard({ scenario, currentScore, controls }: WinConditionsCardProps) {
+export function WinConditionsCard({ 
+  scenario, 
+  currentScore, 
+  controls,
+  requiredControls: requiredControlsProp,
+  controlsRegistry
+}: WinConditionsCardProps) {
   const { t } = useTranslation();
   const winConditions = scenario.suggestedWinConditions;
-  
-  if (!winConditions || (!winConditions.maxTotalRisk && !winConditions.requires?.length)) {
+
+  const hasScoreGoal = winConditions?.maxTotalRisk !== undefined;
+  const hasControlGoal = (winConditions?.requires?.length ?? 0) > 0;
+
+  if (!winConditions || (!hasScoreGoal && !hasControlGoal)) {
     return null;
   }
 
   const targetScore = winConditions.maxTotalRisk;
-  const scoreAchieved = targetScore !== undefined && currentScore <= targetScore;
+  const scoreAchieved = hasScoreGoal && targetScore !== undefined && currentScore <= targetScore;
   
-  const requiredControls = winConditions.requires || [];
+  const requiredControls = requiredControlsProp ?? winConditions.requires || [];
   const controlsStatus = requiredControls.map(req => {
     const currentValue = controls[req.control as keyof Controls];
     const met = currentValue === req.value;
-    const controlLabel = t(controlKeys[req.control] || req.control);
+    const definition = getControlDefinition(controlsRegistry, req.control);
+    const controlLabel = definition
+      ? t(definition.labelKey)
+      : t(controlKeys[req.control] || req.control);
     
     let goalText: string;
     if (typeof req.value === "boolean") {
@@ -55,7 +77,19 @@ export function WinConditionsCard({ scenario, currentScore, controls }: WinCondi
     };
   });
 
-  const allRequirementsMet = scoreAchieved && controlsStatus.every(c => c.met);
+  const scoreRequirementMet = hasScoreGoal ? scoreAchieved : true;
+  const allRequirementsMet = scoreRequirementMet && controlsStatus.every(c => c.met);
+  const missingControlsCount = controlsStatus.filter(c => !c.met).length;
+  const needsScore = hasScoreGoal && !scoreAchieved;
+  const statusMessage = !allRequirementsMet
+    ? needsScore && missingControlsCount > 0
+      ? t('goals.missingBoth', { target: targetScore, count: missingControlsCount })
+      : needsScore
+        ? t('goals.missingScore', { target: targetScore })
+        : missingControlsCount > 0
+          ? t('goals.missingControls', { count: missingControlsCount })
+          : null
+    : null;
 
   return (
     <Card 
@@ -74,6 +108,11 @@ export function WinConditionsCard({ scenario, currentScore, controls }: WinCondi
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
+        {statusMessage && (
+          <div className="rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground" data-testid="goals-status">
+            {statusMessage}
+          </div>
+        )}
         {targetScore !== undefined && (
           <div className="flex items-center gap-2" data-testid="goal-score">
             {scoreAchieved ? (

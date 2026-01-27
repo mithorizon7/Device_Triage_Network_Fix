@@ -12,6 +12,10 @@ interface InsightsCardProps {
   deviceZones: Record<string, ZoneId>;
   controls: Controls;
   explanations: ScoreResult["explanations"];
+  flaggedDevices: Set<string>;
+  availableControlIds?: Set<string>;
+  maxExplainItems?: number;
+  explainSortOrder?: string;
 }
 
 export function InsightsCard({
@@ -19,6 +23,10 @@ export function InsightsCard({
   deviceZones,
   controls,
   explanations,
+  flaggedDevices,
+  availableControlIds,
+  maxExplainItems = 8,
+  explainSortOrder,
 }: InsightsCardProps) {
   const { t } = useTranslation();
 
@@ -55,6 +63,8 @@ export function InsightsCard({
                 scenario={scenario}
                 deviceZones={deviceZones}
                 controls={controls}
+                flaggedDevices={flaggedDevices}
+                availableControlIds={availableControlIds}
                 embedded={true}
               />
             </TabsContent>
@@ -62,7 +72,8 @@ export function InsightsCard({
             <TabsContent value="explain" className="mt-0 pr-2">
               <ExplainScorePanel
                 explanations={explanations}
-                maxItems={8}
+                maxItems={maxExplainItems}
+                sortOrder={explainSortOrder}
                 embedded={true}
               />
             </TabsContent>

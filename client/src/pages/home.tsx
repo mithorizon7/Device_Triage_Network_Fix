@@ -17,7 +17,10 @@ import { WinConditionsCard } from "@/components/WinConditionsCard";
 import { InsightsCard } from "@/components/InsightsCard";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
-import { getCustomScenarios } from "@/lib/customScenarios";
+import { getCustomScenarios, getCustomScenariosUpdatedEventName } from "@/lib/customScenarios";
+import { getDeviceDisplayLabel } from "@/lib/i18n";
+import { formatExplanation } from "@/lib/explanationFormatter";
+import { filterRequiredControlsByScenario, getScenarioControlIds } from "@/lib/controlsRegistry";
 import { 
   getProgress, 
   recordAttempt, 
@@ -28,7 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RotateCcw, Target, FileText, LayoutGrid, List } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
-import type { Scenario, Controls, ZoneId, ScoreResult, Device } from "@shared/schema";
+import type { Scenario, Controls, ZoneId, ScoreResult, Device, ControlsRegistry } from "@shared/schema";
 import type { ZoneConfig } from "@/lib/zones";
 
 interface DynamicZoneGridProps {
@@ -116,6 +119,7 @@ export default function Home() {
   const lastRecordedScore = useRef<number | null>(null);
   const previousScore = useRef<number | null>(null);
   const { toast } = useToast();
+  const lastZoneWarningScenario = useRef<string | null>(null);
 
   useEffect(() => {
     try {
@@ -133,8 +137,26 @@ export default function Home() {
     queryKey: ["/api/scoring-rules"]
   });
 
+  const { data: controlsRegistry } = useQuery<ControlsRegistry>({
+    queryKey: ["/api/controls-registry"]
+  });
+
   useEffect(() => {
-    setCustomScenarios(getCustomScenarios());
+    const refreshCustomScenarios = () => {
+      setCustomScenarios(getCustomScenarios());
+    };
+    
+    const scenariosUpdatedEventName = getCustomScenariosUpdatedEventName();
+    refreshCustomScenarios();
+    window.addEventListener("focus", refreshCustomScenarios);
+    window.addEventListener("storage", refreshCustomScenarios);
+    window.addEventListener(scenariosUpdatedEventName, refreshCustomScenarios);
+    
+    return () => {
+      window.removeEventListener("focus", refreshCustomScenarios);
+      window.removeEventListener("storage", refreshCustomScenarios);
+      window.removeEventListener(scenariosUpdatedEventName, refreshCustomScenarios);
+    };
   }, []);
 
   const allScenarios = useMemo(() => {
@@ -172,14 +194,33 @@ export default function Home() {
 
   useEffect(() => {
     if (currentScenario) {
+      const allowedZoneIds = new Set(zones.map(zone => zone.id));
       const initialZones: Record<string, ZoneId> = {};
+      const invalidDeviceIds: string[] = [];
       currentScenario.devices.forEach(device => {
-        initialZones[device.id] = device.networkId as ZoneId;
+        const zoneId = allowedZoneIds.has(device.networkId as ZoneId) 
+          ? (device.networkId as ZoneId) 
+          : "main";
+        if (zoneId === "main" && device.networkId !== "main") {
+          invalidDeviceIds.push(device.id);
+        }
+        initialZones[device.id] = zoneId;
       });
       setDeviceZones(initialZones);
       setControls({ ...currentScenario.initialControls });
+
+      if (
+        invalidDeviceIds.length > 0 &&
+        lastZoneWarningScenario.current !== currentScenario.id
+      ) {
+        toast({
+          title: t('author.importZoneWarningTitle'),
+          description: t('author.importZoneWarning', { count: invalidDeviceIds.length })
+        });
+        lastZoneWarningScenario.current = currentScenario.id;
+      }
     }
-  }, [currentScenario]);
+  }, [currentScenario, toast, t]);
 
   const handleScenarioChange = useCallback((id: string) => {
     setSelectedScenarioId(id);
@@ -236,8 +277,18 @@ export default function Home() {
         explanations: []
       };
     }
-    return calculateScore(scoringRules, currentScenario.devices, deviceZones, controls, flaggedDevices);
-  }, [scoringRules, currentScenario, deviceZones, controls, flaggedDevices]);
+    const getDeviceLabel = (device: Device) =>
+      getDeviceDisplayLabel(device.id, device.label, currentScenario?.id ?? null, t);
+    return calculateScore(
+      scoringRules, 
+      currentScenario.devices, 
+      deviceZones, 
+      controls, 
+      flaggedDevices,
+      currentScenario.environment.type,
+      getDeviceLabel
+    );
+  }, [scoringRules, currentScenario, deviceZones, controls, flaggedDevices, t]);
 
   const guestNetworkAvailable = currentScenario?.networks.some(n => n.id === "guest") ?? false;
   const iotNetworkAvailable = currentScenario?.networks.some(n => n.id === "iot") ?? false;
@@ -251,7 +302,17 @@ export default function Home() {
   }, [currentScenario, deviceZones]);
 
   const maxRisk = currentScenario?.suggestedWinConditions?.maxTotalRisk ?? 35;
-  const meetsWinCondition = checkWinCondition(scoreResult.total, maxRisk);
+  const requiredControls = currentScenario?.suggestedWinConditions?.requires ?? [];
+  const scopedRequiredControls = useMemo(
+    () => filterRequiredControlsByScenario(requiredControls, controlsRegistry, currentScenario?.environment.type),
+    [requiredControls, controlsRegistry, currentScenario?.environment.type]
+  );
+  const availableControlIds = useMemo(() => {
+    if (!controlsRegistry) return undefined;
+    const ids = getScenarioControlIds(controlsRegistry, currentScenario?.environment.type);
+    return ids.size > 0 ? ids : undefined;
+  }, [controlsRegistry, currentScenario?.environment.type]);
+  const meetsWinCondition = checkWinCondition(scoreResult.total, maxRisk, scopedRequiredControls, controls);
 
   useEffect(() => {
     if (!currentScenario || scoreResult.total === 0) return;
@@ -309,14 +370,14 @@ export default function Home() {
       toast({
         title: isImprovement ? t('notifications.riskReduced') : t('notifications.riskIncreased'),
         description: lastExplanation 
-          ? t('notifications.riskDelta', { delta: deltaDisplay, reason: lastExplanation.explain })
+          ? t('notifications.riskDelta', { delta: deltaDisplay, reason: formatExplanation(lastExplanation, t) })
           : t('notifications.riskDeltaGeneric', { delta: deltaDisplay }),
         variant: isImprovement ? "default" : "destructive",
       });
     }
 
     previousScore.current = scoreResult.total;
-  }, [scoreResult.total, scoreResult.explanations, toast]);
+  }, [scoreResult.total, scoreResult.explanations, toast, t]);
 
   const isLoading = scenariosLoading || rulesLoading || scenarioLoading;
 
@@ -484,6 +545,8 @@ export default function Home() {
                 scenario={currentScenario}
                 currentScore={scoreResult.total}
                 controls={controls}
+                requiredControls={scopedRequiredControls}
+                controlsRegistry={controlsRegistry}
               />
             )}
 
@@ -494,6 +557,7 @@ export default function Home() {
                 guestNetworkAvailable={guestNetworkAvailable}
                 iotNetworkAvailable={iotNetworkAvailable}
                 scenarioType={currentScenario.environment.type}
+                controlsRegistry={controlsRegistry}
               />
             )}
 
@@ -503,6 +567,10 @@ export default function Home() {
                 deviceZones={deviceZones}
                 controls={controls}
                 explanations={scoreResult.explanations}
+                flaggedDevices={flaggedDevices}
+                maxExplainItems={scoringRules?.explainPanel?.maxItems ?? 8}
+                explainSortOrder={scoringRules?.explainPanel?.sortOrder}
+                availableControlIds={availableControlIds}
               />
             )}
 

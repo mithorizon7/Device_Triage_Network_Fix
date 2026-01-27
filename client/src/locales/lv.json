@@ -15,8 +15,8 @@
     "listViewAriaLabel": "Ekrānlasītājam draudzīgs saraksta skats"
   },
   "actions": {
-    "flagDevice": "Atzīmēt izmeklēšanai",
-    "unflagDevice": "Noņemt izmeklēšanas atzīmi"
+    "flagDevice": "Atzīmēt pārbaudei",
+    "unflagDevice": "Noņemt pārbaudes atzīmi"
   },
   "scenarios": {
     "select": "Izvēlieties scenāriju",
@@ -57,7 +57,9 @@
     "unknownFlag": "Nezināms",
     "iotFlag": "IoT",
     "visitorFlag": "Viesis",
-    "workFlag": "Darbs"
+    "workFlag": "Darbs",
+    "flagsList": "Atzīmes: {flags}",
+    "flaggedForReview": "Atzīmēts pārbaudei"
   },
   "deviceLabels": {
     "family_iot_sprawl_v1": {
@@ -154,7 +156,10 @@
     "enable": "Iespējot {control}",
     "disable": "Atspējot {control}",
     "setTo": "Iestatīt {control} uz {value}",
-    "allComplete": "Visi mērķi sasniegti!"
+    "allComplete": "Visi mērķi sasniegti!",
+    "missingScore": "Vēl nepieciešams: samazināt risku līdz {target} vai zemāk.",
+    "missingControls": "Vēl nepieciešams: {count, plural, one {# obligāta kontrole} other {# obligātas kontroles}}.",
+    "missingBoth": "Vēl nepieciešams: samazināt risku līdz {target} vai zemāk un {count, plural, one {# obligāta kontrole} other {# obligātas kontroles}}."
   },
   "tooltips": {
     "deviceTypes": {
@@ -168,10 +173,10 @@
       "camera": "Drošības kamerām būtu jāaizsargā jūs, bet ja uzlauztas, uzbrucēji var vērot jūsu māju. Uzturiet programmaparatūru atjauninātu.",
       "printer": "Tīkla printeri bieži tiek ignorēti, bet var saglabāt dokumentu kopijas un nodrošināt tīkla piekļuvi uzbrucējiem.",
       "iot": "IoT ierīcēm bieži ir vāja drošība, reti atjauninājumi un var izmantot noklusējuma paroles. Izolējiet tās no galvenajām ierīcēm.",
-      "unknown": "Neatpazīta ierīce jūsu tīklā. Varētu būt kaimiņš, aizmirsta ierīce vai ielauzējs. Izmeklējiet pirms uzticaties."
+      "unknown": "Neatpazīta ierīce jūsu tīklā. Varētu būt kaimiņš, aizmirsta ierīce vai ielauzējs. Atzīmējiet un pārbaudiet pirms uzticaties."
     },
     "riskFlags": {
-      "unknown_device": "Šī ierīce netika gaidīta jūsu tīklā. Tā varētu būt nekaitīga (viesa tālrunis) vai ļaunprātīga. Turiet izolētu līdz identificēta.",
+      "unknown_device": "Šī ierīce netika gaidīta jūsu tīklā. Tā varētu būt nekaitīga (viesa tālrunis) vai ļaunprātīga. Atzīmējiet pārbaudei līdz identificēta.",
       "iot_device": "IoT ierīcēm bieži ir slikta drošība: vājas paroles, bez šifrēšanas, reti atjauninājumi. Ievietojiet tās atsevišķā tīklā.",
       "visitor_device": "Apmeklētāju ierīces ir ārpus jūsu kontroles. Jūs nezināt to drošības stāvokli. Dodiet interneta piekļuvi, bet izolējiet no galvenā tīkla.",
       "trusted_work_device": "Darba ierīcēm parasti ir korporatīvās drošības politikas, regulāri atjauninājumi un IT uzraudzība. Tām nepieciešama uzticama tīkla piekļuve."
@@ -202,8 +207,8 @@
       "guest": "Tikai interneta piekļuve apmeklētājiem vai neuzticamām ierīcēm. Var pārlūkot tīmekli, bet nevar piekļūt jūsu galvenā tīkla ierīcēm.",
       "iot": "Izolēts tīkls viedmājas ierīcēm. Tās saņem interneta piekļuvi, bet nevar sazināties ar jūsu galvenajām ierīcēm, ja kompromitētas."
     },
-    "flagForInvestigation": "Noklikšķiniet, lai atzīmētu šo nezināmo ierīci izmeklēšanai. Atzīmējot ierīces, kuras neatpazīstat, samazinās risks, nodrošinot to pārskatīšanu pirms uzticēšanās.",
-    "flagged": "Šī ierīce ir atzīmēta izmeklēšanai. Jūs to atzīmējāt kā aizdomīgu un tā tiek pārskatīta. Noklikšķiniet, lai noņemtu atzīmi, ja ierīce ir identificēta."
+    "flagForInvestigation": "Noklikšķiniet, lai atzīmētu šo nezināmo ierīci pārbaudei. Atzīmējot ierīces, kuras neatpazīstat, samazinās risks, nodrošinot to pārskatīšanu pirms uzticēšanās.",
+    "flagged": "Šī ierīce ir atzīmēta pārbaudei. Jūs to atzīmējāt kā aizdomīgu un tā tiek pārskatīta. Noklikšķiniet, lai noņemtu atzīmi, ja ierīce ir identificēta."
   },
   "education": {
     "dontShowAgain": "Nerādīt vēlreiz",
@@ -308,7 +313,7 @@
   },
   "learningObjectives": {
     "family_iot_sprawl_v1": {
-      "0": "Sadalīt ierīces uzticamības zonās (Galvenā, Viesu, IoT, Izmeklēšana).",
+      "0": "Sadalīt ierīces uzticamības zonās (Galvenā, Viesu, IoT) un atzīmēt nezināmās ierīces pārbaudei.",
       "1": "Iespējot augstas ietekmes kontroles (Wi-Fi drošība, viesu/IoT tīkli, MFA, atjauninājumi).",
       "2": "Interpretēt vērtējuma izmaiņas, izmantojot Paskaidrojumu paneli."
     },
@@ -340,6 +345,48 @@
     "reducesRisk": "Samazina risku",
     "increasesRisk": "Palielina risku"
   },
+  "scoring": {
+    "baseline": "Sākuma bāzes riska rādītāji",
+    "zone": {
+      "unknown_not_flagged": "{device}: nezināma ierīce nav atzīmēta pārbaudei un rada augstu risku.",
+      "unknown_flagged": "{device}: nezināmas ierīces atzīmēšana pārbaudei samazina tūlītēju ekspozīciju.",
+      "iot_on_main": "{device}: IoT ierīce galvenajā tīklā palielina ietekmes apjomu.",
+      "visitor_on_main": "{device}: viesu ierīce galvenajā tīklā palielina risku.",
+      "printer_on_guest_or_iot": "{device}: printeris ārpus galvenā tīkla var radīt pieejamības/darba plūsmas problēmas; izmantojiet pamatoti.",
+      "trusted_work_device_on_guest": "{device}: uzticama darba ierīce viesu tīklā var mazināt drošības kontroli/redzamību atkarībā no politikas."
+    },
+    "control": {
+      "wifi_security_open": "Atvērts Wi-Fi noņem kanāla līmeņa aizsardzību un ir augsta riska noklusējums.",
+      "wifi_security_wpa2": "WPA2 ir labs pamats; labāks par atvērtu, bet ne labākais.",
+      "wifi_security_wpa3": "WPA3 nodrošina spēcīgāku Wi-Fi aizsardzību, ja tiek atbalstīts.",
+      "strong_wifi_password_on": "Spēcīga Wi-Fi parole samazina nejaušas piekļuves risku.",
+      "strong_wifi_password_off": "Vājas Wi-Fi paroles palielina neatļautas piekļuves risku.",
+      "guest_network_enabled_on": "Viesu tīkls samazina galveno ierīču ekspozīciju pret apmeklētājiem.",
+      "iot_network_enabled_on": "Atsevišķa IoT zona samazina galveno ierīču ekspozīciju.",
+      "mfa_on": "MFA samazina kontu pārņemšanas risku ierīču mākoņkontiem.",
+      "mfa_off": "MFA neesamība palielina kontu pārņemšanas risku.",
+      "auto_updates_on": "Atjauninājumi laika gaitā samazina zināmo ievainojamību ekspozīciju.",
+      "auto_updates_off": "Bez atjauninājumiem palielinās risks no zināmām ievainojamībām.",
+      "default_passwords_addressed_on": "Noklusējuma paroļu maiņa samazina vieglas kompromitēšanas risku.",
+      "default_passwords_addressed_off": "Noklusējuma paroļu atstāšana palielina vieglas kompromitēšanas risku.",
+      "vpn_enabled_on": "VPN šifrē visu trafiku, pasargājot no noklausīšanās publiskos tīklos.",
+      "vpn_enabled_off": "Bez VPN trafiku publiskā Wi-Fi var pārtvert uzbrucēji.",
+      "personal_hotspot_on": "Personīgā tīklāja izmantošana pilnībā izvairās no koplietota tīkla riskiem.",
+      "firewall_enabled_on": "Ierīces ugunsmūris bloķē neatļautus ienākošos savienojumus.",
+      "firewall_enabled_off": "Bez ugunsmūra ierīce pieņem savienojumus no jebkura tīklā.",
+      "file_sharing_disabled_on": "Failu koplietošanas izslēgšana novērš neatļautu piekļuvi jūsu failiem.",
+      "file_sharing_disabled_off": "Failu koplietošana publiskos tīklos atver jūsu failus svešiniekiem.",
+      "bluetooth_disabled_on": "Bluetooth izslēgšana novērš tuvumā esošas ierīču uzbrukumus.",
+      "https_only_on": "Tikai HTTPS režīms nodrošina šifrētus savienojumus ar vietnēm.",
+      "verify_network_on": "Tīkla autentiskuma pārbaude novērš viltus tīklu uzbrukumus.",
+      "verify_network_off": "Bez pārbaudes varat pieslēgties viltotam tīklam, ko izveidojuši uzbrucēji."
+    },
+    "synergy": {
+      "iot_isolation_bonus": "Vairuma IoT ierīču izolēšana IoT zonā būtiski samazina ietekmes apjomu.",
+      "guest_network_used_bonus": "Viesu ierīču izvietošana viesu tīklā samazina galvenā tīkla ekspozīciju.",
+      "unknown_device_penalty_if_ignored": "Nezināmas ierīces bez atzīmēšanas pārbaudei palielina risku."
+    }
+  },
   "synergy": {
     "title": "Kontroles sinerģijas",
     "activeCount": "{active}/{total} aktīvas",
@@ -352,8 +399,8 @@
     "iotIsolationDesc": "IoT tīkls iespējots ar pareizi nodalītām ierīcēm",
     "guestSegmentation": "Viesu segmentācija",
     "guestSegmentationDesc": "Viesu tīkls iespējots ar pareizi izolētiem viesiem",
-    "threatQuarantine": "Draudu karantīna",
-    "threatQuarantineDesc": "Visas nezināmās ierīces izolētas izmeklēšanai",
+    "threatQuarantine": "Nezināmo ierīču pārbaude",
+    "threatQuarantineDesc": "Visas nezināmās ierīces atzīmētas pārbaudei",
     "defenseInDepth": "Dziļā aizsardzība",
     "defenseInDepthDesc": "Spēcīga Wi-Fi drošība ar MFA un WPA3",
     "activeMaintenance": "Aktīva uzturēšana",
@@ -362,7 +409,7 @@
     "componentDevicePlacement": "Ierīču izvietojums",
     "componentGuestNetwork": "Viesu tīkls",
     "componentVisitorDevices": "Viesu ierīces",
-    "componentInvestigateZone": "Izmeklēšanas zona",
+    "componentInvestigateZone": "Pārbaudes atzīme",
     "componentUnknownDevices": "Nezināmas ierīces",
     "componentWPA3": "WPA3",
     "componentStrongPassword": "Spēcīga parole",
@@ -373,7 +420,14 @@
     "actionMoveIot": "Pārvietot IoT ierīces uz IoT zonu ({placed}/{total} izvietotas)",
     "actionEnableGuest": "Iespējot viesu tīklu",
     "actionMoveVisitors": "Pārvietot viesu ierīces uz viesu zonu",
-    "actionQuarantineUnknown": "Karantīnā ievietot nezināmās ierīces",
+    "actionQuarantineUnknown": "Atzīmēt nezināmās ierīces",
+    "actionEnableVpn": "Iespējot VPN",
+    "actionUseHotspot": "Izmantot personīgo tīklāju",
+    "actionVerifyNetwork": "Pārbaudīt tīkla nosaukumu un pierakstu",
+    "actionEnableFirewall": "Iespējot ugunsmūri",
+    "actionEnableHttpsOnly": "Iespējot tikai HTTPS režīmu",
+    "actionDisableFileSharing": "Atspējot failu koplietošanu",
+    "actionDisableBluetooth": "Atspējot Bluetooth",
     "actionUpgradeWifi": "Jaunināt uz WPA3",
     "actionEnableMfa": "Iespējot MFA kontiem",
     "actionEnableUpdates": "Iespējot automātiskos atjauninājumus",
@@ -381,7 +435,14 @@
     "impactCompleteIot": "Pabeigt IoT izolāciju pilnam sinerģijas bonusam",
     "impactSeparateVisitors": "Nodalīt viesu ierīces no galvenā tīkla",
     "impactGuestSynergy": "Aktivizēt viesu segmentācijas sinerģiju",
-    "impactQuarantine": "Samazināt riskus no neidentificētām ierīcēm",
+    "impactQuarantine": "Samazināt riskus no nezināmām ierīcēm",
+    "impactVpnProtection": "Šifrēt datu plūsmu publiskā Wi-Fi",
+    "impactAvoidPublicWifi": "Pilnībā izvairīties no koplietota Wi-Fi riskiem",
+    "impactAvoidEvilTwin": "Samazināt viltotu tīklu risku",
+    "impactBlockInbound": "Bloķēt nevēlamus ienākošos savienojumus",
+    "impactEncryptWeb": "Nodrošināt šifrētu tīmekļa datu plūsmu",
+    "impactReduceFileExposure": "Samazināt koplietoto failu ekspozīciju",
+    "impactReduceNearbyAttack": "Samazināt tuvumā esošu uzbrukumu risku",
     "impactStrongerEncryption": "Spēcīgāka bezvadu šifrēšana",
     "impactProtectAccounts": "Aizsargāt mākoņa ierīces no konta kompromitēšanas",
     "impactReduceVulnerability": "Samazināt ievainojamību laika gaitā"
@@ -467,7 +528,7 @@
       },
       "flagInvestigation": {
         "title": "Atzīmējiet nezināmās ierīces",
-        "content": "Redzat ierīci, kuru neatpazīstat? Meklējiet karodziņa pogu uz ierīcēm, kas atzīmētas kā 'Nezināmas'. Aizdomīgas ierīces atzīmēšana nozīmē to reģistrēšanu izmeklēšanai - kritisks pirmais solis, kad pamanāt kaut ko negaidītu savā tīklā. Neuzticieties nezināmām ierīcēm, kamēr neesat tās identificējuši. Reālajā pasaulē tā varētu būt kaimiņš, kas izmanto jūsu Wi-Fi, vai aizmirsta ierīce - bet tā varētu būt arī iebrucējs."
+        "content": "Redzat ierīci, kuru neatpazīstat? Meklējiet karodziņa pogu uz ierīcēm, kas atzīmētas kā 'Nezināmas'. Aizdomīgas ierīces atzīmēšana nozīmē to reģistrēšanu pārbaudei - kritisks pirmais solis, kad pamanāt kaut ko negaidītu savā tīklā. Neuzticieties nezināmām ierīcēm, kamēr neesat tās identificējuši. Reālajā pasaulē tā varētu būt kaimiņš, kas izmanto jūsu Wi-Fi, vai aizmirsta ierīce - bet tā varētu būt arī iebrucējs."
       },
       "riskMeter": {
         "title": "Vērojiet, kā krīt jūsu risks",
@@ -525,6 +586,8 @@
     "export": "Eksportēt",
     "copyTitle": "{title} (Kopija)",
     "importError": "Neizdevās importēt scenāriju. Lūdzu, pārbaudiet faila formātu.",
+    "importZoneWarningTitle": "Zonas koriģētas",
+    "importZoneWarning": "{count, plural, one {# ierīcei bija} other {# ierīcēm bija}} nezināma tīkla zona, un tā tika pārvietota uz Galveno.",
     "deviceDefaultName": "Ierīce {index}",
     "riskFlags": {
       "unknown_device": "nezināma ierīce",

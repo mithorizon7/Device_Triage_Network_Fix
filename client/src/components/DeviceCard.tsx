@@ -33,11 +33,11 @@ interface DeviceCardProps {
   onFlagToggle?: (deviceId: string) => void;
 }
 
-const riskFlagConfig: Record<RiskFlag, { label: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  unknown_device: { label: "Unknown", icon: AlertTriangle, variant: "destructive" },
-  iot_device: { label: "IoT", icon: Shield, variant: "secondary" },
-  visitor_device: { label: "Visitor", icon: User, variant: "outline" },
-  trusted_work_device: { label: "Work", icon: Briefcase, variant: "default" }
+const riskFlagConfig: Record<RiskFlag, { labelKey: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  unknown_device: { labelKey: "devices.unknownFlag", icon: AlertTriangle, variant: "destructive" },
+  iot_device: { labelKey: "devices.iotFlag", icon: Shield, variant: "secondary" },
+  visitor_device: { labelKey: "devices.visitorFlag", icon: User, variant: "outline" },
+  trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "default" }
 };
 
 export function DeviceCard({
@@ -72,7 +72,12 @@ export function DeviceCard({
     }
   };
 
-  const hasUnknownFlag = device.riskFlags.includes("unknown_device");
+  const flagLabels = device.riskFlags.map(flag => t(riskFlagConfig[flag].labelKey));
+  const ariaLabel = [
+    `${deviceLabel}, ${t(`devices.${device.type}`)}`,
+    flagLabels.length > 0 ? t("devices.flagsList", { flags: flagLabels.join(", ") }) : "",
+    isFlagged ? t("devices.flaggedForReview") : ""
+  ].filter(Boolean).join(", ");
 
   return (
     <Card
@@ -83,7 +88,7 @@ export function DeviceCard({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="listitem"
-      aria-label={`${deviceLabel}, ${device.type} device${device.riskFlags.length > 0 ? `, flags: ${device.riskFlags.join(", ")}` : ""}${isFlagged ? ", flagged for investigation" : ""}`}
+      aria-label={ariaLabel}
       data-testid={`card-device-${device.id}`}
       className={`
         relative flex flex-wrap items-center gap-2 p-3 cursor-grab active:cursor-grabbing
@@ -125,6 +130,7 @@ export function DeviceCard({
           {device.riskFlags.map((flag) => {
             const config = riskFlagConfig[flag];
             const FlagIcon = config.icon;
+            const label = t(config.labelKey);
             return (
               <Tooltip key={flag}>
                 <TooltipTrigger asChild>
@@ -134,7 +140,7 @@ export function DeviceCard({
                     data-testid={`badge-flag-${device.id}-${flag}`}
                   >
                     <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                    <span className="sr-only">{config.label}</span>
+                    <span className="sr-only">{label}</span>
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[280px]">
@@ -154,7 +160,7 @@ export function DeviceCard({
           <SelectTrigger
             className="w-auto min-w-[80px] h-8 text-xs"
             data-testid={`select-zone-${device.id}`}
-            aria-label={`Move ${deviceLabel} to zone`}
+            aria-label={t('devices.moveToZone', { device: deviceLabel })}
           >
             <SelectValue />
           </SelectTrigger>

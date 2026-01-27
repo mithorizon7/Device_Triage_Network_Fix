@@ -1,3 +1,5 @@
+import type { Controls } from "@shared/schema";
+
 const PROGRESS_KEY = "device_triage_progress";
 const TUTORIAL_KEY = "device_triage_tutorial_completed";
 
@@ -153,7 +155,7 @@ export function recordAttempt(
     }
   }
 
-  if (score <= 20 && !hasBadge(progress, "perfect_score")) {
+  if (score <= 10 && meetsWinCondition && !hasBadge(progress, "perfect_score")) {
     const badge = awardBadge(progress, "perfect_score", scenarioId);
     if (badge) newBadges.push(badge);
   }
@@ -209,9 +211,19 @@ function awardBadge(progress: UserProgress, badgeId: string, scenarioId?: string
 
 export function checkWinCondition(
   score: number,
-  maxRisk: number = 35
+  maxRisk: number = 35,
+  requires: Array<{ control: string; value: boolean | string }> = [],
+  controls?: Controls | null
 ): boolean {
-  return score <= maxRisk;
+  const scoreMet = score <= maxRisk;
+  if (!requires.length) return scoreMet;
+  if (!controls) return false;
+  
+  const requirementsMet = requires.every(req => 
+    controls[req.control as keyof Controls] === req.value
+  );
+  
+  return scoreMet && requirementsMet;
 }
 
 export function getTutorialCompleted(): boolean {

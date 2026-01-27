@@ -46,7 +46,7 @@
       "category": "network",
       "applicableScenarios": ["home", "office"],
       "icon": "Users",
-      "labelKey": "controls.guestNetwork",
+      "labelKey": "controls.guestNetworkEnabled",
       "descriptionKey": "controls.guestNetworkDesc",
       "educationKey": "education.guestNetwork"
     },
@@ -57,7 +57,7 @@
       "category": "network",
       "applicableScenarios": ["home", "office"],
       "icon": "Cpu",
-      "labelKey": "controls.iotNetwork",
+      "labelKey": "controls.iotNetworkEnabled",
       "descriptionKey": "controls.iotNetworkDesc",
       "educationKey": "education.iotNetwork"
     },
@@ -156,7 +156,7 @@
       "category": "device",
       "applicableScenarios": ["home", "office", "hotel"],
       "icon": "RefreshCw",
-      "labelKey": "controls.autoUpdates",
+      "labelKey": "controls.autoUpdatesEnabled",
       "descriptionKey": "controls.autoUpdatesDesc",
       "educationKey": "education.autoUpdates"
     },
@@ -167,7 +167,7 @@
       "category": "account",
       "applicableScenarios": ["home", "office"],
       "icon": "KeyRound",
-      "labelKey": "controls.defaultPasswords",
+      "labelKey": "controls.defaultPasswordsAddressed",
       "descriptionKey": "controls.defaultPasswordsDesc",
       "educationKey": "education.defaultPasswords"
     }

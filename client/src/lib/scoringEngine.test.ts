@@ -3,7 +3,7 @@ import { calculateScore, type ScoringRules } from "./scoringEngine";
 
 type DeviceType = "router" | "laptop" | "phone" | "tablet" | "tv" | "speaker" | "thermostat" | "camera" | "printer" | "iot" | "unknown";
 type RiskFlag = "unknown_device" | "iot_device" | "visitor_device" | "trusted_work_device";
-type ZoneId = "main" | "guest" | "iot" | "investigate";
+type ZoneId = "main" | "guest" | "iot";
 
 interface Device {
   id: string;
@@ -47,20 +47,20 @@ const testRules: ScoringRules = {
       credentialAccount: 15,
       hygiene: 15
     },
-    allowedZones: ["main", "guest", "iot", "investigate"]
+    allowedZones: ["main", "guest", "iot"]
   },
   zoneRules: [
     {
-      id: "unknown_not_in_investigate",
-      when: { deviceHasFlag: "unknown_device", zoneNot: "investigate" },
+      id: "unknown_not_flagged",
+      when: { deviceHasFlag: "unknown_device", notFlaggedForInvestigation: true },
       add: { exposure: 35 },
-      explain: "Unknown device is not quarantined for investigation."
+      explain: "Unknown device is not flagged for review."
     },
     {
-      id: "unknown_in_investigate",
-      when: { deviceHasFlag: "unknown_device", zoneIs: "investigate" },
+      id: "unknown_flagged",
+      when: { deviceHasFlag: "unknown_device", flaggedForInvestigation: true },
       add: { exposure: -15 },
-      explain: "Unknown device quarantined for investigation reduces immediate exposure."
+      explain: "Unknown device flagged for review reduces immediate exposure."
     },
     {
       id: "iot_on_main",
@@ -111,6 +111,13 @@ const testRules: ScoringRules = {
       when: { controlIs: "mfaEnabled", valueIs: false },
       add: { credentialAccount: 12 },
       explain: "No MFA increases account takeover risk."
+    },
+    {
+      id: "hotel_mfa_bonus",
+      scenarioTypes: ["hotel"],
+      when: { controlIs: "mfaEnabled", valueIs: true },
+      add: { credentialAccount: -5 },
+      explain: "Hotel-only MFA bonus."
     }
   ],
   synergyRules: [
@@ -235,10 +242,19 @@ describe("Scoring Engine", () => {
 
       expect(resultMfa.subscores.credentialAccount).toBeLessThan(resultNoMfa.subscores.credentialAccount);
     });
+
+    it("should apply scenario-scoped control rules only for matching scenario type", () => {
+      const controlsMfa = createControls({ mfaEnabled: true });
+
+      const resultHome = calculateScore(testRules, [], {}, controlsMfa, new Set(), "home");
+      const resultHotel = calculateScore(testRules, [], {}, controlsMfa, new Set(), "hotel");
+
+      expect(resultHotel.subscores.credentialAccount).toBeLessThan(resultHome.subscores.credentialAccount);
+    });
   });
 
   describe("Zone Rules", () => {
-    it("should penalize unknown device not in investigate zone", () => {
+    it("should penalize unknown device not flagged for review", () => {
       const unknownDevice = createDevice({
         id: "unknown1",
         type: "unknown",
@@ -246,21 +262,23 @@ describe("Scoring Engine", () => {
       });
       const controls = createControls({});
 
-      const resultMain = calculateScore(
+      const resultUnflagged = calculateScore(
         testRules,
         [unknownDevice],
         { unknown1: "main" },
-        controls
+        controls,
+        new Set()
       );
       
-      const resultInvestigate = calculateScore(
+      const resultFlagged = calculateScore(
         testRules,
         [unknownDevice],
-        { unknown1: "investigate" },
-        controls
+        { unknown1: "main" },
+        controls,
+        new Set(["unknown1"])
       );
 
-      expect(resultMain.subscores.exposure).toBeGreaterThan(resultInvestigate.subscores.exposure);
+      expect(resultUnflagged.subscores.exposure).toBeGreaterThan(resultFlagged.subscores.exposure);
     });
 
     it("should penalize IoT device on main network", () => {

@@ -106,7 +106,9 @@ export const scoreResultSchema = z.object({
   explanations: z.array(z.object({
     ruleId: z.string(),
     delta: z.record(z.string(), z.number()),
-    explain: z.string()
+    explain: z.string(),
+    explainKey: z.string().optional(),
+    explainParams: z.record(z.string(), z.union([z.string(), z.number()])).optional()
   }))
 });
 

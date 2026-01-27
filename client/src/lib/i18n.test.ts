@@ -104,7 +104,6 @@ describe('i18n Translation Integrity', () => {
       'zones.main',
       'zones.guest',
       'zones.iot',
-      'zones.investigate',
       'controls.wifiSecurity',
       'controls.strongWifiPassword',
       'controls.mfaEnabled',
@@ -153,7 +152,7 @@ describe('i18n Translation Integrity', () => {
     it.each(localeNames)('should translate all zone labels in %s', async (locale) => {
       await i18n.changeLanguage(locale);
       
-      const zones = ['main', 'guest', 'iot', 'investigate'];
+      const zones = ['main', 'guest', 'iot'];
       for (const zone of zones) {
         const translation = i18n.t(`zones.${zone}`);
         expect(translation).not.toContain('[MISSING:');
@@ -183,10 +182,10 @@ describe('i18n Translation Integrity', () => {
   });
 
   describe('Locale Count Verification', () => {
-    it('should have exactly 235 keys in all locales', () => {
-      expect(flattenKeys(en).length).toBe(235);
-      expect(flattenKeys(lv).length).toBe(235);
-      expect(flattenKeys(ru).length).toBe(235);
+    it('should have exactly 493 keys in all locales', () => {
+      expect(flattenKeys(en).length).toBe(493);
+      expect(flattenKeys(lv).length).toBe(493);
+      expect(flattenKeys(ru).length).toBe(493);
     });
   });
 });

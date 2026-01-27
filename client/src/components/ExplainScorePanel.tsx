@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
 import type { ScoreResult } from "@shared/schema";
+import { formatExplanation } from "@/lib/explanationFormatter";
 
 interface ExplainScorePanelProps {
   explanations: ScoreResult["explanations"];
   maxItems?: number;
+  sortOrder?: string;
   embedded?: boolean;
 }
 
@@ -37,6 +39,7 @@ function getDeltaDisplay(delta: Record<string, number>, t: (key: string) => stri
 export function ExplainScorePanel({ 
   explanations, 
   maxItems = 8,
+  sortOrder = "largestAbsoluteImpactFirst",
   embedded = false
 }: ExplainScorePanelProps) {
   const { t } = useTranslation();
@@ -47,7 +50,17 @@ export function ExplainScorePanel({
       ...exp,
       totalDelta: Object.values(exp.delta).reduce((sum, val) => sum + val, 0)
     }))
-    .sort((a, b) => Math.abs(b.totalDelta) - Math.abs(a.totalDelta))
+    .sort((a, b) => {
+      switch (sortOrder) {
+        case "largestIncreaseFirst":
+          return b.totalDelta - a.totalDelta;
+        case "largestReductionFirst":
+          return a.totalDelta - b.totalDelta;
+        case "largestAbsoluteImpactFirst":
+        default:
+          return Math.abs(b.totalDelta) - Math.abs(a.totalDelta);
+      }
+    })
     .slice(0, maxItems);
 
   const hasPositiveImpact = sortedExplanations.some(e => e.totalDelta < 0);
@@ -86,7 +99,7 @@ export function ExplainScorePanel({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm" data-testid={`text-explain-${index}`}>
-                    {exp.explain}
+                    {formatExplanation(exp, t)}
                   </p>
                   {breakdown.length > 0 && (
                     <p className="text-xs text-muted-foreground mt-1 font-mono">
