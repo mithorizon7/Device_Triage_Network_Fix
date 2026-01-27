@@ -151,6 +151,8 @@
   },
   "goals": {
     "title": "Ваши цели",
+    "checklistTitle": "Чек-лист",
+    "progress": "{completed}/{total} выполнено",
     "reduceRiskTo": "Снизить оценку риска до {target} или ниже",
     "currentScore": "{current}/{target}",
     "enable": "Включить {control}",
@@ -589,6 +591,21 @@
     "importZoneWarningTitle": "Зоны скорректированы",
     "importZoneWarning": "{count, plural, one {# устройство имело} few {# устройства имели} many {# устройств имели} other {# устройств имели}} неизвестную сетевую зону и было перемещено в Основную.",
     "deviceDefaultName": "Устройство {index}",
+    "lint": {
+      "title": "Проверка сценария",
+      "noIssues": "Проблем не найдено.",
+      "missingMainNetwork": "Отсутствует обязательная зона сети: Основная.",
+      "unknownNetworkIds": "Неизвестные идентификаторы сетей: {ids}.",
+      "duplicateNetworkIds": "Дублирующиеся идентификаторы сетей: {ids}.",
+      "deviceInvalidNetwork": "{count, plural, one {# устройство использует} few {# устройства используют} many {# устройств используют} other {# устройств используют}} недопустимую сетевую зону. По умолчанию используется Основная.",
+      "deviceNetworkMissing": "{count, plural, one {# устройство ссылается} few {# устройства ссылаются} many {# устройств ссылаются} other {# устройств ссылаются}} на сеть, не определённую в этом сценарии.",
+      "deviceTypeInvalid": "Неизвестные типы устройств: {types}.",
+      "deviceFlagInvalid": "Неизвестные флаги устройств: {flags}.",
+      "controlMissing": "{count, plural, one {# обязательная настройка} few {# обязательные настройки} many {# обязательных настроек} other {# обязательных настроек}} не имеют значения по умолчанию.",
+      "controlInvalidValue": "{count, plural, one {# настройка} few {# настройки} many {# настроек} other {# настроек}} имеют недопустимые значения по умолчанию.",
+      "controlNotApplicable": "{count, plural, one {# настройка} few {# настройки} many {# настроек} other {# настроек}} заданы, но не применимы к этому типу сценария.",
+      "winConditionNotApplicable": "{count, plural, one {# требование победы не применимо} few {# требования победы не применимы} many {# требований победы не применимы} other {# требований победы не применимы}} к этому типу сценария."
+    },
     "riskFlags": {
       "unknown_device": "неизвестное устройство",
       "iot_device": "устройство IoT",

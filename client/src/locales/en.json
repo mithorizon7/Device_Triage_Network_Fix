@@ -151,6 +151,8 @@
   },
   "goals": {
     "title": "Your Goals",
+    "checklistTitle": "Checklist",
+    "progress": "{completed}/{total} complete",
     "reduceRiskTo": "Reduce risk score to {target} or below",
     "currentScore": "{current}/{target}",
     "enable": "Enable {control}",
@@ -589,6 +591,21 @@
     "importZoneWarningTitle": "Zones adjusted",
     "importZoneWarning": "{count, plural, one {# device had} other {# devices had}} an unknown network zone and was moved to Main.",
     "deviceDefaultName": "Device {index}",
+    "lint": {
+      "title": "Scenario Checks",
+      "noIssues": "No issues found.",
+      "missingMainNetwork": "Missing required network zone: Main.",
+      "unknownNetworkIds": "Unknown network IDs: {ids}.",
+      "duplicateNetworkIds": "Duplicate network IDs: {ids}.",
+      "deviceInvalidNetwork": "{count, plural, one {# device uses} other {# devices use}} an invalid network zone. Default is Main.",
+      "deviceNetworkMissing": "{count, plural, one {# device references} other {# devices reference}} a network that isn't defined in this scenario.",
+      "deviceTypeInvalid": "Unknown device types: {types}.",
+      "deviceFlagInvalid": "Unknown device flags: {flags}.",
+      "controlMissing": "{count, plural, one {# required control} other {# required controls}} have no default value.",
+      "controlInvalidValue": "{count, plural, one {# control} other {# controls}} have invalid default values.",
+      "controlNotApplicable": "{count, plural, one {# control} other {# controls}} are set but not applicable to this scenario type.",
+      "winConditionNotApplicable": "{count, plural, one {# win condition control} other {# win condition controls}} are not applicable to this scenario type."
+    },
     "riskFlags": {
       "unknown_device": "unknown device",
       "iot_device": "IoT device",

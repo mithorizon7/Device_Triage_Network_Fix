@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Target, CheckCircle2, Circle } from "lucide-react";
+import { Target, CheckCircle2, Circle, ListChecks } from "lucide-react";
 import type { Scenario, Controls, ControlsRegistry } from "@shared/schema";
 import { getControlDefinition } from "@/lib/controlsRegistry";
 
@@ -81,6 +81,11 @@ export function WinConditionsCard({
   const allRequirementsMet = scoreRequirementMet && controlsStatus.every(c => c.met);
   const missingControlsCount = controlsStatus.filter(c => !c.met).length;
   const needsScore = hasScoreGoal && !scoreAchieved;
+  const totalRequirements = (hasScoreGoal ? 1 : 0) + controlsStatus.length;
+  const completedRequirements = (scoreRequirementMet ? 1 : 0) + controlsStatus.filter(c => c.met).length;
+  const progressPercent = totalRequirements > 0
+    ? Math.round((completedRequirements / totalRequirements) * 100)
+    : 0;
   const statusMessage = !allRequirementsMet
     ? needsScore && missingControlsCount > 0
       ? t('goals.missingBoth', { target: targetScore, count: missingControlsCount })
@@ -108,6 +113,24 @@ export function WinConditionsCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
+        {totalRequirements > 0 && (
+          <div className="space-y-2" data-testid="goals-progress">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <ListChecks className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>{t('goals.checklistTitle')}</span>
+              </div>
+              <span>{t('goals.progress', { completed: completedRequirements, total: totalRequirements })}</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-muted">
+              <div
+                className={`h-1.5 rounded-full ${allRequirementsMet ? "bg-emerald-500" : "bg-amber-500"}`}
+                style={{ width: `${progressPercent}%` }}
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+        )}
         {statusMessage && (
           <div className="rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground" data-testid="goals-status">
             {statusMessage}

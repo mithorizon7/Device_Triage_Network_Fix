@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,13 +27,14 @@ import {
 } from "@/lib/customScenarios";
 import { getDeviceIcon } from "@/lib/deviceIcons";
 import { recordCustomScenarioCreated } from "@/lib/progressTracking";
+import { lintScenario } from "@/lib/scenarioLint";
 import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, Plus, Trash2, Download, Upload, Save, 
-  Target, FileText, Pencil, Copy
+  Target, FileText, Pencil, Copy, AlertTriangle
 } from "lucide-react";
 import { scenarioSchema } from "@shared/schema";
-import type { Scenario, Device, DeviceType, RiskFlag } from "@shared/schema";
+import type { Scenario, Device, DeviceType, RiskFlag, ControlsRegistry } from "@shared/schema";
 
 const deviceTypes: DeviceType[] = [
   "router", "laptop", "phone", "tablet", "tv", "speaker", 
@@ -65,6 +67,14 @@ export default function AuthorPage() {
   const [editingScenario, setEditingScenario] = useState<Scenario | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { data: controlsRegistry } = useQuery<ControlsRegistry>({
+    queryKey: ["/api/controls-registry"]
+  });
+
+  const lintWarnings = useMemo(
+    () => editingScenario ? lintScenario(editingScenario, controlsRegistry) : [],
+    [editingScenario, controlsRegistry]
+  );
 
   const handleCreateNew = useCallback(() => {
     setEditingScenario(createEmptyScenario());
@@ -280,6 +290,38 @@ export default function AuthorPage() {
                   data-testid="textarea-notes"
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="author-lint-card">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                {t('author.lint.title')}
+                {lintWarnings.length > 0 && (
+                  <Badge variant="secondary" className="ml-auto">
+                    {lintWarnings.length}
+                  </Badge>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {lintWarnings.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t('author.lint.noIssues')}</p>
+              ) : (
+                <div className="space-y-2">
+                  {lintWarnings.map((warning, index) => (
+                    <div
+                      key={`${warning.code}-${index}`}
+                      className="flex items-start gap-2 text-sm"
+                      data-testid={`author-lint-${warning.code}`}
+                    >
+                      <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5" aria-hidden="true" />
+                      <span>{t(`author.lint.${warning.code}`, warning.params || {})}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 

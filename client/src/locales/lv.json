@@ -151,6 +151,8 @@
   },
   "goals": {
     "title": "Jūsu mērķi",
+    "checklistTitle": "Kontrolsaraksts",
+    "progress": "{completed}/{total} izpildīts",
     "reduceRiskTo": "Samazināt riska vērtējumu līdz {target} vai zemāk",
     "currentScore": "{current}/{target}",
     "enable": "Iespējot {control}",
@@ -589,6 +591,21 @@
     "importZoneWarningTitle": "Zonas koriģētas",
     "importZoneWarning": "{count, plural, one {# ierīcei bija} other {# ierīcēm bija}} nezināma tīkla zona, un tā tika pārvietota uz Galveno.",
     "deviceDefaultName": "Ierīce {index}",
+    "lint": {
+      "title": "Scenārija pārbaudes",
+      "noIssues": "Problēmas nav atrastas.",
+      "missingMainNetwork": "Trūkst obligātās tīkla zonas: Galvenā.",
+      "unknownNetworkIds": "Nezināmi tīklu ID: {ids}.",
+      "duplicateNetworkIds": "Dublēti tīklu ID: {ids}.",
+      "deviceInvalidNetwork": "{count, plural, one {# ierīce izmanto} other {# ierīces izmanto}} nederīgu tīkla zonu. Noklusējums ir Galvenā.",
+      "deviceNetworkMissing": "{count, plural, one {# ierīce atsaucas} other {# ierīces atsaucas}} uz tīklu, kas nav definēts šajā scenārijā.",
+      "deviceTypeInvalid": "Nezināmi ierīču tipi: {types}.",
+      "deviceFlagInvalid": "Nezināmi ierīču karodziņi: {flags}.",
+      "controlMissing": "{count, plural, one {# obligātai kontrolei} other {# obligātām kontrolēm}} nav noklusējuma vērtības.",
+      "controlInvalidValue": "{count, plural, one {# kontrolei} other {# kontrolēm}} ir nederīgas noklusējuma vērtības.",
+      "controlNotApplicable": "{count, plural, one {# kontrole} other {# kontroles}} ir iestatīta, bet nav piemērojama šim scenārija tipam.",
+      "winConditionNotApplicable": "{count, plural, one {# uzvaras nosacījums nav piemērojams} other {# uzvaras nosacījumi nav piemērojami}} šim scenārija tipam."
+    },
     "riskFlags": {
       "unknown_device": "nezināma ierīce",
       "iot_device": "IoT ierīce",

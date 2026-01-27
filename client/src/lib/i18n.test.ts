@@ -182,10 +182,10 @@ describe('i18n Translation Integrity', () => {
   });
 
   describe('Locale Count Verification', () => {
-    it('should have exactly 493 keys in all locales', () => {
-      expect(flattenKeys(en).length).toBe(493);
-      expect(flattenKeys(lv).length).toBe(493);
-      expect(flattenKeys(ru).length).toBe(493);
+    it('should have exactly 508 keys in all locales', () => {
+      expect(flattenKeys(en).length).toBe(508);
+      expect(flattenKeys(lv).length).toBe(508);
+      expect(flattenKeys(ru).length).toBe(508);
     });
   });
 });
