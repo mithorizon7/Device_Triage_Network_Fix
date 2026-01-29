@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Home, Building2, Hotel } from "lucide-react";
-import type { Scenario } from "@shared/schema";
+import { getScenarioDisplayTitle } from "@/lib/scenarioTitles";
 
 interface ScenarioSelectorProps {
   scenarios: Array<{ id: string; title: string; environment: { type: string } }>;
@@ -20,45 +20,35 @@ const environmentIcons: Record<string, typeof Home> = {
   home: Home,
   office: Building2,
   hotel: Hotel,
-  public: Hotel
-};
-
-const builtInScenarioTitleKeys: Record<string, string> = {
-  "family_iot_sprawl_v1": "scenarios.familyIoT",
-  "small_office_v1": "scenarios.smallOffice",
-  "hotel_public_v1": "scenarios.hotelPublic"
+  public: Hotel,
 };
 
 export function ScenarioSelector({
   scenarios,
   selectedId,
   onSelect,
-  isLoading = false
+  isLoading = false,
 }: ScenarioSelectorProps) {
   const { t } = useTranslation();
-  const selectedScenario = scenarios.find(s => s.id === selectedId);
 
   if (isLoading) {
-    return (
-      <div className="h-9 w-[280px] bg-muted rounded-md animate-pulse" />
-    );
+    return <div className="h-9 w-[280px] bg-muted rounded-md animate-pulse" />;
   }
 
   return (
     <Select value={selectedId} onValueChange={onSelect}>
-      <SelectTrigger 
+      <SelectTrigger
         className="w-[280px]"
         data-testid="select-scenario"
-        aria-label={t('scenarios.select')}
+        aria-label={t("scenarios.select")}
       >
-        <SelectValue placeholder={t('scenarios.selectPlaceholder')} />
+        <SelectValue placeholder={t("scenarios.selectPlaceholder")} />
       </SelectTrigger>
       <SelectContent>
         {scenarios.map((scenario) => {
           const Icon = environmentIcons[scenario.environment.type] || Home;
-          const titleKey = builtInScenarioTitleKeys[scenario.id];
-          const displayTitle = titleKey ? t(titleKey) : scenario.title;
-          
+          const displayTitle = getScenarioDisplayTitle(scenario, t);
+
           return (
             <SelectItem
               key={scenario.id}

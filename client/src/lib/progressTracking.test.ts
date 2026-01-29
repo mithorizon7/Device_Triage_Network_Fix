@@ -14,7 +14,7 @@ const createLocalStorageMock = () => {
     },
     clear: () => {
       store.clear();
-    }
+    },
   };
 };
 
@@ -45,21 +45,21 @@ describe("recordAttempt", () => {
     const mockStorage = createLocalStorageMock();
     Object.defineProperty(globalThis, "localStorage", {
       value: mockStorage,
-      configurable: true
+      configurable: true,
     });
     mockStorage.clear();
   });
 
   it("awards perfect score badge only when win condition is met and score <= 10", () => {
     recordAttempt("scenario-1", "Scenario", 9, false, false);
-    expect(getProgress().badges.some(badge => badge.id === "perfect_score")).toBe(false);
+    expect(getProgress().badges.some((badge) => badge.id === "perfect_score")).toBe(false);
 
     recordAttempt("scenario-1", "Scenario", 9, true, false);
-    expect(getProgress().badges.some(badge => badge.id === "perfect_score")).toBe(true);
+    expect(getProgress().badges.some((badge) => badge.id === "perfect_score")).toBe(true);
   });
 
   it("does not award perfect score badge above threshold", () => {
     recordAttempt("scenario-2", "Scenario", 11, true, false);
-    expect(getProgress().badges.some(badge => badge.id === "perfect_score")).toBe(false);
+    expect(getProgress().badges.some((badge) => badge.id === "perfect_score")).toBe(false);
   });
 });

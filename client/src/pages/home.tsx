@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -20,18 +20,29 @@ import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios, getCustomScenariosUpdatedEventName } from "@/lib/customScenarios";
 import { getDeviceDisplayLabel } from "@/lib/i18n";
 import { formatExplanation } from "@/lib/explanationFormatter";
-import { filterRequiredControlsByScenario, getScenarioControlIds } from "@/lib/controlsRegistry";
-import { 
-  getProgress, 
-  recordAttempt, 
+import {
+  filterRequiredControlsByScenario,
+  getControlDefinition,
+  getScenarioControlIds,
+} from "@/lib/controlsRegistry";
+import {
+  getProgress,
+  recordAttempt,
   checkWinCondition,
-  type UserProgress
+  type UserProgress,
 } from "@/lib/progressTracking";
 import { useToast } from "@/hooks/use-toast";
 import { RotateCcw, Target, FileText, LayoutGrid, List } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
-import type { Scenario, Controls, ZoneId, ScoreResult, Device, ControlsRegistry } from "@shared/schema";
+import type {
+  Scenario,
+  Controls,
+  ZoneId,
+  ScoreResult,
+  Device,
+  ControlsRegistry,
+} from "@shared/schema";
 import type { ZoneConfig } from "@/lib/zones";
 
 interface DynamicZoneGridProps {
@@ -53,11 +64,11 @@ function DynamicZoneGrid({
   onZoneChange,
   scenarioId,
   flaggedDevices,
-  onFlagToggle
+  onFlagToggle,
 }: DynamicZoneGridProps) {
-  const guestZone = zones.find(z => z.id === "guest")!;
-  const iotZone = zones.find(z => z.id === "iot")!;
-  const mainZone = zones.find(z => z.id === "main")!;
+  const guestZone = zones.find((z) => z.id === "guest")!;
+  const iotZone = zones.find((z) => z.id === "iot")!;
+  const mainZone = zones.find((z) => z.id === "main")!;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" data-testid="zones-container">
@@ -108,6 +119,13 @@ export default function Home() {
   const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
   const [isNewCompletion, setIsNewCompletion] = useState(false);
   const [flaggedDevices, setFlaggedDevices] = useState<Set<string>>(new Set());
+  const [lastAction, setLastAction] = useState<{
+    type: "deviceMoved" | "controlUpdated" | "unknownFlagged" | "unknownUnflagged";
+    deviceId?: string;
+    zoneId?: ZoneId;
+    controlId?: string;
+    value?: Controls[keyof Controls];
+  } | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
     try {
       const saved = localStorage.getItem("deviceTriage_viewMode");
@@ -129,29 +147,31 @@ export default function Home() {
     }
   }, [viewMode]);
 
-  const { data: serverScenariosList, isLoading: scenariosLoading } = useQuery<Array<{ id: string; title: string; environment: { type: string } }>>({
-    queryKey: ["/api/scenarios"]
+  const { data: serverScenariosList, isLoading: scenariosLoading } = useQuery<
+    Array<{ id: string; title: string; environment: { type: string } }>
+  >({
+    queryKey: ["/api/scenarios"],
   });
 
   const { data: scoringRules, isLoading: rulesLoading } = useQuery<ScoringRules>({
-    queryKey: ["/api/scoring-rules"]
+    queryKey: ["/api/scoring-rules"],
   });
 
   const { data: controlsRegistry } = useQuery<ControlsRegistry>({
-    queryKey: ["/api/controls-registry"]
+    queryKey: ["/api/controls-registry"],
   });
 
   useEffect(() => {
     const refreshCustomScenarios = () => {
       setCustomScenarios(getCustomScenarios());
     };
-    
+
     const scenariosUpdatedEventName = getCustomScenariosUpdatedEventName();
     refreshCustomScenarios();
     window.addEventListener("focus", refreshCustomScenarios);
     window.addEventListener("storage", refreshCustomScenarios);
     window.addEventListener(scenariosUpdatedEventName, refreshCustomScenarios);
-    
+
     return () => {
       window.removeEventListener("focus", refreshCustomScenarios);
       window.removeEventListener("storage", refreshCustomScenarios);
@@ -161,30 +181,32 @@ export default function Home() {
 
   const allScenarios = useMemo(() => {
     const serverScenarios = serverScenariosList || [];
-    const customSummaries = customScenarios.map(s => ({
+    const customSummaries = customScenarios.map((s) => ({
       id: s.id,
       title: s.title,
       environment: { type: s.environment.type },
-      isCustom: true
+      isCustom: true,
     }));
-    return [...serverScenarios.map(s => ({ ...s, isCustom: false })), ...customSummaries];
+    return [...serverScenarios.map((s) => ({ ...s, isCustom: false })), ...customSummaries];
   }, [serverScenariosList, customScenarios]);
 
-  const isCustomScenario = selectedScenarioId.startsWith("custom_") || selectedScenarioId.startsWith("imported_");
+  const isCustomScenario =
+    selectedScenarioId.startsWith("custom_") || selectedScenarioId.startsWith("imported_");
 
   const { data: serverScenario, isLoading: scenarioLoading } = useQuery<Scenario>({
     queryKey: ["/api/scenarios", selectedScenarioId],
-    enabled: !!selectedScenarioId && !isCustomScenario
+    enabled: !!selectedScenarioId && !isCustomScenario,
   });
 
   const currentScenario: Scenario | undefined = useMemo(() => {
     if (isCustomScenario) {
-      return customScenarios.find(s => s.id === selectedScenarioId);
+      return customScenarios.find((s) => s.id === selectedScenarioId);
     }
     return serverScenario;
   }, [isCustomScenario, selectedScenarioId, customScenarios, serverScenario]);
 
-  const { showTutorial, startTutorial, completeTutorial, resetTutorialState } = useTutorial(!!currentScenario);
+  const { showTutorial, startTutorial, completeTutorial, resetTutorialState } =
+    useTutorial(!!currentScenario);
 
   useEffect(() => {
     if (allScenarios.length && !selectedScenarioId) {
@@ -194,12 +216,12 @@ export default function Home() {
 
   useEffect(() => {
     if (currentScenario) {
-      const allowedZoneIds = new Set(zones.map(zone => zone.id));
+      const allowedZoneIds = new Set(zones.map((zone) => zone.id));
       const initialZones: Record<string, ZoneId> = {};
       const invalidDeviceIds: string[] = [];
-      currentScenario.devices.forEach(device => {
-        const zoneId = allowedZoneIds.has(device.networkId as ZoneId) 
-          ? (device.networkId as ZoneId) 
+      currentScenario.devices.forEach((device) => {
+        const zoneId = allowedZoneIds.has(device.networkId as ZoneId)
+          ? (device.networkId as ZoneId)
           : "main";
         if (zoneId === "main" && device.networkId !== "main") {
           invalidDeviceIds.push(device.id);
@@ -209,13 +231,10 @@ export default function Home() {
       setDeviceZones(initialZones);
       setControls({ ...currentScenario.initialControls });
 
-      if (
-        invalidDeviceIds.length > 0 &&
-        lastZoneWarningScenario.current !== currentScenario.id
-      ) {
+      if (invalidDeviceIds.length > 0 && lastZoneWarningScenario.current !== currentScenario.id) {
         toast({
-          title: t('author.importZoneWarningTitle'),
-          description: t('author.importZoneWarning', { count: invalidDeviceIds.length })
+          title: t("author.importZoneWarningTitle"),
+          description: t("author.importZoneWarning", { count: invalidDeviceIds.length }),
         });
         lastZoneWarningScenario.current = currentScenario.id;
       }
@@ -226,45 +245,166 @@ export default function Home() {
     setSelectedScenarioId(id);
   }, []);
 
-  const handleDeviceDrop = useCallback((deviceId: string, zoneId: ZoneId) => {
-    setDeviceZones(prev => ({
-      ...prev,
-      [deviceId]: zoneId
-    }));
-  }, []);
+  const getZoneLabel = useCallback(
+    (zoneId: ZoneId) => {
+      const zone = zones.find((z) => z.id === zoneId);
+      return zone ? t(zone.labelKey) : zoneId;
+    },
+    [t]
+  );
 
-  const handleZoneChange = useCallback((deviceId: string, newZone: ZoneId) => {
-    setDeviceZones(prev => ({
-      ...prev,
-      [deviceId]: newZone
-    }));
-  }, []);
+  const getDeviceLabelById = useCallback(
+    (deviceId: string) => {
+      const device = currentScenario?.devices.find((d) => d.id === deviceId);
+      if (!device) return deviceId;
+      return getDeviceDisplayLabel(device.id, device.label, currentScenario?.id ?? null, t);
+    },
+    [currentScenario, t]
+  );
 
-  const handleControlChange = useCallback(<K extends keyof Controls>(key: K, value: Controls[K]) => {
-    setControls(prev => prev ? { ...prev, [key]: value } : null);
-  }, []);
+  const getControlLabel = useCallback(
+    (controlId: string) => {
+      const definition = getControlDefinition(controlsRegistry, controlId);
+      if (definition) return t(definition.labelKey);
+      const fallbackKeyMap: Record<string, string> = {
+        verifyNetworkAuthenticity: "controls.verifyNetwork",
+      };
+      const fallbackKey = fallbackKeyMap[controlId] ?? `controls.${controlId}`;
+      return t(fallbackKey, { defaultValue: controlId });
+    },
+    [controlsRegistry, t]
+  );
 
-  const handleFlagToggle = useCallback((deviceId: string) => {
-    setFlaggedDevices(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(deviceId)) {
-        newSet.delete(deviceId);
-      } else {
-        newSet.add(deviceId);
+  const getControlValueLabel = useCallback(
+    (controlId: string, value: Controls[keyof Controls]) => {
+      if (typeof value === "boolean") {
+        return value ? t("learning.value.enabled") : t("learning.value.disabled");
       }
-      return newSet;
-    });
-  }, []);
+      if (controlId === "wifiSecurity") {
+        const keyMap: Record<string, string> = {
+          OPEN: "controls.wifiSecurityOpen",
+          WPA2: "controls.wifiSecurityWPA2",
+          WPA3: "controls.wifiSecurityWPA3",
+        };
+        const valueKey = keyMap[String(value)];
+        return valueKey ? t(valueKey) : String(value);
+      }
+      return String(value);
+    },
+    [t]
+  );
+
+  const handleDeviceDrop = useCallback(
+    (deviceId: string, zoneId: ZoneId) => {
+      const currentZone = deviceZones[deviceId];
+      if (currentZone === zoneId) return;
+      setDeviceZones((prev) => ({
+        ...prev,
+        [deviceId]: zoneId,
+      }));
+      setLastAction({ type: "deviceMoved", deviceId, zoneId });
+    },
+    [deviceZones]
+  );
+
+  const handleZoneChange = useCallback(
+    (deviceId: string, newZone: ZoneId) => {
+      const currentZone = deviceZones[deviceId];
+      if (currentZone === newZone) return;
+      setDeviceZones((prev) => ({
+        ...prev,
+        [deviceId]: newZone,
+      }));
+      setLastAction({ type: "deviceMoved", deviceId, zoneId: newZone });
+    },
+    [deviceZones]
+  );
+
+  const handleControlChange = useCallback(
+    <K extends keyof Controls>(key: K, value: Controls[K]) => {
+      if (!controls) return;
+      if (controls[key] === value) return;
+      setControls((prev) => (prev ? { ...prev, [key]: value } : null));
+      setLastAction({ type: "controlUpdated", controlId: String(key), value });
+    },
+    [controls]
+  );
+
+  const handleFlagToggle = useCallback(
+    (deviceId: string) => {
+      const wasFlagged = flaggedDevices.has(deviceId);
+      setFlaggedDevices((prev) => {
+        const newSet = new Set(prev);
+        if (wasFlagged) {
+          newSet.delete(deviceId);
+        } else {
+          newSet.add(deviceId);
+        }
+        return newSet;
+      });
+      setLastAction({ type: wasFlagged ? "unknownUnflagged" : "unknownFlagged", deviceId });
+    },
+    [flaggedDevices]
+  );
+
+  const actionInsight = useMemo(() => {
+    if (!lastAction) return null;
+    switch (lastAction.type) {
+      case "deviceMoved": {
+        if (!lastAction.deviceId || !lastAction.zoneId) return null;
+        const params: Record<string, string | number> = {
+          device: getDeviceLabelById(lastAction.deviceId),
+          zone: getZoneLabel(lastAction.zoneId),
+        };
+        return {
+          key: "learning.action.deviceMoved",
+          params,
+        };
+      }
+      case "controlUpdated": {
+        if (!lastAction.controlId || lastAction.value === undefined) return null;
+        const params: Record<string, string | number> = {
+          control: getControlLabel(lastAction.controlId),
+          value: getControlValueLabel(lastAction.controlId, lastAction.value),
+        };
+        return {
+          key: "learning.action.controlUpdated",
+          params,
+        };
+      }
+      case "unknownFlagged":
+      case "unknownUnflagged": {
+        if (!lastAction.deviceId) return null;
+        const params: Record<string, string | number> = {
+          device: getDeviceLabelById(lastAction.deviceId),
+        };
+        return {
+          key:
+            lastAction.type === "unknownFlagged"
+              ? "learning.action.unknownFlagged"
+              : "learning.action.unknownUnflagged",
+          params,
+        };
+      }
+      default:
+        return null;
+    }
+  }, [lastAction, getDeviceLabelById, getZoneLabel, getControlLabel, getControlValueLabel]);
 
   const handleReset = useCallback(() => {
     if (currentScenario) {
+      const allowedZoneIds = new Set(zones.map((zone) => zone.id));
       const initialZones: Record<string, ZoneId> = {};
-      currentScenario.devices.forEach(device => {
-        initialZones[device.id] = device.networkId as ZoneId;
+      currentScenario.devices.forEach((device) => {
+        const zoneId = allowedZoneIds.has(device.networkId as ZoneId)
+          ? (device.networkId as ZoneId)
+          : "main";
+        initialZones[device.id] = zoneId;
       });
       setDeviceZones(initialZones);
       setControls({ ...currentScenario.initialControls });
       setFlaggedDevices(new Set());
+      setLastAction(null);
       resetTutorialState();
     }
   }, [currentScenario, resetTutorialState]);
@@ -274,55 +414,67 @@ export default function Home() {
       return {
         subscores: { exposure: 0, credentialAccount: 0, hygiene: 0 },
         total: 0,
-        explanations: []
+        explanations: [],
       };
     }
     const getDeviceLabel = (device: Device) =>
       getDeviceDisplayLabel(device.id, device.label, currentScenario?.id ?? null, t);
     return calculateScore(
-      scoringRules, 
-      currentScenario.devices, 
-      deviceZones, 
-      controls, 
+      scoringRules,
+      currentScenario.devices,
+      deviceZones,
+      controls,
       flaggedDevices,
       currentScenario.environment.type,
       getDeviceLabel
     );
   }, [scoringRules, currentScenario, deviceZones, controls, flaggedDevices, t]);
 
-  const guestNetworkAvailable = currentScenario?.networks.some(n => n.id === "guest") ?? false;
-  const iotNetworkAvailable = currentScenario?.networks.some(n => n.id === "iot") ?? false;
+  const guestNetworkAvailable = currentScenario?.networks.some((n) => n.id === "guest") ?? false;
+  const iotNetworkAvailable = currentScenario?.networks.some((n) => n.id === "iot") ?? false;
 
   const iotDevicesInIotZone = useMemo(() => {
     if (!currentScenario) return false;
-    const iotDevices = currentScenario.devices.filter(d => d.riskFlags.includes("iot_device"));
+    const iotDevices = currentScenario.devices.filter((d) => d.riskFlags.includes("iot_device"));
     if (iotDevices.length === 0) return false;
-    const inIotZone = iotDevices.filter(d => deviceZones[d.id] === "iot");
+    const inIotZone = iotDevices.filter((d) => deviceZones[d.id] === "iot");
     return inIotZone.length >= iotDevices.length * 0.7;
   }, [currentScenario, deviceZones]);
 
   const maxRisk = currentScenario?.suggestedWinConditions?.maxTotalRisk ?? 35;
-  const requiredControls = currentScenario?.suggestedWinConditions?.requires ?? [];
-  const scopedRequiredControls = useMemo(
-    () => filterRequiredControlsByScenario(requiredControls, controlsRegistry, currentScenario?.environment.type),
-    [requiredControls, controlsRegistry, currentScenario?.environment.type]
-  );
+  const scopedRequiredControls = useMemo(() => {
+    const requiredControls = currentScenario?.suggestedWinConditions?.requires ?? [];
+    return filterRequiredControlsByScenario(
+      requiredControls,
+      controlsRegistry,
+      currentScenario?.environment.type
+    );
+  }, [
+    currentScenario?.suggestedWinConditions?.requires,
+    controlsRegistry,
+    currentScenario?.environment.type,
+  ]);
   const availableControlIds = useMemo(() => {
     if (!controlsRegistry) return undefined;
     const ids = getScenarioControlIds(controlsRegistry, currentScenario?.environment.type);
     return ids.size > 0 ? ids : undefined;
   }, [controlsRegistry, currentScenario?.environment.type]);
-  const meetsWinCondition = checkWinCondition(scoreResult.total, maxRisk, scopedRequiredControls, controls);
+  const meetsWinCondition = checkWinCondition(
+    scoreResult.total,
+    maxRisk,
+    scopedRequiredControls,
+    controls
+  );
 
   useEffect(() => {
     if (!currentScenario || scoreResult.total === 0) return;
-    
+
     const currentScore = Math.round(scoreResult.total);
     if (lastRecordedScore.current === currentScore) return;
-    
+
     if (meetsWinCondition && lastRecordedScore.current !== currentScore) {
       lastRecordedScore.current = currentScore;
-      
+
       const { newBadges, isNewCompletion: newCompletion } = recordAttempt(
         currentScenario.id,
         currentScenario.title,
@@ -330,24 +482,25 @@ export default function Home() {
         meetsWinCondition,
         iotDevicesInIotZone
       );
-      
+
       setUserProgress(getProgress());
       setIsNewCompletion(newCompletion);
 
-      newBadges.forEach(badge => {
+      newBadges.forEach((badge) => {
         toast({
-          title: t('notifications.badgeEarned'),
+          title: t("notifications.badgeEarned"),
           description: `${t(badge.name)}: ${t(badge.description)}`,
         });
       });
     }
-  }, [currentScenario, scoreResult.total, meetsWinCondition, iotDevicesInIotZone, toast]);
+  }, [currentScenario, scoreResult.total, meetsWinCondition, iotDevicesInIotZone, toast, t]);
 
   useEffect(() => {
     lastRecordedScore.current = null;
     previousScore.current = null;
     setIsNewCompletion(false);
     setFlaggedDevices(new Set());
+    setLastAction(null);
   }, [selectedScenarioId]);
 
   useEffect(() => {
@@ -360,24 +513,31 @@ export default function Home() {
     const shouldNotify = Math.abs(delta) >= 0.5;
 
     if (shouldNotify) {
-      const lastExplanation = scoreResult.explanations.length > 0 
-        ? scoreResult.explanations[scoreResult.explanations.length - 1] 
-        : null;
-      
+      const lastExplanation =
+        scoreResult.explanations.length > 0
+          ? scoreResult.explanations[scoreResult.explanations.length - 1]
+          : null;
+
       const deltaDisplay = delta > 0 ? `+${Math.round(delta)}` : `${Math.round(delta)}`;
       const isImprovement = delta < 0;
+      const actionText = actionInsight ? t(actionInsight.key, actionInsight.params || {}) : null;
+      const actionLine = actionText ? t("notifications.actionWhy", { action: actionText }) : null;
+      const baseDescription = lastExplanation
+        ? t("notifications.riskDelta", {
+            delta: deltaDisplay,
+            reason: formatExplanation(lastExplanation, t),
+          })
+        : t("notifications.riskDeltaGeneric", { delta: deltaDisplay });
 
       toast({
-        title: isImprovement ? t('notifications.riskReduced') : t('notifications.riskIncreased'),
-        description: lastExplanation 
-          ? t('notifications.riskDelta', { delta: deltaDisplay, reason: formatExplanation(lastExplanation, t) })
-          : t('notifications.riskDeltaGeneric', { delta: deltaDisplay }),
+        title: isImprovement ? t("notifications.riskReduced") : t("notifications.riskIncreased"),
+        description: actionLine ? `${baseDescription} ${actionLine}` : baseDescription,
         variant: isImprovement ? "default" : "destructive",
       });
     }
 
     previousScore.current = scoreResult.total;
-  }, [scoreResult.total, scoreResult.explanations, toast, t]);
+  }, [scoreResult.total, scoreResult.explanations, actionInsight, toast, t]);
 
   const isLoading = scenariosLoading || rulesLoading || scenarioLoading;
 
@@ -388,7 +548,7 @@ export default function Home() {
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Target className="h-6 w-6 text-muted-foreground" />
-              <h1 className="text-lg font-semibold">{t('app.title')}</h1>
+              <h1 className="text-lg font-semibold">{t("app.title")}</h1>
             </div>
             <Skeleton className="h-9 w-[280px]" />
             <ThemeToggle />
@@ -416,9 +576,9 @@ export default function Home() {
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Target className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-            <h1 className="text-lg font-semibold">{t('app.title')}</h1>
+            <h1 className="text-lg font-semibold">{t("app.title")}</h1>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <ScenarioSelector
               scenarios={allScenarios}
@@ -431,25 +591,29 @@ export default function Home() {
               size="sm"
               onClick={handleReset}
               data-testid="button-reset"
-              aria-label={t('header.reset')}
+              aria-label={t("header.reset")}
             >
               <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
-              {t('header.reset')}
+              {t("header.reset")}
             </Button>
             <Link href="/author">
               <Button variant="ghost" size="sm" data-testid="button-author">
                 <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
-                {t('header.author')}
+                {t("header.author")}
               </Button>
             </Link>
-            <div className="flex items-center border rounded-md" role="group" aria-label={t('header.viewMode')}>
+            <div
+              className="flex items-center border rounded-md"
+              role="group"
+              aria-label={t("header.viewMode")}
+            >
               <Button
                 variant={viewMode === "grid" ? "secondary" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
                 data-testid="button-view-grid"
                 aria-pressed={viewMode === "grid"}
-                aria-label={t('header.gridViewAriaLabel')}
+                aria-label={t("header.gridViewAriaLabel")}
                 className="rounded-r-none border-r"
               >
                 <LayoutGrid className="h-4 w-4" aria-hidden="true" />
@@ -460,7 +624,7 @@ export default function Home() {
                 onClick={() => setViewMode("list")}
                 data-testid="button-view-list"
                 aria-pressed={viewMode === "list"}
-                aria-label={t('header.listViewAriaLabel')}
+                aria-label={t("header.listViewAriaLabel")}
                 className="rounded-l-none"
               >
                 <List className="h-4 w-4" aria-hidden="true" />
@@ -476,13 +640,13 @@ export default function Home() {
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {currentScenario?.learningObjectives && currentScenario.learningObjectives.length > 0 && (
           <div className="mb-8 text-center" data-testid="goals-section">
-            <h2 className="text-2xl font-semibold mb-6">{t('goals.title')}</h2>
+            <h2 className="text-2xl font-semibold mb-6">{t("goals.title")}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
               {currentScenario.learningObjectives.map((objective, index) => {
                 const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
                 const translated = t(translationKey, { defaultValue: objective });
                 const displayText = translated || objective;
-                
+
                 return (
                   <Card key={index} className="text-center" data-testid={`card-goal-${index}`}>
                     <CardContent className="pt-6">
@@ -525,18 +689,12 @@ export default function Home() {
 
           <div className="lg:col-span-4 space-y-4">
             {meetsWinCondition && (
-              <CompletionBanner 
-                score={scoreResult.total} 
-                isNewCompletion={isNewCompletion} 
-              />
+              <CompletionBanner score={scoreResult.total} isNewCompletion={isNewCompletion} />
             )}
 
             <Card data-testid="risk-meter-card">
               <CardContent className="pt-6">
-                <RiskMeter
-                  subscores={scoreResult.subscores}
-                  total={scoreResult.total}
-                />
+                <RiskMeter subscores={scoreResult.subscores} total={scoreResult.total} />
               </CardContent>
             </Card>
 
@@ -568,6 +726,7 @@ export default function Home() {
                 controls={controls}
                 explanations={scoreResult.explanations}
                 flaggedDevices={flaggedDevices}
+                actionInsight={actionInsight}
                 maxExplainItems={scoringRules?.explainPanel?.maxItems ?? 8}
                 explainSortOrder={scoringRules?.explainPanel?.sortOrder}
                 availableControlIds={availableControlIds}
@@ -590,9 +749,7 @@ export default function Home() {
 
       <footer className="border-t mt-12">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-xs text-muted-foreground text-center">
-            {t('footer.disclaimer')}
-          </p>
+          <p className="text-xs text-muted-foreground text-center">{t("footer.disclaimer")}</p>
         </div>
       </footer>
 

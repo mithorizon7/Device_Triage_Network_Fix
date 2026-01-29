@@ -1,21 +1,21 @@
 import { describe, it, expect } from "vitest";
 import { createEmptyScenario, sanitizeScenarioNetworkIds } from "./customScenarios";
 
-const createDevice = (overrides: Partial<ReturnType<typeof createEmptyScenario>['devices'][number]> = {}) => ({
+const createDevice = (
+  overrides: Partial<ReturnType<typeof createEmptyScenario>["devices"][number]> = {}
+) => ({
   id: "device-1",
   type: "laptop",
   label: "Test Device",
   networkId: "main",
   riskFlags: [],
-  ...overrides
+  ...overrides,
 });
 
 describe("sanitizeScenarioNetworkIds", () => {
   it("moves devices with invalid networkId to main and reports them", () => {
     const scenario = createEmptyScenario();
-    scenario.devices = [
-      createDevice({ id: "device-invalid", networkId: "unknown-zone" })
-    ];
+    scenario.devices = [createDevice({ id: "device-invalid", networkId: "unknown-zone" })];
 
     const result = sanitizeScenarioNetworkIds(scenario);
 

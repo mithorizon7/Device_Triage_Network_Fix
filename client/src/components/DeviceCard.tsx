@@ -9,12 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { GripVertical, AlertTriangle, Shield, User, Briefcase, Flag } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { GripVertical, HelpCircle, Shield, User, Briefcase, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
@@ -33,11 +29,18 @@ interface DeviceCardProps {
   onFlagToggle?: (deviceId: string) => void;
 }
 
-const riskFlagConfig: Record<RiskFlag, { labelKey: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  unknown_device: { labelKey: "devices.unknownFlag", icon: AlertTriangle, variant: "destructive" },
-  iot_device: { labelKey: "devices.iotFlag", icon: Shield, variant: "secondary" },
+const riskFlagConfig: Record<
+  RiskFlag,
+  {
+    labelKey: string;
+    icon: typeof HelpCircle;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
+  unknown_device: { labelKey: "devices.unknownFlag", icon: HelpCircle, variant: "outline" },
+  iot_device: { labelKey: "devices.iotFlag", icon: Shield, variant: "outline" },
   visitor_device: { labelKey: "devices.visitorFlag", icon: User, variant: "outline" },
-  trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "default" }
+  trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "outline" },
 };
 
 export function DeviceCard({
@@ -49,7 +52,7 @@ export function DeviceCard({
   onDragEnd,
   scenarioId,
   isFlagged = false,
-  onFlagToggle
+  onFlagToggle,
 }: DeviceCardProps) {
   const { t } = useTranslation();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -58,6 +61,7 @@ export function DeviceCard({
     () => getDeviceDisplayLabel(device.id, device.label, scenarioId || null, t),
     [device.id, device.label, scenarioId, t]
   );
+  const hasUnknownFlag = device.riskFlags.includes("unknown_device");
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", device.id);
@@ -72,12 +76,14 @@ export function DeviceCard({
     }
   };
 
-  const flagLabels = device.riskFlags.map(flag => t(riskFlagConfig[flag].labelKey));
+  const flagLabels = device.riskFlags.map((flag) => t(riskFlagConfig[flag].labelKey));
   const ariaLabel = [
     `${deviceLabel}, ${t(`devices.${device.type}`)}`,
     flagLabels.length > 0 ? t("devices.flagsList", { flags: flagLabels.join(", ") }) : "",
-    isFlagged ? t("devices.flaggedForReview") : ""
-  ].filter(Boolean).join(", ");
+    isFlagged ? t("devices.flaggedForReview") : "",
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <Card
@@ -115,11 +121,17 @@ export function DeviceCard({
       </Tooltip>
 
       <div className="flex-1 min-w-[100px]">
-        <p className="text-sm font-medium leading-tight" data-testid={`text-device-label-${device.id}`}>
+        <p
+          className="text-sm font-medium leading-tight"
+          data-testid={`text-device-label-${device.id}`}
+        >
           {deviceLabel}
         </p>
         {device.ip && (
-          <p className="text-xs font-mono text-muted-foreground hidden sm:block" data-testid={`text-device-ip-${device.id}`}>
+          <p
+            className="text-xs font-mono text-muted-foreground hidden sm:block"
+            data-testid={`text-device-ip-${device.id}`}
+          >
             {device.ip}
           </p>
         )}
@@ -160,7 +172,7 @@ export function DeviceCard({
           <SelectTrigger
             className="w-auto min-w-[80px] h-8 text-xs"
             data-testid={`select-zone-${device.id}`}
-            aria-label={t('devices.moveToZone', { device: deviceLabel })}
+            aria-label={t("devices.moveToZone", { device: deviceLabel })}
           >
             <SelectValue />
           </SelectTrigger>
@@ -176,7 +188,7 @@ export function DeviceCard({
             ))}
           </SelectContent>
         </Select>
-        
+
         {hasUnknownFlag && onFlagToggle && (
           <Tooltip>
             <TooltipTrigger asChild>

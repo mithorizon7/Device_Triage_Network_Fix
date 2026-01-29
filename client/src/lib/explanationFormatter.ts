@@ -7,7 +7,7 @@ export function formatExplanation(explanation: Explanation, t: TFunction): strin
   if (explanation.explainKey) {
     return t(explanation.explainKey, {
       ...(explanation.explainParams || {}),
-      defaultValue: explanation.explain
+      defaultValue: explanation.explain,
     });
   }
   return explanation.explain;

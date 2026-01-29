@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 
 const STORAGE_KEY = "deviceTriage_controlEducationDismissed";
 
-type ControlKey = 
+type ControlKey =
   | "strongWifiPassword"
   | "guestNetworkEnabled"
   | "iotNetworkEnabled"
@@ -43,25 +43,31 @@ export function useControlEducation() {
     return !dismissed[controlKey];
   }, []);
 
-  const showEducation = useCallback((controlKey: ControlKey) => {
-    if (shouldShowEducation(controlKey)) {
-      setActiveControl(controlKey);
-      setDontShowAgain(false);
-    }
-  }, [shouldShowEducation]);
+  const showEducation = useCallback(
+    (controlKey: ControlKey) => {
+      if (shouldShowEducation(controlKey)) {
+        setActiveControl(controlKey);
+        setDontShowAgain(false);
+      }
+    },
+    [shouldShowEducation]
+  );
 
-  const dismissEducation = useCallback((keepEnabled: boolean) => {
-    if (activeControl && dontShowAgain) {
-      setDismissedControl(activeControl, true);
-    }
-    const result = { 
-      controlKey: activeControl, 
-      keepEnabled 
-    };
-    setActiveControl(null);
-    setDontShowAgain(false);
-    return result;
-  }, [activeControl, dontShowAgain]);
+  const dismissEducation = useCallback(
+    (keepEnabled: boolean) => {
+      if (activeControl && dontShowAgain) {
+        setDismissedControl(activeControl, true);
+      }
+      const result = {
+        controlKey: activeControl,
+        keepEnabled,
+      };
+      setActiveControl(null);
+      setDontShowAgain(false);
+      return result;
+    },
+    [activeControl, dontShowAgain]
+  );
 
   const closeEducation = useCallback(() => {
     if (activeControl && dontShowAgain) {

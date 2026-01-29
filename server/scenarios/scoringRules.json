@@ -258,7 +258,9 @@
       "when": {
         "all": [
           { "controlIs": "iotNetworkEnabled", "valueIs": true },
-          { "pctOfDevicesWithFlagInZoneAtLeast": { "flag": "iot_device", "zone": "iot", "pct": 0.7 } }
+          {
+            "pctOfDevicesWithFlagInZoneAtLeast": { "flag": "iot_device", "zone": "iot", "pct": 0.7 }
+          }
         ]
       },
       "add": { "exposure": -10 },
@@ -270,7 +272,13 @@
       "when": {
         "all": [
           { "controlIs": "guestNetworkEnabled", "valueIs": true },
-          { "countDevicesWithFlagInZoneAtLeast": { "flag": "visitor_device", "zone": "guest", "count": 1 } }
+          {
+            "countDevicesWithFlagInZoneAtLeast": {
+              "flag": "visitor_device",
+              "zone": "guest",
+              "count": 1
+            }
+          }
         ]
       },
       "add": { "exposure": -6 },

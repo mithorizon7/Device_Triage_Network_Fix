@@ -1,15 +1,18 @@
 # Device Triage + Network Fix-It Planner
 
 ## Overview
+
 An interactive educational security tool that teaches network segmentation and security controls through hands-on practice. Users drag-and-drop devices between trust zones and apply security controls to see real-time risk scoring with transparent explanations.
 
 ## Purpose
+
 - Teach network segmentation concepts (Main, Guest, IoT, Investigate zones)
 - Demonstrate why IoT devices shouldn't share a flat network with primary computers
 - Show high-impact security controls in a practical, transferable way
 - Provide deterministic, transparent risk scoring with plain-English explanations
 
 ## Current State
+
 - Fully functional MVP with three pre-built scenarios
 - Real-time scoring engine with configurable rules (unit-tested)
 - Drag-and-drop interface with keyboard accessibility
@@ -26,6 +29,7 @@ An interactive educational security tool that teaches network segmentation and s
 ## Project Architecture
 
 ### Frontend (React + TypeScript + Tailwind)
+
 ```
 client/src/
 ├── pages/
@@ -58,6 +62,7 @@ client/src/
 ```
 
 ### Backend (Express + TypeScript)
+
 ```
 server/
 ├── routes.ts                 # API endpoints for scenarios/rules
@@ -69,6 +74,7 @@ server/
 ```
 
 ### Shared Types
+
 ```
 shared/
 └── schema.ts                 # Zod schemas and TypeScript types
@@ -77,17 +83,20 @@ shared/
 ## Key Features
 
 ### Three Scenarios
+
 1. **Family IoT Sprawl** - Home network with 14 devices including IoT sprawl
 2. **Small Office** - Business environment with work devices and visitors
 3. **Hotel/Public Wi-Fi** - Travel scenario with shared network risks
 
 ### Four Trust Zones
+
 - **Main Network** - Trusted personal devices with full access
 - **Guest Network** - Visitor devices with internet-only access
 - **IoT Network** - Smart devices isolated from main network
 - **Investigate** - Unknown or suspicious devices for review
 
 ### Security Controls
+
 - Wi-Fi Security (Open/WPA2/WPA3)
 - Strong Wi-Fi Password
 - Guest Network Enabled
@@ -97,12 +106,14 @@ shared/
 - Default Passwords Addressed
 
 ### Scoring System
+
 - Three sub-scores: Exposure, Credential/Account, Hygiene
 - Weighted total risk (0-100)
 - Configurable via `scoringRules.json`
 - Transparent "Explain My Score" panel
 
 ### Synergy System
+
 - IoT Isolation (IoT network + proper device placement)
 - Guest Segmentation (Guest network + visitor placement)
 - Threat Quarantine (Unknown devices in Investigate zone)
@@ -110,7 +121,9 @@ shared/
 - Active Maintenance (Auto Updates + Changed Passwords)
 
 ### Progress Tracking
+
 7 achievement badges:
+
 - First Steps - Complete your first scenario
 - IoT Wrangler - Properly isolate IoT devices
 - Zone Master - Complete all three built-in scenarios
@@ -120,11 +133,13 @@ shared/
 - Scenario Author - Create a custom scenario
 
 ## API Endpoints
+
 - `GET /api/scenarios` - List all scenarios (id, title, environment type)
 - `GET /api/scenarios/:id` - Get full scenario by ID
 - `GET /api/scoring-rules` - Get scoring rules configuration
 
 ## Security & Privacy
+
 - No external API calls
 - No telemetry or analytics
 - All data is fictional (RFC 5737 IPs, fake MAC addresses)
@@ -134,6 +149,7 @@ shared/
 ## Internationalization (i18n)
 
 ### Architecture
+
 - **Source locale**: English (en.json) - canonical keyset
 - **Target locales**: Latvian (lv), Russian (ru)
 - **Fallback chain**: user preference → browser locale → locale-specific fallbacks
@@ -144,7 +160,9 @@ shared/
 - **Loading strategy**: Bundled (all locales loaded at startup for offline support)
 
 ### Key Conventions
+
 Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
+
 - `header.tutorial` - Tutorial button in header
 - `zones.main.label` - Main zone label
 - `controls.wifiSecurity` - Wi-Fi security control
@@ -152,18 +170,21 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - `deviceLabels.{scenarioId}.{deviceId}` - Device label translations for built-in scenarios
 
 ### Files
+
 - `client/src/locales/{en,lv,ru}.json` - Translation files (435 keys each)
 - `client/src/lib/i18n.ts` - i18next configuration with ICU support and getDeviceDisplayLabel() helper
 - `scripts/i18n-validate.js` - Validation script
 - `docs/i18n-glossary.md` - Terminology glossary for translators
 
 ### Tooling
+
 - **Validate**: `node scripts/i18n-validate.js`
   - Fails on missing keys, empty values, invalid ICU syntax
   - Warns on placeholder mismatches between locales
 - **Dev mode**: Missing keys display as `[MISSING:key]` in UI and console
 
 ### Features
+
 - Language switcher in header (flag icons with dropdown)
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 - Locale-aware formatting via `formatNumber()` and `formatDate()` helpers
@@ -171,6 +192,7 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Author page fully internationalized with scenario creation/editing workflow
 
 ## User Preferences
+
 - Dark/light mode persisted in localStorage
 - Tutorial completion persisted in localStorage
 - Progress and badges persisted in localStorage
@@ -178,6 +200,7 @@ Keys follow the pattern: `{namespace}.{screen/component}.{element}.{state}`
 - Language preference persisted in localStorage (key: `deviceTriage_language`)
 
 ## Recent Changes
+
 - 2024-12-19: Interactive password brute-force estimator added to "Strong Password" control
 - 2024-12-19: Password training shows real-time crack time estimates using A^L log-space math
 - 2024-12-19: Two attack presets: Fast hash (300B guesses/sec GPU) vs Modern bcrypt (9K guesses/sec)

@@ -115,10 +115,7 @@ function evaluateZoneCondition(
   return true;
 }
 
-function evaluateControlCondition(
-  condition: ControlRule["when"],
-  controls: Controls
-): boolean {
+function evaluateControlCondition(condition: ControlRule["when"], controls: Controls): boolean {
   const controlValue = controls[condition.controlIs];
   return controlValue === condition.valueIs;
 }
@@ -132,37 +129,37 @@ function evaluateSynergyCondition(
 ): boolean {
   if (!rule.when.all) return false;
 
-  return rule.when.all.every(condition => {
+  return rule.when.all.every((condition) => {
     if (condition.controlIs !== undefined && condition.valueIs !== undefined) {
       return controls[condition.controlIs] === condition.valueIs;
     }
 
     if (condition.pctOfDevicesWithFlagInZoneAtLeast) {
       const { flag, zone, pct } = condition.pctOfDevicesWithFlagInZoneAtLeast;
-      const devicesWithFlag = devices.filter(d => d.riskFlags.includes(flag));
+      const devicesWithFlag = devices.filter((d) => d.riskFlags.includes(flag));
       if (devicesWithFlag.length === 0) return false;
-      const devicesInZone = devicesWithFlag.filter(d => deviceZones[d.id] === zone);
-      return (devicesInZone.length / devicesWithFlag.length) >= pct;
+      const devicesInZone = devicesWithFlag.filter((d) => deviceZones[d.id] === zone);
+      return devicesInZone.length / devicesWithFlag.length >= pct;
     }
 
     if (condition.countDevicesWithFlagInZoneAtLeast) {
       const { flag, zone, count } = condition.countDevicesWithFlagInZoneAtLeast;
       const devicesWithFlagInZone = devices.filter(
-        d => d.riskFlags.includes(flag) && deviceZones[d.id] === zone
+        (d) => d.riskFlags.includes(flag) && deviceZones[d.id] === zone
       );
       return devicesWithFlagInZone.length >= count;
     }
 
     if (condition.countDevicesWithFlagAtLeast) {
       const { flag, count } = condition.countDevicesWithFlagAtLeast;
-      const devicesWithFlag = devices.filter(d => d.riskFlags.includes(flag));
+      const devicesWithFlag = devices.filter((d) => d.riskFlags.includes(flag));
       return devicesWithFlag.length >= count;
     }
 
     if (condition.countUnflaggedDevicesWithFlag) {
       const { flag, count } = condition.countUnflaggedDevicesWithFlag;
       const unflaggedDevicesWithFlag = devices.filter(
-        d => d.riskFlags.includes(flag) && !flaggedDevices.has(d.id)
+        (d) => d.riskFlags.includes(flag) && !flaggedDevices.has(d.id)
       );
       return unflaggedDevicesWithFlag.length >= count;
     }
@@ -181,7 +178,7 @@ export function calculateScore(
   getDeviceLabel?: (device: Device) => string
 ): ScoreResult {
   const explanations: Array<Explanation & { kind: ExplanationKind }> = [];
-  
+
   const subscores: Subscores = { ...rules.defaults.baseline };
 
   explanations.push({
@@ -189,7 +186,7 @@ export function calculateScore(
     delta: { ...rules.defaults.baseline },
     explain: "Starting baseline risk scores",
     explainKey: "scoring.baseline",
-    kind: "baseline"
+    kind: "baseline",
   });
 
   for (const rule of rules.controlRules) {
@@ -207,7 +204,7 @@ export function calculateScore(
         delta: rule.add as Record<string, number>,
         explain: rule.explain,
         explainKey: rule.explainKey,
-        kind: "controlRules"
+        kind: "controlRules",
       });
     }
   }
@@ -220,9 +217,7 @@ export function calculateScore(
       if (evaluateZoneCondition(rule.when, device, deviceZone, flaggedDevices.has(device.id))) {
         const deviceLabel = getDeviceLabel ? getDeviceLabel(device) : device.label;
         const explainParams = rule.explainKey ? { device: deviceLabel } : undefined;
-        const explainFallback = rule.explain
-          ? `${deviceLabel}: ${rule.explain}`
-          : deviceLabel;
+        const explainFallback = rule.explain ? `${deviceLabel}: ${rule.explain}` : deviceLabel;
 
         for (const [key, value] of Object.entries(rule.add)) {
           if (key in subscores) {
@@ -235,7 +230,7 @@ export function calculateScore(
           explain: explainFallback,
           explainKey: rule.explainKey,
           explainParams,
-          kind: "zoneRules"
+          kind: "zoneRules",
         });
       }
     }
@@ -253,7 +248,7 @@ export function calculateScore(
         delta: rule.add as Record<string, number>,
         explain: rule.explain,
         explainKey: rule.explainKey,
-        kind: "synergyRules"
+        kind: "synergyRules",
       });
     }
   }
@@ -275,27 +270,27 @@ export function calculateScore(
   );
 
   const weights = rules.scoreModel.weights;
-  let total = 
+  let total =
     subscores.exposure * (weights.exposure || 0.5) +
     subscores.credentialAccount * (weights.credentialAccount || 0.3) +
     subscores.hygiene * (weights.hygiene || 0.2);
 
-  total = clamp(
-    total,
-    rules.scoreModel.caps.total.min,
-    rules.scoreModel.caps.total.max
-  );
+  total = clamp(total, rules.scoreModel.caps.total.min, rules.scoreModel.caps.total.max);
 
-  const includeSet = new Set(rules.explainPanel?.include || ["baseline", "zoneRules", "controlRules", "synergyRules"]);
-  const filteredExplanations = explanations.filter(exp => {
-    if (!includeSet.has(exp.kind)) return false;
-    const totalDelta = Object.values(exp.delta).reduce((sum, val) => sum + val, 0);
-    return totalDelta !== 0 || exp.ruleId === "baseline";
-  }).map(({ kind, ...exp }) => exp);
+  const includeSet = new Set(
+    rules.explainPanel?.include || ["baseline", "zoneRules", "controlRules", "synergyRules"]
+  );
+  const filteredExplanations = explanations
+    .filter((exp) => {
+      if (!includeSet.has(exp.kind)) return false;
+      const totalDelta = Object.values(exp.delta).reduce((sum, val) => sum + val, 0);
+      return totalDelta !== 0 || exp.ruleId === "baseline";
+    })
+    .map(({ kind: _kind, ...exp }) => exp);
 
   return {
     subscores,
     total,
-    explanations: filteredExplanations
+    explanations: filteredExplanations,
   };
 }

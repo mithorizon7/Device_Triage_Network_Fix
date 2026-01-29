@@ -22,7 +22,7 @@ export function saveCustomScenario(scenario: Scenario): void {
   try {
     const { scenario: sanitized } = sanitizeScenarioNetworkIds(scenario);
     const existing = getCustomScenarios();
-    const index = existing.findIndex(s => s.id === scenario.id);
+    const index = existing.findIndex((s) => s.id === scenario.id);
     if (index >= 0) {
       existing[index] = sanitized;
     } else {
@@ -38,7 +38,7 @@ export function saveCustomScenario(scenario: Scenario): void {
 export function deleteCustomScenario(scenarioId: string): void {
   try {
     const existing = getCustomScenarios();
-    const filtered = existing.filter(s => s.id !== scenarioId);
+    const filtered = existing.filter((s) => s.id !== scenarioId);
     localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(filtered));
     notifyCustomScenariosUpdated();
   } catch {
@@ -69,30 +69,49 @@ export function generateScenarioId(): string {
 export interface CreateEmptyScenarioOptions {
   title?: string;
   notes?: string;
-  networkLabels?: {
-    main?: string;
-    guest?: string;
-    iot?: string;
-  };
+  networkLabels?: Partial<Record<"main" | "guest" | "iot", string>>;
+  networkSsids?: Partial<Record<"main" | "guest" | "iot", string>>;
   learningObjectives?: string[];
 }
 
 const DEFAULT_NETWORKS = [
-  { id: "main", label: "Main Network", ssid: "MyNetwork_Main", security: "WPA2", subnet: "192.168.1.0/24", enabled: true },
-  { id: "guest", label: "Guest Network", ssid: "MyNetwork_Guest", security: "WPA2", subnet: "192.168.2.0/24", enabled: false },
-  { id: "iot", label: "IoT Network", ssid: "MyNetwork_IoT", security: "WPA2", subnet: "192.168.3.0/24", enabled: false }
+  {
+    id: "main",
+    label: "Main Network",
+    ssid: "MyNetwork_Main",
+    security: "WPA2",
+    subnet: "192.168.1.0/24",
+    enabled: true,
+  },
+  {
+    id: "guest",
+    label: "Guest Network",
+    ssid: "MyNetwork_Guest",
+    security: "WPA2",
+    subnet: "192.168.2.0/24",
+    enabled: false,
+  },
+  {
+    id: "iot",
+    label: "IoT Network",
+    ssid: "MyNetwork_IoT",
+    security: "WPA2",
+    subnet: "192.168.3.0/24",
+    enabled: false,
+  },
 ];
 
 const DEFAULT_LEARNING_OBJECTIVES = [
   "Organize devices into appropriate trust zones",
   "Apply security controls to reduce risk",
-  "Understand the impact of each control on overall security"
+  "Understand the impact of each control on overall security",
 ];
 
 export function createEmptyScenario(options?: CreateEmptyScenarioOptions): Scenario {
-  const networks = DEFAULT_NETWORKS.map(n => ({
+  const networks = DEFAULT_NETWORKS.map((n) => ({
     ...n,
-    label: options?.networkLabels?.[n.id as keyof typeof options.networkLabels] ?? n.label
+    label: options?.networkLabels?.[n.id as "main" | "guest" | "iot"] ?? n.label,
+    ssid: options?.networkSsids?.[n.id as "main" | "guest" | "iot"] ?? n.ssid,
   }));
 
   return {
@@ -100,7 +119,7 @@ export function createEmptyScenario(options?: CreateEmptyScenarioOptions): Scena
     title: options?.title ?? "New Custom Scenario",
     environment: {
       type: "home",
-      notes: options?.notes ?? "Custom scenario created by instructor"
+      notes: options?.notes ?? "Custom scenario created by instructor",
     },
     networks,
     initialControls: {
@@ -110,14 +129,14 @@ export function createEmptyScenario(options?: CreateEmptyScenarioOptions): Scena
       iotNetworkEnabled: false,
       mfaEnabled: false,
       autoUpdatesEnabled: false,
-      defaultPasswordsAddressed: false
+      defaultPasswordsAddressed: false,
     },
     devices: [],
     learningObjectives: options?.learningObjectives ?? DEFAULT_LEARNING_OBJECTIVES,
     suggestedWinConditions: {
       maxTotalRisk: 35,
-      requires: []
-    }
+      requires: [],
+    },
   };
 }
 
@@ -132,7 +151,7 @@ export function sanitizeScenarioNetworkIds(scenario: Scenario): ScenarioSanitiza
   const invalidDeviceIds: string[] = [];
   let updated = false;
 
-  const devices = scenario.devices.map(device => {
+  const devices = scenario.devices.map((device) => {
     if (!ALLOWED_ZONE_IDS.has(device.networkId)) {
       invalidDeviceIds.push(device.id);
       updated = true;
@@ -143,6 +162,6 @@ export function sanitizeScenarioNetworkIds(scenario: Scenario): ScenarioSanitiza
 
   return {
     scenario: updated ? { ...scenario, devices } : scenario,
-    invalidDeviceIds
+    invalidDeviceIds,
   };
 }

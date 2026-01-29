@@ -14,6 +14,16 @@
     "gridViewAriaLabel": "Režģa skats ar vilkšanu un nomešanu",
     "listViewAriaLabel": "Ekrānlasītājam draudzīgs saraksta skats"
   },
+  "languages": {
+    "en": "angļu",
+    "lv": "latviešu",
+    "ru": "krievu",
+    "parenthetical": "({language})"
+  },
+  "theme": {
+    "switchToDark": "Pārslēgt uz tumšo režīmu",
+    "switchToLight": "Pārslēgt uz gaišo režīmu"
+  },
   "actions": {
     "flagDevice": "Atzīmēt pārbaudei",
     "unflagDevice": "Noņemt pārbaudes atzīmi"
@@ -25,6 +35,15 @@
     "smallOffice": "Maza biroja tīkls",
     "hotelPublic": "Viesnīcas / publiskais Wi-Fi"
   },
+  "environmentTypes": {
+    "home": "Mājas",
+    "office": "Birojs",
+    "hotel": "Viesnīca",
+    "school": "Skola",
+    "cafe": "Kafejnīca",
+    "other": "Cits",
+    "public": "Publisks"
+  },
   "zones": {
     "main": "Galvenais tīkls",
     "mainDescription": "Uzticamas personīgās ierīces ar pilnu piekļuvi",
@@ -32,6 +51,11 @@
     "guestDescription": "Viesu ierīces ar piekļuvi tikai internetam",
     "iot": "IoT tīkls",
     "iotDescription": "Viedierīces, kas izolētas no galvenā tīkla",
+    "realWorld": {
+      "main": "Lielākajā daļā maršrutētāju tā ir galvenā Wi-Fi vai LAN.",
+      "guest": "Bieži saukta Guest Network vai viesu Wi-Fi.",
+      "iot": "Bieži saukta IoT vai viedās mājas tīkla."
+    },
     "dropHere": "Nometiet ierīces šeit",
     "dropToMove": "Nometiet, lai pārvietotu šeit",
     "zoneWithDevices": "{zone} zona ar {count, plural, one {# ierīci} other {# ierīcēm}}"
@@ -141,6 +165,8 @@
   "riskMeter": {
     "title": "Kopējais riska vērtējums",
     "of100": "/100",
+    "subscoreAria": "{label}: {value}%",
+    "subscoreTooltip": "{label}: {value} / 100",
     "low": "Zems risks",
     "medium": "Vidējs",
     "high": "Augsts",
@@ -178,7 +204,7 @@
       "unknown": "Neatpazīta ierīce jūsu tīklā. Varētu būt kaimiņš, aizmirsta ierīce vai ielauzējs. Atzīmējiet un pārbaudiet pirms uzticaties."
     },
     "riskFlags": {
-      "unknown_device": "Šī ierīce netika gaidīta jūsu tīklā. Tā varētu būt nekaitīga (viesa tālrunis) vai ļaunprātīga. Atzīmējiet pārbaudei līdz identificēta.",
+      "unknown_device": "Šī ierīce nav atpazīta jūsu tīklā. Praksē tas parasti nozīmē viesa ierīci, aizmirstu ierīci vai neatļautu ierīci. Uztveriet to kā neuzticamu un atzīmējiet pārbaudei, līdz to identificējat.",
       "iot_device": "IoT ierīcēm bieži ir slikta drošība: vājas paroles, bez šifrēšanas, reti atjauninājumi. Ievietojiet tās atsevišķā tīklā.",
       "visitor_device": "Apmeklētāju ierīces ir ārpus jūsu kontroles. Jūs nezināt to drošības stāvokli. Dodiet interneta piekļuvi, bet izolējiet no galvenā tīkla.",
       "trusted_work_device": "Darba ierīcēm parasti ir korporatīvās drošības politikas, regulāri atjauninājumi un IT uzraudzība. Tām nepieciešama uzticama tīkla piekļuve."
@@ -209,56 +235,56 @@
       "guest": "Tikai interneta piekļuve apmeklētājiem vai neuzticamām ierīcēm. Var pārlūkot tīmekli, bet nevar piekļūt jūsu galvenā tīkla ierīcēm.",
       "iot": "Izolēts tīkls viedmājas ierīcēm. Tās saņem interneta piekļuvi, bet nevar sazināties ar jūsu galvenajām ierīcēm, ja kompromitētas."
     },
-    "flagForInvestigation": "Noklikšķiniet, lai atzīmētu šo nezināmo ierīci pārbaudei. Atzīmējot ierīces, kuras neatpazīstat, samazinās risks, nodrošinot to pārskatīšanu pirms uzticēšanās.",
+    "flagForInvestigation": "Noklikšķiniet, lai atzīmētu šo nezināmo ierīci pārbaudei. Atzīmējot ierīces, kuras neatpazīstat, risks samazinās, jo tās tiek pārskatītas pirms tām uzticaties.",
     "flagged": "Šī ierīce ir atzīmēta pārbaudei. Jūs to atzīmējāt kā aizdomīgu un tā tiek pārskatīta. Noklikšķiniet, lai noņemtu atzīmi, ja ierīce ir identificēta."
   },
   "education": {
     "dontShowAgain": "Nerādīt vēlreiz",
     "keepEnabled": "Sapratu, saglabāt ieslēgtu",
     "turnOff": "Izslēgt",
-    "whatIsThis": "Kas tas ir?",
-    "whyMatters": "Kāpēc tas ir svarīgi?",
-    "howToDo": "Kā to izdarīt?",
+    "whatIsThis": "Definīcija",
+    "whyMatters": "Kāpēc tas ir svarīgi",
+    "howToDo": "Kā to izdarīt",
     "strongWifiPassword": {
       "title": "Spēcīga Wi-Fi parole",
       "what": "Spēcīga Wi-Fi parole ir vismaz 12-16 rakstzīmes gara, apvieno lielos burtus, mazos burtus, ciparus un speciālus simbolus, un nesatur vārdnīcas vārdus, vārdus vai paredzamus modeļus kā '123456' vai 'password'.",
-      "why": "Vājas paroles ir #1 veids, kā uzbrucēji iegūst piekļuvi mājas tīkliem. Ar tiešsaistē brīvi pieejamiem rīkiem hakeri var uzminēt miljoniem bieži lietotu paroļu sekundē. Tiklīdz jūsu tīklā, viņi var pārtvert jūsu bankas darījumus, lasīt e-pastus un uzbrukt jūsu ierīcēm. Kaimiņš vai garāmgājējs varētu zagt jūsu interneta joslas platumu vai sliktāk - veikt noziegumus caur jūsu savienojumu, kas izsekojami pie jums.",
-      "how": "Izveidojiet paroles frāzi nevis paroli: savienojiet 4-5 nejauši vārdus kā 'pareizs-zirgs-baterija-skava'. Vai izmantojiet paroļu pārvaldnieku, lai ģenerētu un atcerētos sarežģītu paroli. Pierakstiet to un glabājiet drošā vietā mājās. Dalieties ar viesiem mutiski - nekad nenosūtiet īsziņā vai e-pastā."
+      "why": "Vājas paroles ir #1 veids, kā uzbrucēji iegūst piekļuvi mājas tīkliem. Ar tiešsaistē brīvi pieejamiem rīkiem hakeri var uzminēt miljoniem bieži lietotu paroļu sekundē. Tiklīdz viņi ir jūsu tīklā, viņi var pārtvert bankas darījumus, lasīt e-pastus un uzbrukt ierīcēm. Kaimiņš vai garāmgājējs var nozagt jūsu interneta joslas platumu vai izmantot jūsu savienojumu noziedzīgām darbībām, kas izsekojamas pie jums.",
+      "how": "Izveidojiet paroles frāzi, nevis paroli: savienojiet 4-5 nejaušus vārdus kā 'pareizs-zirgs-baterija-skava'. Vai izmantojiet paroļu pārvaldnieku, lai ģenerētu un atcerētos sarežģītu paroli. Pierakstiet to un glabājiet drošā vietā mājās. Dalieties ar viesiem mutiski. Nesūtiet īsziņā vai e-pastā."
     },
     "guestNetworkEnabled": {
       "title": "Viesu tīkls",
       "what": "Viesu tīkls ir atsevišķs Wi-Fi tīkls, kas nodrošina interneta piekļuvi, bet ir izolēts no jūsu galvenā tīkla. Ierīces viesu tīklā nevar redzēt vai sazināties ar jūsu datoriem, printeriem vai viedmājas ierīcēm.",
-      "why": "Kad apmeklētāji pieslēdzas jūsu galvenajam tīklam, viņu potenciāli inficētās ierīces var redzēt visu: jūsu koplietotās mapes, viedo TV, tīkla printeri. Pat labvēlīgi viesi var nezināt par ļaunprogrammatūru viņu ierīcēs. Līdz 2024. gadam vidējā māja ir 22 pieslēgtas ierīces - tas ir liels uzbrukumu laukums. Viesu tīkli uzliek sienu starp apmeklētājiem un jūsu digitālo dzīvi.",
+      "why": "Kad apmeklētāji pieslēdzas jūsu galvenajam tīklam, viņu potenciāli inficētās ierīces var redzēt visu: jūsu koplietotās mapes, viedo TV, tīkla printeri. Pat labvēlīgi viesi var nezināt par ļaunprogrammatūru viņu ierīcēs. Daudzās mājās tagad ir 20+ pieslēgtas ierīces. Tas ir liels uzbrukumu laukums. Viesu tīkli atdala apmeklētājus no jūsu galvenajām ierīcēm.",
       "how": "Lielākā daļa maršrutētāju, kas ražoti pēc 2015. gada, atbalsta viesu tīklus. Piesakieties savā maršrutētājā (parasti 192.168.1.1 vai 192.168.0.1), meklējiet 'Guest Network' vai 'Guest Access' bezvadu iestatījumos. Iespējojiet to ar citu paroli nekā galvenajam tīklam. Daži maršrutētāji pat ļauj ierobežot joslas platumu vai iestatīt automātisku izslēgšanos."
     },
     "iotNetworkEnabled": {
       "title": "IoT tīkls (viedo ierīču izolācija)",
-      "what": "IoT tīkls ir atsevišķs tīkla segments īpaši jūsu viedierīcēm - termostatiem, kamerām, viedajiem skaļruņiem, viedajām kontaktligzdām un citām 'lietu interneta' ierīcēm. Šīs ierīces var piekļūt internetam, bet nevar sazināties ar jūsu galvenajiem datoriem un tālruņiem.",
+      "what": "IoT tīkls ir atsevišķs tīkla segments, kas paredzēts viedierīcēm, piemēram, termostatiem, kamerām, viedajiem skaļruņiem, viedajām kontaktligzdām un citām lietu interneta ierīcēm. Šīs ierīces var piekļūt internetam, bet nevar sazināties ar jūsu galvenajiem datoriem un tālruņiem.",
       "why": "Viedierīces ir bēdīgi nedrošas. Daudzas izmanto novecojušu programmatūru, tām ir zināmas ievainojamības un reti saņem atjauninājumus. 2016. gadā Mirai botnets inficēja miljoniem IoT ierīču un nojauca lielas tīmekļa vietnes. Ja jūsu viedā spuldze tiek uzlauzta, uzbrucējs varētu to izmantot kā atspēriena punktu, lai piekļūtu jūsu portatīvajam datoram ar bankas informāciju. Izolācija novērš šo sānu kustību.",
       "how": "Daudzi mūsdienu maršrutētāji atbalsta IoT VLAN vai otro tīklu. Dažas tīkla sistēmas (piemēram, Eero, Google Nest WiFi) to padara viegli ar vienu klikšķi. Vecākiem maršrutētājiem varat izmantot viesu tīklu IoT ierīcēm, ja jums nav bieži apmeklētāju. Galvenais ir turēt IoT ierīces prom no uzticamajiem datoriem."
     },
     "mfaEnabled": {
       "title": "Daudzfaktoru autentifikācija (MFA)",
       "what": "Daudzfaktoru autentifikācija pieprasa divus vai vairāk veidus, kā pierādīt savu identitāti, piesakoties: kaut ko, ko zināt (parole), kaut ko, kas jums ir (tālrunis vai drošības atslēga), vai kaut ko, kas jūs esat (pirkstu nospiedums). Pat ja kāds nozog jūsu paroli, viņi joprojām nevar iekļūt bez otrā faktora.",
-      "why": "Paroles tiek zagtas pastāvīgi - no datu noplūdēm, pikšķerēšanas e-pastiem vai apskatīšanas pāri plecam. Microsoft ziņo, ka MFA bloķē 99.9% automatizētu kontu uzbrukumu. Jūsu viedmājas ierīces, e-pasts un mākoņa konti visi ir aizsargāti ar parolēm. Ja uzbrucējs kompromitē jūsu e-pastu, viņi var atiestatīt paroles visam pārējam. MFA ir jūsu drošības tīkls.",
+      "why": "Paroles regulāri tiek nozagtas, izmantojot datu noplūdes, pikšķerēšanas e-pastus vai noskatīšanos. Microsoft ziņo, ka MFA bloķē 99.9% automatizētu kontu uzbrukumu. Jūsu viedmājas ierīces, e-pasts un mākoņa konti visi ir aizsargāti ar parolēm. Ja uzbrucējs kompromitē jūsu e-pastu, viņi var atiestatīt paroles visam pārējam. MFA ir aizsardzība, kas pārtrauc šo ķēdi.",
       "how": "Vispirms iespējojiet MFA savos svarīgākajos kontos: e-pastā, bankā, sociālajos tīklos un jebkurās viedmājas lietotnēs (Ring, Nest utt.). Izmantojiet autentifikatora lietotni (Google Authenticator, Microsoft Authenticator, Authy) nevis SMS, kad iespējams. Lielākajai daļai pakalpojumu ir MFA iestatījumi zem 'Drošība' vai 'Konta aizsardzība'. Tas aizņem 5 minūtes katram kontam."
     },
     "autoUpdatesEnabled": {
       "title": "Automātiskie atjauninājumi",
       "what": "Automātiskie atjauninājumi ļauj jūsu ierīcēm un programmatūrai lejupielādēt un instalēt drošības ielāpus bez manuālas darbības. Tas ietver operētājsistēmas atjauninājumus, lietotņu atjauninājumus un programmaparatūras atjauninājumus maršrutētājiem un viedierīcēm.",
-      "why": "Lielākā daļa veiksmīgu kiberuzbrukumu izmanto zināmas ievainojamības - drošības caurumus, kas jau ir atklāti un laboti. 2017. gada WannaCry izspiedējvīruss inficēja 200 000 datoru visā pasaulē, bet tikai tos, kas nebija instalējuši mēnešus agrāk izlaisto ielāpu. Katra diena, kad aizkavējat atjauninājumu, ir vēl viena diena, kad uzbrucēji var izmantot šo ievainojamību pret jums.",
+      "why": "Lielākā daļa veiksmīgu kiberuzbrukumu izmanto zināmas ievainojamības, tas ir, drošības problēmas, kas jau ir atklātas un labotas. 2017. gada WannaCry izspiedējvīruss inficēja 200 000 datoru visā pasaulē, bet tikai tos, kas nebija instalējuši mēnešus agrāk izlaisto ielāpu. Katra diena, kad aizkavējat atjauninājumu, ir vēl viena diena, kad uzbrucēji var izmantot šo ievainojamību pret jums.",
       "how": "Tālrunī: Iestatījumi > Vispārīgi > Programmatūras atjauninājums > Automātiskie atjauninājumi. Windows: Iestatījumi > Atjauninājumi un drošība > Ieslēgt automātiskos atjauninājumus. Mac: Sistēmas preferences > Programmatūras atjauninājums > Automātiski uzturēt Mac atjauninātu. Maršrutētājiem un viedierīcēm pārbaudiet ražotāju lietotnes vai tīmekļa saskarnes 'Programmaparatūras atjauninājums' iestatījumus."
     },
     "defaultPasswordsAddressed": {
       "title": "Noklusējuma paroles nomainītas",
-      "what": "Noklusējuma paroles ir rūpnīcā iestatītie akreditācijas dati, kas nāk līdzi ierīcēm - bieži 'admin/admin', 'admin/password', vai uzdrukāti uz uzlīmes. Šīs paroles ir publiski dokumentētas un identiskas miljoniem viena modeļa ierīcēm.",
+      "what": "Noklusējuma paroles ir rūpnīcā iestatītie akreditācijas dati, kas nāk līdzi ierīcēm, bieži 'admin/admin', 'admin/password' vai uzdrukāti uz uzlīmes. Šīs paroles ir publiski dokumentētas un identiskas miljoniem viena modeļa ierīcēm.",
       "why": "Uzbrucēji uztur datubāzes ar noklusējuma parolēm katram ierīces modelim. Mirai botnets izplatījās vienkārši mēģinot noklusējuma akreditācijas datus miljoniem ierīču. Ja jūsu maršrutētājam joprojām ir noklusējuma parole, ikviens var pierakstīties, mainīt DNS iestatījumus (novirzot jūs uz viltotām banku vietnēm), vai atspējot jūsu drošību. Viedkamerām ar noklusējuma parolēm ir piekļuvuši svešinieki, kas skatās un pat runā caur tām.",
-      "how": "Sāciet ar maršrutētāju - tas ir vissvarīgākais. Piesakieties administratora saskarnē un nomainiet gan administratora paroli, gan Wi-Fi paroli. Tad pārbaudiet katras viedierīces lietotni paroles iestatījumiem. Izmantojiet unikālas paroles katrai ierīcei. Paroļu pārvaldnieks palīdz tās visas izsekot. Kad pērkat jaunas ierīces, nomainiet paroli sākotnējās iestatīšanas laikā."
+      "how": "Sāciet ar maršrutētāju. Tas ir kritiskākais. Piesakieties administratora saskarnē un nomainiet gan administratora paroli, gan Wi-Fi paroli. Tad pārbaudiet katras viedierīces lietotni paroles iestatījumiem. Izmantojiet unikālas paroles katrai ierīcei. Paroļu pārvaldnieks palīdz tās izsekot. Kad pērkat jaunas ierīces, nomainiet paroli sākotnējās iestatīšanas laikā."
     },
     "wifiSecurity": {
       "title": "Wi-Fi šifrēšanas drošība",
       "what": "Wi-Fi drošības protokoli (WPA2, WPA3) šifrē datus, kas ceļo starp jūsu ierīcēm un maršrutētāju. WPA3 ir jaunākais standarts (2018), piedāvājot spēcīgāku aizsardzību nekā WPA2 (2004). Atvērtiem tīkliem nav nekādas šifrēšanas.",
-      "why": "Bez šifrēšanas ikviens Wi-Fi diapazonā var uztvert jūsu tīkla datu plūsmu - paroles, e-pastus, pārlūkošanas vēsturi, visu. Pat WPA2, lai gan kopumā droša, ir zināmas ievainojamības (KRACK uzbrukums, 2017), ko WPA3 novērš. WPA3 arī ievērojami apgrūtina uzbrucējiem uzminēt jūsu paroli ar brutāla spēka uzbrukumiem.",
+      "why": "Bez šifrēšanas ikviens Wi-Fi diapazonā var uztvert jūsu tīkla datu plūsmu, tostarp paroles, e-pastus un pārlūkošanas vēsturi. Pat WPA2, lai gan kopumā droša, ir zināmas ievainojamības (KRACK uzbrukums, 2017), ko WPA3 novērš. WPA3 arī ievērojami apgrūtina uzbrucējiem uzminēt jūsu paroli ar brutāla spēka uzbrukumiem.",
       "how": "Piesakieties maršrutētāja administrācijas panelī (parasti 192.168.1.1). Meklējiet 'Bezvadu drošība' vai 'Wi-Fi iestatījumi'. Izvēlieties WPA3, ja pieejams, vai WPA2/WPA3 jaukto režīmu, ja jums ir vecākas ierīces. Izvairieties no WPA (ne WPA2) un nekad neizmantojiet 'Atvērts' vai WEP. Ja jūsu maršrutētājs neatbalsta WPA3 un ir vecāks par 5 gadiem, apsveriet atjaunināšanu labākai drošībai."
     }
   },
@@ -266,7 +292,7 @@
     "title": "Paroles apmācība: izveidojiet spēcīgu Wi-Fi paroli",
     "subtitle": "Uzziniet, kas padara paroli spēcīgu, to izveidojot",
     "howBruteForceWorks": "Kā darbojas brutāla spēka uzbrukumi",
-    "bruteForceExplainer": "Brutāla spēka uzbrukumi izmēģina katru iespējamo paroļu kombināciju. Ja uzbrucējs nozog paroļu jaucējkodu datubāzi, viņš var izmantot jaudīgus GPU, lai pārbaudītu miljardiem kombināciju sekundē. Jūsu aizsardzība? Padariet meklēšanas telpu neiespējami lielu.",
+    "bruteForceExplainer": "Brutāla spēka uzbrukumi izmēģina katru iespējamo paroļu kombināciju. Ja uzbrucējs nozog paroļu jaucējkodu datubāzi, viņš var izmantot jaudīgus GPU, lai pārbaudītu miljardiem kombināciju sekundē. Aizsardzība ir padarīt meklēšanas telpu pietiekami lielu, lai tas būtu nepraktiski.",
     "exponentialGrowth": "Katra rakstzīme, ko pievienojat, reizina kombinācijas ar alfabēta lielumu (26-95x lielāks)",
     "attackScenario": "Uzbrukuma scenārijs",
     "presetFastHash": "Ātra jaucējkoda uzbrukums (sliktākais gadījums)",
@@ -274,7 +300,7 @@
     "presetBcrypt": "Moderna bcrypt aizsardzība",
     "presetBcryptNotes": "Parole saglabāta ar bcrypt (nozares standarts). Daudz lēnāk: ~9000 minējumi sekundē pat uz jaudīgas aparatūras.",
     "bestPractices": "Paroļu labākās prakses",
-    "tipLength": "Izmantojiet vismaz 12-16 rakstzīmes - katra papildu rakstzīme reizina uzlaušanas laiku",
+    "tipLength": "Izmantojiet vismaz 12-16 rakstzīmes. Katra papildu rakstzīme reizina uzlaušanas laiku.",
     "tipMix": "Sajauciet lielos, mazos burtus, ciparus un simbolus, lai paplašinātu meklēšanas telpu",
     "tipPassphrase": "Apsveriet paroles frāzes: 'Saulriets-Kafija-42-Raķete!' ir spēcīga UN iegaumējama",
     "originalPassword": "Pašreizējā (vājā) parole",
@@ -287,6 +313,7 @@
     "strengthMedium": "Vidēja",
     "strengthStrong": "Spēcīga",
     "length": "Garums",
+    "metricWithValue": "{label}: {value}",
     "detectedLength": "Paroles garums",
     "alphabetSize": "Alfabēta lielums",
     "totalCombinations": "Kopējās iespējamās kombinācijas",
@@ -295,6 +322,7 @@
     "reqLowercase": "Mazie burti",
     "reqNumbers": "Cipari",
     "reqSymbols": "Simboli",
+    "requirementWithCount": "{label} ({count})",
     "estimatedCrackTime": "Laiks uzlaušanai (brutālais spēks)",
     "averageCase": "Vidēji",
     "worstCase": "Maksimāli",
@@ -305,7 +333,7 @@
     "timeUnit_hours": "stundas",
     "timeUnit_days": "dienas",
     "timeUnit_years": "gadi",
-    "warnCommon": "Šī parole ir izplatītu paroļu sarakstos - uzbrucēji šādas mēģina vispirms!",
+    "warnCommon": "Šī parole ir izplatītu paroļu sarakstos. Uzbrucēji šādas mēģina vispirms!",
     "warnSequential": "Satur secīgas secības (abc, 123), ko uzbrucēji zina mēģināt",
     "warnRepeating": "Satur atkārtotas rakstzīmes (aaa, 111), kas vājina entropiju",
     "dictionaryWarning": "Šīs aplēses pieņem nejaušas paroles. Vārdnīcas vārdi, vārdi un secības tiek uzlauzti daudz ātrāk nekā tīrs brutālais spēks.",
@@ -341,11 +369,28 @@
     "hideExplanations": "Slēpt paskaidrojumus",
     "noExplanations": "Nav pieejami paskaidrojumi",
     "noFactors": "Nav rādāmu vērtējuma faktoru. Veiciet izmaiņas, lai redzētu to ietekmi.",
+    "recentAction": "Nesenā darbība",
+    "recentActionLabel": "Nesenā darbība:",
+    "subscoreSummary": "Apakšvērtējumu kopsavilkums",
+    "subscoreValue": "{label}: {value}",
+    "topDrivers": "Galvenie faktori",
     "factorsAffecting": "{count} faktori, kas ietekmē jūsu vērtējumu",
     "collapseExplanations": "Sakļaut paskaidrojumus",
     "expandExplanations": "Izvērst paskaidrojumus",
     "reducesRisk": "Samazina risku",
     "increasesRisk": "Palielina risku"
+  },
+  "learning": {
+    "action": {
+      "deviceMoved": "{device} pārvietota uz {zone}",
+      "controlUpdated": "{control} iestatīts uz {value}",
+      "unknownFlagged": "{device} atzīmēta pārbaudei",
+      "unknownUnflagged": "Noņemta pārbaudes atzīme ierīcei {device}"
+    },
+    "value": {
+      "enabled": "Ieslēgts",
+      "disabled": "Izslēgts"
+    }
   },
   "scoring": {
     "baseline": "Sākuma bāzes riska rādītāji",
@@ -395,6 +440,8 @@
     "activeSynergies": "Aktīvās sinerģijas",
     "availableSynergies": "Pieejamās sinerģijas",
     "suggestedActions": "Ieteicamās darbības",
+    "reviewUnknownPrompt": "Pārbaudiet nezināmās ierīces pirms uzticēšanās",
+    "reviewUnknownDetail": "Pārbaudiet nosaukumus vai ražotāja informāciju maršrutētāja sarakstā. Ja ierīci nevarat atpazīt, atzīmējiet to pārbaudei.",
     "maxSynergiesActive": "Maksimālās sinerģijas aktīvas",
     "allOptimized": "Visas kontroles kombinācijas ir optimizētas",
     "iotIsolation": "IoT izolācija",
@@ -411,7 +458,7 @@
     "componentDevicePlacement": "Ierīču izvietojums",
     "componentGuestNetwork": "Viesu tīkls",
     "componentVisitorDevices": "Viesu ierīces",
-    "componentInvestigateZone": "Pārbaudes atzīme",
+    "componentInvestigateZone": "Pārbaudes karodziņš",
     "componentUnknownDevices": "Nezināmas ierīces",
     "componentWPA3": "WPA3",
     "componentStrongPassword": "Spēcīga parole",
@@ -455,6 +502,7 @@
     "completed": "pabeigti",
     "badgesCount": "nozīmītes",
     "badgeEarned": "Nopelnīta nozīmīte!",
+    "badgeEarnedDetail": "{name}: {description}",
     "winConditionMet": "Uzvaras nosacījums izpildīts",
     "riskScoreTarget": "Riska vērtējums: {score} (mērķis: {target} vai zemāk)",
     "firstSteps": "Pirmie soļi",
@@ -477,13 +525,42 @@
   "export": {
     "title": "Eksportēt",
     "htmlReport": "HTML atskaite",
-    "jsonData": "JSON dati"
+    "jsonData": "JSON dati",
+    "report": {
+      "title": "Tīkla triāžas atskaite",
+      "documentTitle": "{reportTitle} - {title}",
+      "fileNameReportPrefix": "tīkla-triāžas-atskaite",
+      "fileNameDataPrefix": "scenārija-dati",
+      "metaScenario": "Scenārijs",
+      "metaGenerated": "Izveidots",
+      "riskScore": "Riska vērtējums",
+      "summary": "Kopsavilkums",
+      "summaryTotalDevices": "Kopā ierīču",
+      "summaryDevicesMoved": "Pārvietotās ierīces",
+      "summaryControlsEnabled": "Ieslēgtas kontroles",
+      "summaryInMainZone": "Galvenajā zonā",
+      "summaryInGuestZone": "Viesu zonā",
+      "summaryInIotZone": "IoT zonā",
+      "securityControls": "Drošības kontroles",
+      "devicePlacements": "Ierīču izvietojums",
+      "tableDevice": "Ierīce",
+      "tableType": "Tips",
+      "tableZone": "Zona",
+      "tableStatus": "Statuss",
+      "movedFrom": "Pārvietots no zonas {zone}",
+      "riskFactors": "Riska faktori",
+      "footer": "Izveidots ar {appTitle}. Visi dati ir izdomāti un izmantoti apmācībai.",
+      "on": "Ieslēgts",
+      "off": "Izslēgts",
+      "controlWithValue": "{control}: {value}"
+    }
   },
   "notifications": {
     "riskReduced": "Risks samazināts",
     "riskIncreased": "Risks palielināts",
     "riskDelta": "{delta} risks: {reason}",
     "riskDeltaGeneric": "{delta} risks no nesenām izmaiņām",
+    "actionWhy": "Nesenā darbība: {action}",
     "badgeEarned": "Nopelnīta nozīmīte!",
     "scenarioComplete": "Scenārijs pabeigts!"
   },
@@ -502,39 +579,39 @@
     "steps": {
       "welcome": {
         "title": "Jūsu tīklam ir problēma",
-        "content": "Vairumam mājas tīklu ir bīstams trūkums: visas ierīces pieslēdzas vienam tīklam. Jūsu dators, viedais televizors, bērna planšete un tā lētā drošības kamera no ārzemēm - visi dalās vienā savienojumā. Ja viena ierīce tiek kompromitēta, uzbrucēji var sasniegt visu. Labosim to."
+        "content": "Vairumam mājas tīklu ir bīstams trūkums: visas ierīces pieslēdzas vienam tīklam. Jūsu dators, viedais televizors, bērna planšete un tā lētā drošības kamera no ārzemēm visi dalās vienā savienojumā. Ja viena ierīce tiek kompromitēta, uzbrucēji var sasniegt visu. Mēs to salabosim."
       },
       "scenarioSelector": {
         "title": "Izvēlieties savu izaicinājumu",
-        "content": "Katrs scenārijs atspoguļo reālu tīkla problēmu. Ģimenes IoT haoss ir tipisks - māja, kur ierīces uzkrājās laika gaitā bez organizācijas. Pazīstami skan?"
+        "content": "Katrs scenārijs atspoguļo reālu tīkla problēmu. Ģimenes IoT haoss modelē māju, kur ierīces uzkrājās laika gaitā bez organizācijas vai segmentācijas."
       },
       "theProblem": {
-        "title": "Redzat problēmu?",
-        "content": "Paskatieties uz Galveno tīklu - tas ir pārpildīts ar ierīcēm, kurām nevajadzētu dalīties vienā piekļuves līmenī. Viedie skaļruņi blakus jūsu darba datoram. Viesa telefons ar tādu pašu tīkla piekļuvi kā jūsu bankas dators. Šis 'plakanais tīkls' ir tieši tas, kā vairums māju ir uzstādītas, un tā ir drošības murgs."
+        "title": "Nosakiet problēmu",
+        "content": "Paskatieties uz Galveno tīklu. Tas ir pārpildīts ar ierīcēm, kurām nevajadzētu dalīties vienā piekļuves līmenī. Viedie skaļruņi blakus jūsu darba datoram. Viesa telefons ar tādu pašu tīkla piekļuvi kā jūsu bankas dators. Šis plakanais tīkls ir tipisks daudzām mājām un rada lieku risku."
       },
       "mainZone": {
         "title": "Galvenais tīkls: jūsu iekšējais loks",
-        "content": "Galvenajam tīklam JĀSATUR tikai ierīces, kurām pilnībā uzticaties un kurām jāsazinās savā starpā. Jūsu personālais dators, telefons un planšete pieder šeit. Šīs ir ierīces ar regulāriem drošības atjauninājumiem, kontiem, kurus jūs kontrolējat, un datiem, kas jāaizsargā. Viss pārējais? Tam jānonāk kaut kur drošākā vietā."
+        "content": "Galvenajam tīklam jāietver ierīces, kurām uzticaties un kurām jāsazinās savā starpā. Jūsu personālais dators, telefons un planšete pieder šeit, jo tiem ir regulāri drošības atjauninājumi, konti, kurus jūs kontrolējat, un dati, kas jāaizsargā. Ierīcēm ārpus šīs uzticamības robežas jābūt citās zonās."
       },
       "guestZone": {
         "title": "Viesu tīkls: draudzīgs, bet atsevišķs",
-        "content": "Kad draugi ciemojas, viņu ierīcēm nevajadzētu piekļūt jūsu failu koplietojumiem vai viedās mājas vadībai. Viesu tīkls nodrošina interneta piekļuvi, neredzot jūsu iekšējo tīklu. Šī ir reāla funkcija vairumā maršrutētāju - jūs varat to uzstādīt jau šodien. Apmeklētāji nokļūst tiešsaistē, bet viņu potenciāli inficētās ierīces nevar izplatīties uz jūsējām."
+        "content": "Kad draugi ciemojas, viņu ierīcēm nevajadzētu piekļūt jūsu failu koplietojumiem vai viedās mājas vadībai. Viesu tīkls nodrošina interneta piekļuvi bez piekļuves jūsu iekšējam tīklam. Tā ir standarta maršrutētāju funkcija, ko varat ieslēgt jau šodien. Apmeklētāji nokļūst tiešsaistē, bet viņu ierīces nevar sasniegt jūsu Galveno tīklu."
       },
       "iotZone": {
         "title": "IoT tīkls: ierobežojiet risku",
-        "content": "Viedās ierīces ir ērtas, bet bieži nedroši. Tam viedajam durvju zvanam var būt nelabotas ievainojamības. Tas balss asistents vienmēr klausās. IoT tīkls izolē šīs ierīces, tāpēc pat ja viena tiek kompromitēta, uzbrucēji nevar pāriet uz jūsu galvenajiem datoriem. Daudzi maršrutētāji atbalsta atsevišķa IoT tīkla izveidi - tā ir viena no augstākās ietekmes drošības izmaiņām, ko varat veikt."
+        "content": "Viedās ierīces ir ērtas, bet bieži nedrošas. Viedajiem durvju zvaniem var būt nelabotas ievainojamības. Balss asistenti vienmēr klausās. IoT tīkls izolē šīs ierīces, tāpēc pat ja viena tiek kompromitēta, uzbrucēji nevar pāriet uz jūsu galvenajiem datoriem. Daudzi maršrutētāji atbalsta atsevišķu IoT tīklu, un tā ieslēgšana dod augstu drošības ieguvumu."
       },
       "deviceCards": {
         "title": "Velciet, lai pārkārtotu",
-        "content": "Tagad jūsu kārta labot šo tīklu. Velciet ierīces uz atbilstošajām zonām vai izmantojiet nolaižamo izvēlni katrā kartē. Padomājiet par katru ierīci: Vai es tai pilnībā uzticos? Vai tai jāredz manas citas ierīces? Vai tā varētu būt risks, ja tiktu kompromitēta?"
+        "content": "Velciet ierīces uz atbilstošajām zonām vai izmantojiet nolaižamo izvēlni katrā kartē. Klasificējiet ierīces pēc uzticamības līmeņa un piekļuves vajadzības: uzticamas personīgās ierīces Galvenajā tīklā, viesi Viesu tīklā un IoT IoT tīklā. Ja ierīce palielinātu risku kompromitēšanas gadījumā, turiet to ārpus Galvenā tīkla."
       },
       "flagInvestigation": {
         "title": "Atzīmējiet nezināmās ierīces",
-        "content": "Redzat ierīci, kuru neatpazīstat? Meklējiet karodziņa pogu uz ierīcēm, kas atzīmētas kā 'Nezināmas'. Aizdomīgas ierīces atzīmēšana nozīmē to reģistrēšanu pārbaudei - kritisks pirmais solis, kad pamanāt kaut ko negaidītu savā tīklā. Neuzticieties nezināmām ierīcēm, kamēr neesat tās identificējuši. Reālajā pasaulē tā varētu būt kaimiņš, kas izmanto jūsu Wi-Fi, vai aizmirsta ierīce - bet tā varētu būt arī iebrucējs."
+        "content": "Nezināmās ierīces ir atzīmētas kā 'Nezināms' un tām ir karodziņa darbība. Atzīmēšana nozīmē, ka ierīce tiek pārskatīta un tiek uzskatīta par neuzticamu, līdz tā ir identificēta. Praksē nezināmas ierīces bieži ir viesa tālrunis, aizmirsta ierīce vai neatļauta ierīce. Pārbaudiet maršrutētāja sarakstu un noņemiet atzīmi tikai pēc identifikācijas."
       },
       "riskMeter": {
         "title": "Vērojiet, kā krīt jūsu risks",
-        "content": "Šis vērtējums parāda jūsu tīkla pašreizējo drošības risku. Pārvietojot ierīces uz atbilstošām zonām un ieslēdzot drošības kontroles, vērojiet, kā skaitlis krīt. Mērķis ir nokļūt zem 35 - tas atspoguļo labi segmentētu, pareizi nodrošinātu tīklu."
+        "content": "Šis vērtējums parāda jūsu tīkla pašreizējo drošības risku. Pārvietojot ierīces uz atbilstošām zonām un ieslēdzot drošības kontroles, skaitlim vajadzētu samazināties. Mērķis ir nokļūt zem 35, kas atspoguļo labi segmentētu un pareizi nodrošinātu tīklu."
       },
       "controls": {
         "title": "Drošības kontroles: aizsardzība dziļumā",
@@ -542,11 +619,11 @@
       },
       "insightsPanel": {
         "title": "Uzziniet, kāpēc tas ir svarīgi",
-        "content": "Šis panelis parāda spēcīgas kontroles kombinācijas (sinerģijas) un precīzi izskaidro, kas ietekmē jūsu vērtējumu. Izmantojiet to, lai saprastu 'kāpēc' aiz tīkla drošības - zināšanas, kuras varat pielietot savam reālajam tīklam mājās."
+        "content": "Šis panelis parāda kontroles kombinācijas (sinerģijas) un izskaidro, kas ietekmē jūsu vērtējumu. Izmantojiet to, lai sasaistītu katru darbību ar tās ietekmi uz risku un pielietotu to pašu loģiku savam tīklam."
       },
       "complete": {
         "title": "Labojiet savu reālo tīklu",
-        "content": "Tagad jūs saprotat tīkla segmentāciju - praksi, kā atdalīt ierīces pēc uzticamības līmeņa. Šī nav tikai spēle; šīs ir reālas tehnikas, kuras varat ieviest jau šodien. Pārbaudiet sava maršrutētāja iestatījumus Viesu tīkla un IoT tīkla opcijām. Pārvietojiet savas viedās ierīces uz atsevišķu tīklu. Jūsu nākotnes es jums pateiks."
+        "content": "Tagad jūs saprotat tīkla segmentāciju, praksi, kā atdalīt ierīces pēc uzticamības līmeņa. Tā ir reāla tehnika, kuru varat ieviest jau šodien. Pārbaudiet sava maršrutētāja iestatījumus Viesu tīkla un IoT tīkla opcijām. Pārvietojiet savas viedās ierīces uz atsevišķu tīklu, lai uzreiz samazinātu risku."
       }
     }
   },
@@ -587,6 +664,18 @@
     "duplicate": "Dublēt",
     "export": "Eksportēt",
     "copyTitle": "{title} (Kopija)",
+    "defaults": {
+      "title": "Jauns pielāgots scenārijs",
+      "notes": "Pielāgots scenārijs izveidots instruktora",
+      "ssidMain": "MansTīkls_Galvenais",
+      "ssidGuest": "MansTīkls_Viesi",
+      "ssidIot": "MansTīkls_IoT",
+      "learningObjectives": {
+        "organizeDevices": "Organizēt ierīces atbilstošās uzticamības zonās",
+        "applyControls": "Piemērot drošības kontroles risku samazināšanai",
+        "understandImpact": "Saprast katras kontroles ietekmi uz kopējo drošību"
+      }
+    },
     "importError": "Neizdevās importēt scenāriju. Lūdzu, pārbaudiet faila formātu.",
     "importZoneWarningTitle": "Zonas koriģētas",
     "importZoneWarning": "{count, plural, one {# ierīcei bija} other {# ierīcēm bija}} nezināma tīkla zona, un tā tika pārvietota uz Galveno.",
@@ -613,6 +702,33 @@
       "trusted_work_device": "uzticama darba ierīce"
     }
   },
+  "notFound": {
+    "title": "404 Lapa nav atrasta",
+    "description": "Pieprasītā lapa šajā lietotnē nav pieejama."
+  },
+  "carousel": {
+    "previousSlide": "Iepriekšējais slaids",
+    "nextSlide": "Nākamais slaids",
+    "roleDescription": "karuselis",
+    "slideDescription": "slaids"
+  },
+  "pagination": {
+    "label": "Lapu navigācija",
+    "previous": "Iepriekšējā",
+    "next": "Nākamā",
+    "more": "Vairāk lapu",
+    "goToPrevious": "Doties uz iepriekšējo lapu",
+    "goToNext": "Doties uz nākamo lapu"
+  },
+  "breadcrumb": {
+    "label": "Navigācijas ceļš",
+    "more": "Vairāk"
+  },
+  "sidebar": {
+    "title": "Sānu josla",
+    "description": "Parāda sānu joslu mobilajā skatā.",
+    "toggle": "Pārslēgt sānu joslu"
+  },
   "common": {
     "start": "Sākt",
     "continue": "Turpināt",
@@ -624,7 +740,8 @@
     "close": "Aizvērt",
     "loading": "Ielādē...",
     "error": "Kļūda",
-    "success": "Veiksmīgi"
+    "success": "Veiksmīgi",
+    "numberedItem": "{number}."
   },
   "footer": {
     "disclaimer": "Visas adreses un identifikatori ir izdomāti apmācību nolūkiem. Nekādi reāli tīkla dati netiek apkopoti."

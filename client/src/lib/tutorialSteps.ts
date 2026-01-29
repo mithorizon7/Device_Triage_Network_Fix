@@ -14,14 +14,14 @@ export const tutorialSteps: TutorialStep[] = [
     target: "body",
     titleKey: "tutorial.steps.welcome.title",
     contentKey: "tutorial.steps.welcome.content",
-    placement: "center"
+    placement: "center",
   },
   {
     id: "scenario-selector",
     target: "[data-testid='select-scenario']",
     titleKey: "tutorial.steps.scenarioSelector.title",
     contentKey: "tutorial.steps.scenarioSelector.content",
-    placement: "bottom"
+    placement: "bottom",
   },
   {
     id: "the-problem",
@@ -29,7 +29,7 @@ export const tutorialSteps: TutorialStep[] = [
     titleKey: "tutorial.steps.theProblem.title",
     contentKey: "tutorial.steps.theProblem.content",
     placement: "right",
-    highlightZone: "main"
+    highlightZone: "main",
   },
   {
     id: "main-zone",
@@ -37,7 +37,7 @@ export const tutorialSteps: TutorialStep[] = [
     titleKey: "tutorial.steps.mainZone.title",
     contentKey: "tutorial.steps.mainZone.content",
     placement: "right",
-    highlightZone: "main"
+    highlightZone: "main",
   },
   {
     id: "guest-zone",
@@ -45,7 +45,7 @@ export const tutorialSteps: TutorialStep[] = [
     titleKey: "tutorial.steps.guestZone.title",
     contentKey: "tutorial.steps.guestZone.content",
     placement: "left",
-    highlightZone: "guest"
+    highlightZone: "guest",
   },
   {
     id: "iot-zone",
@@ -53,50 +53,50 @@ export const tutorialSteps: TutorialStep[] = [
     titleKey: "tutorial.steps.iotZone.title",
     contentKey: "tutorial.steps.iotZone.content",
     placement: "right",
-    highlightZone: "iot"
+    highlightZone: "iot",
   },
   {
     id: "device-cards",
     target: "[data-testid^='card-device-']",
     titleKey: "tutorial.steps.deviceCards.title",
     contentKey: "tutorial.steps.deviceCards.content",
-    placement: "bottom"
+    placement: "bottom",
   },
   {
     id: "flag-investigation",
     target: "[data-testid^='button-flag-']",
     titleKey: "tutorial.steps.flagInvestigation.title",
     contentKey: "tutorial.steps.flagInvestigation.content",
-    placement: "left"
+    placement: "left",
   },
   {
     id: "risk-meter",
     target: "[data-testid='risk-meter-card']",
     titleKey: "tutorial.steps.riskMeter.title",
     contentKey: "tutorial.steps.riskMeter.content",
-    placement: "left"
+    placement: "left",
   },
   {
     id: "controls",
     target: "[data-testid='controls-drawer']",
     titleKey: "tutorial.steps.controls.title",
     contentKey: "tutorial.steps.controls.content",
-    placement: "left"
+    placement: "left",
   },
   {
     id: "insights-panel",
     target: "[data-testid='insights-card']",
     titleKey: "tutorial.steps.insightsPanel.title",
     contentKey: "tutorial.steps.insightsPanel.content",
-    placement: "left"
+    placement: "left",
   },
   {
     id: "complete",
     target: "body",
     titleKey: "tutorial.steps.complete.title",
     contentKey: "tutorial.steps.complete.content",
-    placement: "center"
-  }
+    placement: "center",
+  },
 ];
 
 const TUTORIAL_STORAGE_KEY = "device_triage_tutorial_complete";

@@ -8,13 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Shield, User, Briefcase, Flag } from "lucide-react";
+import { HelpCircle, Shield, User, Briefcase, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Device, ZoneId, RiskFlag } from "@shared/schema";
 import { getDeviceIcon } from "@/lib/deviceIcons";
@@ -30,23 +26,30 @@ interface DeviceListViewProps {
   onFlagToggle?: (deviceId: string) => void;
 }
 
-const riskFlagKeys: Record<RiskFlag, { labelKey: string; icon: typeof AlertTriangle; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  unknown_device: { labelKey: "devices.unknownFlag", icon: AlertTriangle, variant: "destructive" },
-  iot_device: { labelKey: "devices.iotFlag", icon: Shield, variant: "secondary" },
+const riskFlagKeys: Record<
+  RiskFlag,
+  {
+    labelKey: string;
+    icon: typeof HelpCircle;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
+  unknown_device: { labelKey: "devices.unknownFlag", icon: HelpCircle, variant: "outline" },
+  iot_device: { labelKey: "devices.iotFlag", icon: Shield, variant: "outline" },
   visitor_device: { labelKey: "devices.visitorFlag", icon: User, variant: "outline" },
-  trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "default" }
+  trusted_work_device: { labelKey: "devices.workFlag", icon: Briefcase, variant: "outline" },
 };
 
-export function DeviceListView({ 
-  devices, 
-  deviceZones, 
-  onZoneChange, 
+export function DeviceListView({
+  devices,
+  deviceZones,
+  onZoneChange,
   scenarioId,
   flaggedDevices = new Set(),
-  onFlagToggle
+  onFlagToggle,
 }: DeviceListViewProps) {
   const { t } = useTranslation();
-  
+
   const deviceLabels = useMemo(() => {
     const labels: Record<string, string> = {};
     for (const device of devices) {
@@ -54,53 +57,53 @@ export function DeviceListView({
     }
     return labels;
   }, [devices, scenarioId, t]);
-  
+
   const getLabel = (device: Device): string => deviceLabels[device.id] || device.label;
-  
-  const devicesByZone = zones.map(zone => ({
+
+  const devicesByZone = zones.map((zone) => ({
     zone,
     label: t(zone.labelKey),
     description: t(zone.descriptionKey),
-    devices: devices.filter(d => deviceZones[d.id] === zone.id)
+    devices: devices.filter((d) => deviceZones[d.id] === zone.id),
   }));
 
   return (
-    <div 
-      className="space-y-4" 
-      role="region" 
-      aria-label={t('devices.listViewLabel')}
+    <div
+      className="space-y-4"
+      role="region"
+      aria-label={t("devices.listViewLabel")}
       data-testid="device-list-view"
     >
-      <p className="sr-only">
-        {t('devices.listViewHint')}
-      </p>
-      
+      <p className="sr-only">{t("devices.listViewHint")}</p>
+
       {devicesByZone.map(({ zone, label, description, devices: zoneDevices }) => (
         <Card key={zone.id} data-testid={`list-zone-${zone.id}`}>
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium flex items-center gap-2">
-              <span 
+              <span
                 className={`w-3 h-3 rounded-full flex-shrink-0 ${zone.bgClass}`}
                 aria-hidden="true"
               />
               {label}
               <Badge variant="outline" className="ml-auto">
-                {t('devices.count', { count: zoneDevices.length })}
+                {t("devices.count", { count: zoneDevices.length })}
               </Badge>
             </CardTitle>
             <p className="text-xs text-muted-foreground">{description}</p>
           </CardHeader>
           <CardContent>
             {zoneDevices.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic py-2">
-                {t('devices.noDevices')}
-              </p>
+              <p className="text-sm text-muted-foreground italic py-2">{t("devices.noDevices")}</p>
             ) : (
-              <ul className="divide-y divide-border" role="list" aria-label={t('devices.in', { zone: label })}>
+              <ul
+                className="divide-y divide-border"
+                role="list"
+                aria-label={t("devices.in", { zone: label })}
+              >
                 {zoneDevices.map((device) => {
                   const DeviceIcon = getDeviceIcon(device.type);
                   return (
-                    <li 
+                    <li
                       key={device.id}
                       className={`py-3 first:pt-0 last:pb-0 ${flaggedDevices.has(device.id) ? "bg-amber-100/50 dark:bg-amber-900/20 -mx-4 px-4 rounded-md" : ""}`}
                       data-testid={`list-device-${device.id}`}
@@ -116,11 +119,14 @@ export function DeviceListView({
                             <p className="text-sm">{t(`tooltips.deviceTypes.${device.type}`)}</p>
                           </TooltipContent>
                         </Tooltip>
-                        
+
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{getLabel(device)}</p>
                           <p className="text-xs text-muted-foreground">
-                            {t(`devices.${device.type}`, { defaultValue: device.type.charAt(0).toUpperCase() + device.type.slice(1) })}
+                            {t(`devices.${device.type}`, {
+                              defaultValue:
+                                device.type.charAt(0).toUpperCase() + device.type.slice(1),
+                            })}
                             {device.ip && ` - ${device.ip}`}
                           </p>
                           {device.riskFlags.length > 0 && (
@@ -137,7 +143,7 @@ export function DeviceListView({
                                           className="text-xs px-1.5 py-0 gap-1 cursor-help"
                                         >
                                           <FlagIcon className="h-3 w-3" aria-hidden="true" />
-                                          {t(config.labelKey)}
+                                          <span className="sr-only">{t(config.labelKey)}</span>
                                         </Badge>
                                       </span>
                                     </TooltipTrigger>
@@ -150,10 +156,10 @@ export function DeviceListView({
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="flex-shrink-0 flex items-center gap-2">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
-                            {t('devices.moveToZone', { device: getLabel(device) })}
+                            {t("devices.moveToZone", { device: getLabel(device) })}
                           </label>
                           <Select
                             value={deviceZones[device.id]}
@@ -168,16 +174,13 @@ export function DeviceListView({
                             </SelectTrigger>
                             <SelectContent>
                               {zones.map((z) => (
-                                <SelectItem
-                                  key={z.id}
-                                  value={z.id}
-                                >
+                                <SelectItem key={z.id} value={z.id}>
                                   {t(z.labelKey)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          
+
                           {device.riskFlags.includes("unknown_device") && onFlagToggle && (
                             <Tooltip>
                               <TooltipTrigger asChild>
@@ -186,15 +189,25 @@ export function DeviceListView({
                                   variant={flaggedDevices.has(device.id) ? "default" : "outline"}
                                   onClick={() => onFlagToggle(device.id)}
                                   data-testid={`list-button-flag-${device.id}`}
-                                  aria-label={flaggedDevices.has(device.id) ? t("actions.unflagDevice") : t("actions.flagDevice")}
-                                  className={flaggedDevices.has(device.id) ? "bg-amber-500 hover:bg-amber-600 text-white" : ""}
+                                  aria-label={
+                                    flaggedDevices.has(device.id)
+                                      ? t("actions.unflagDevice")
+                                      : t("actions.flagDevice")
+                                  }
+                                  className={
+                                    flaggedDevices.has(device.id)
+                                      ? "bg-amber-500 hover:bg-amber-600 text-white"
+                                      : ""
+                                  }
                                 >
                                   <Flag className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="left" className="max-w-[280px]">
                                 <p className="text-sm">
-                                  {flaggedDevices.has(device.id) ? t("tooltips.flagged") : t("tooltips.flagForInvestigation")}
+                                  {flaggedDevices.has(device.id)
+                                    ? t("tooltips.flagged")
+                                    : t("tooltips.flagForInvestigation")}
                                 </p>
                               </TooltipContent>
                             </Tooltip>

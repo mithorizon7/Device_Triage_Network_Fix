@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { 
-  tutorialSteps, 
-  isTutorialComplete, 
+import {
+  tutorialSteps,
+  isTutorialComplete,
   markTutorialComplete,
-  resetTutorial
+  resetTutorial,
 } from "@/lib/tutorialSteps";
 import { ChevronLeft, ChevronRight, X, GraduationCap } from "lucide-react";
 
@@ -46,53 +46,56 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     return () => clearTimeout(timer);
   }, [currentStep]);
 
-  const calculateSpotlightRect = useCallback((targetElement: Element | null): SpotlightRect | null => {
-    if (!targetElement) return null;
+  const calculateSpotlightRect = useCallback(
+    (targetElement: Element | null): SpotlightRect | null => {
+      if (!targetElement) return null;
 
-    const rect = targetElement.getBoundingClientRect();
-    
-    // Don't show spotlight if element is not visible in viewport
-    if (rect.width === 0 || rect.height === 0) return null;
-    
-    const computedStyle = window.getComputedStyle(targetElement);
-    const borderRadius = parseFloat(computedStyle.borderRadius) || 8;
+      const rect = targetElement.getBoundingClientRect();
 
-    // Clamp spotlight to viewport bounds
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    let top = rect.top - SPOTLIGHT_PADDING;
-    let left = rect.left - SPOTLIGHT_PADDING;
-    let width = rect.width + SPOTLIGHT_PADDING * 2;
-    let height = rect.height + SPOTLIGHT_PADDING * 2;
-    
-    // Ensure spotlight stays within viewport
-    if (top < 0) {
-      height += top;
-      top = 0;
-    }
-    if (left < 0) {
-      width += left;
-      left = 0;
-    }
-    if (top + height > viewportHeight) {
-      height = viewportHeight - top;
-    }
-    if (left + width > viewportWidth) {
-      width = viewportWidth - left;
-    }
-    
-    // Minimum size to be visible
-    if (width < 20 || height < 20) return null;
+      // Don't show spotlight if element is not visible in viewport
+      if (rect.width === 0 || rect.height === 0) return null;
 
-    return {
-      top,
-      left,
-      width,
-      height,
-      borderRadius: borderRadius + 4
-    };
-  }, []);
+      const computedStyle = window.getComputedStyle(targetElement);
+      const borderRadius = parseFloat(computedStyle.borderRadius) || 8;
+
+      // Clamp spotlight to viewport bounds
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      let top = rect.top - SPOTLIGHT_PADDING;
+      let left = rect.left - SPOTLIGHT_PADDING;
+      let width = rect.width + SPOTLIGHT_PADDING * 2;
+      let height = rect.height + SPOTLIGHT_PADDING * 2;
+
+      // Ensure spotlight stays within viewport
+      if (top < 0) {
+        height += top;
+        top = 0;
+      }
+      if (left < 0) {
+        width += left;
+        left = 0;
+      }
+      if (top + height > viewportHeight) {
+        height = viewportHeight - top;
+      }
+      if (left + width > viewportWidth) {
+        width = viewportWidth - left;
+      }
+
+      // Minimum size to be visible
+      if (width < 20 || height < 20) return null;
+
+      return {
+        top,
+        left,
+        width,
+        height,
+        borderRadius: borderRadius + 4,
+      };
+    },
+    []
+  );
 
   const updatePositions = useCallback(() => {
     if (!step || !tooltipRef.current) return;
@@ -106,19 +109,19 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
       setSpotlightRect(null);
       setTooltipPosition({
         top: window.innerHeight / 2 - tooltipHeight / 2,
-        left: window.innerWidth / 2 - tooltipWidth / 2
+        left: window.innerWidth / 2 - tooltipWidth / 2,
       });
       return;
     }
 
     const targetElement = document.querySelector(step.target);
-    
+
     if (!targetElement) {
       // Fallback to center if target not found
       setSpotlightRect(null);
       setTooltipPosition({
         top: window.innerHeight / 2 - tooltipHeight / 2,
-        left: window.innerWidth / 2 - tooltipWidth / 2
+        left: window.innerWidth / 2 - tooltipWidth / 2,
       });
       return;
     }
@@ -163,12 +166,12 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   // Update positions on mount, step change, resize, and scroll
   useEffect(() => {
     updatePositions();
-    
+
     const handleUpdate = () => updatePositions();
-    
+
     window.addEventListener("resize", handleUpdate);
     window.addEventListener("scroll", handleUpdate, true);
-    
+
     return () => {
       window.removeEventListener("resize", handleUpdate);
       window.removeEventListener("scroll", handleUpdate, true);
@@ -206,12 +209,12 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     if (isLastStep) {
       handleComplete();
     } else {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
-    setCurrentStep(prev => Math.max(0, prev - 1));
+    setCurrentStep((prev) => Math.max(0, prev - 1));
   };
 
   const handleSkip = () => {
@@ -231,13 +234,13 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   return (
     <>
       {/* Full-screen backdrop for click handling */}
-      <div 
+      <div
         className="fixed inset-0 z-[100]"
         onClick={handleBackdropClick}
         data-testid="tutorial-backdrop"
         aria-hidden="true"
       />
-      
+
       {/* Spotlight overlay with cutout effect */}
       {spotlightRect ? (
         <div
@@ -249,18 +252,15 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             height: spotlightRect.height,
             borderRadius: spotlightRect.borderRadius,
             boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
-            transition: isTransitioning ? "none" : "all 0.3s ease-out"
+            transition: isTransitioning ? "none" : "all 0.3s ease-out",
           }}
           aria-hidden="true"
         />
       ) : (
         /* No target - show full dark overlay for center placement */
-        <div 
-          className="fixed inset-0 bg-black/60 z-[100] pointer-events-none"
-          aria-hidden="true"
-        />
+        <div className="fixed inset-0 bg-black/60 z-[100] pointer-events-none" aria-hidden="true" />
       )}
-      
+
       {/* Spotlight border ring for extra visibility */}
       {spotlightRect && (
         <div
@@ -271,12 +271,12 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             width: spotlightRect.width,
             height: spotlightRect.height,
             borderRadius: spotlightRect.borderRadius,
-            transition: isTransitioning ? "none" : "all 0.3s ease-out"
+            transition: isTransitioning ? "none" : "all 0.3s ease-out",
           }}
           aria-hidden="true"
         />
       )}
-      
+
       {/* Tooltip card */}
       <div
         ref={tooltipRef}
@@ -285,10 +285,10 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
         aria-labelledby="tutorial-title"
         aria-describedby="tutorial-content"
         className="fixed z-[101] w-[90vw] max-w-md"
-        style={{ 
-          top: tooltipPosition.top, 
+        style={{
+          top: tooltipPosition.top,
           left: tooltipPosition.left,
-          transition: isTransitioning ? "none" : "top 0.3s ease-out, left 0.3s ease-out"
+          transition: isTransitioning ? "none" : "top 0.3s ease-out, left 0.3s ease-out",
         }}
         data-testid="tutorial-tooltip"
       >
@@ -297,14 +297,16 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
-                <CardTitle id="tutorial-title" className="text-base">{t(step.titleKey)}</CardTitle>
+                <CardTitle id="tutorial-title" className="text-base">
+                  {t(step.titleKey)}
+                </CardTitle>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleSkip}
                 data-testid="button-tutorial-skip"
-                aria-label={t('tutorial.skipAriaLabel')}
+                aria-label={t("tutorial.skipAriaLabel")}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -316,15 +318,21 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             </p>
           </CardContent>
           <CardFooter className="flex items-center justify-between gap-2 pt-0">
-            <div className="flex items-center gap-1" aria-label={t('tutorial.stepOf', { current: currentStep + 1, total: tutorialSteps.length })}>
+            <div
+              className="flex items-center gap-1"
+              aria-label={t("tutorial.stepOf", {
+                current: currentStep + 1,
+                total: tutorialSteps.length,
+              })}
+            >
               {tutorialSteps.map((_, index) => (
                 <div
                   key={index}
                   className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentStep 
-                      ? "bg-primary" 
-                      : index < currentStep 
-                        ? "bg-primary/40" 
+                    index === currentStep
+                      ? "bg-primary"
+                      : index < currentStep
+                        ? "bg-primary/40"
                         : "bg-muted"
                   }`}
                   aria-hidden="true"
@@ -340,7 +348,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                   data-testid="button-tutorial-prev"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" aria-hidden="true" />
-                  {t('tutorial.back')}
+                  {t("tutorial.back")}
                 </Button>
               )}
               <Button
@@ -349,7 +357,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 onClick={handleNext}
                 data-testid="button-tutorial-next"
               >
-                {isLastStep ? t('tutorial.getStarted') : t('tutorial.next')}
+                {isLastStep ? t("tutorial.getStarted") : t("tutorial.next")}
                 {!isLastStep && <ChevronRight className="h-4 w-4 ml-1" aria-hidden="true" />}
               </Button>
             </div>
@@ -366,17 +374,17 @@ interface TutorialTriggerProps {
 
 export function TutorialTrigger({ onStart }: TutorialTriggerProps) {
   const { t } = useTranslation();
-  
+
   return (
     <Button
       variant="ghost"
       size="sm"
       onClick={onStart}
       data-testid="button-start-tutorial"
-      aria-label={t('tutorial.startAriaLabel')}
+      aria-label={t("tutorial.startAriaLabel")}
     >
       <GraduationCap className="h-4 w-4 mr-2" aria-hidden="true" />
-      {t('tutorial.tutorial')}
+      {t("tutorial.tutorial")}
     </Button>
   );
 }
@@ -387,8 +395,9 @@ export function useTutorial(scenarioLoaded: boolean = false) {
   const [tutorialCompleteState, setTutorialCompleteState] = useState(() => isTutorialComplete());
 
   useEffect(() => {
-    const shouldAutoStart = !tutorialCompleteState && scenarioLoaded && !hasAutoStartedForSession && !showTutorial;
-    
+    const shouldAutoStart =
+      !tutorialCompleteState && scenarioLoaded && !hasAutoStartedForSession && !showTutorial;
+
     if (shouldAutoStart) {
       const timer = setTimeout(() => {
         setShowTutorial(true);
@@ -418,6 +427,6 @@ export function useTutorial(scenarioLoaded: boolean = false) {
     hasCompletedTutorial: tutorialCompleteState,
     startTutorial,
     completeTutorial,
-    resetTutorialState
+    resetTutorialState,
   };
 }
