@@ -600,12 +600,6 @@ export default function Home() {
               <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
               {t("header.reset")}
             </Button>
-            <Link href="/author">
-              <Button variant="ghost" size="sm" data-testid="button-author">
-                <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
-                {t("header.author")}
-              </Button>
-            </Link>
             <div
               className="flex items-center rounded-full border border-border/60 bg-card/60 p-1 shadow-[inset_0_1px_0_hsl(var(--foreground)/0.06)]"
               role="group"

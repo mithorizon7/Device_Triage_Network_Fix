@@ -163,6 +163,34 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     setTooltipPosition({ top, left });
   }, [step, calculateSpotlightRect]);
 
+  const ensureTargetVisible = useCallback(() => {
+    if (!step || step.placement === "center") return;
+
+    const targetElement = document.querySelector(step.target);
+    if (!targetElement) return;
+
+    const rect = targetElement.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    const padding = 24;
+
+    const isOutOfView =
+      rect.top < padding ||
+      rect.left < padding ||
+      rect.bottom > viewportHeight - padding ||
+      rect.right > viewportWidth - padding;
+
+    if (isOutOfView) {
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
+  }, [step]);
+
   // Update positions on mount, step change, resize, and scroll
   useEffect(() => {
     updatePositions();
@@ -177,6 +205,14 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
       window.removeEventListener("scroll", handleUpdate, true);
     };
   }, [updatePositions, currentStep]);
+
+  // Scroll to bring the active target into view when steps change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ensureTargetVisible();
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [currentStep, ensureTargetVisible]);
 
   // Delayed position update after step change for DOM settling
   useEffect(() => {
