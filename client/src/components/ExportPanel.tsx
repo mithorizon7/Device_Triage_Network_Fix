@@ -41,8 +41,8 @@ export function ExportPanel({ scenario, deviceZones, controls, scoreResult }: Ex
   return (
     <Card data-testid="export-panel">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Download className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        <CardTitle className="text-sm font-medium flex items-center gap-2 font-display tracking-[0.12em] uppercase">
+          <Download className="h-4 w-4 text-[hsl(var(--primary))]" aria-hidden="true" />
           {t("export.title")}
         </CardTitle>
       </CardHeader>

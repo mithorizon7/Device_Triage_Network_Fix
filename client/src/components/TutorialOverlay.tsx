@@ -292,7 +292,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
         }}
         data-testid="tutorial-tooltip"
       >
-        <Card className="shadow-xl border-2 border-primary/30 bg-card/95 backdrop-blur-sm">
+        <Card className="border-2 border-primary/30 shadow-[0_30px_60px_-40px_hsl(var(--shadow-color)/0.6)]">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">

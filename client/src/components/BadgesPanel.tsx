@@ -19,13 +19,13 @@ const badgeIcons: Record<string, typeof Award> = {
 };
 
 const badgeColors: Record<string, string> = {
-  first_completion: "text-yellow-500",
-  all_builtin: "text-purple-500",
-  perfect_score: "text-green-500",
-  iot_master: "text-blue-500",
-  quick_learner: "text-orange-500",
-  persistent: "text-pink-500",
-  custom_creator: "text-cyan-500",
+  first_completion: "text-[hsl(var(--chart-4))]",
+  all_builtin: "text-[hsl(var(--chart-3))]",
+  perfect_score: "text-[hsl(var(--risk-low))]",
+  iot_master: "text-[hsl(var(--chart-1))]",
+  quick_learner: "text-[hsl(var(--accent))]",
+  persistent: "text-[hsl(var(--chart-5))]",
+  custom_creator: "text-[hsl(var(--chart-2))]",
 };
 
 export function BadgesPanel({ progress }: BadgesPanelProps) {
@@ -39,8 +39,8 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
   return (
     <Card data-testid="badges-panel">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Award className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        <CardTitle className="text-sm font-medium flex items-center gap-2 font-display tracking-[0.12em] uppercase">
+          <Award className="h-4 w-4 text-[hsl(var(--primary))]" aria-hidden="true" />
           {t("badges.title")}
         </CardTitle>
       </CardHeader>
@@ -71,7 +71,7 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
                 <Badge
                   key={badge.id}
                   variant="secondary"
-                  className="gap-1.5 py-1"
+                  className="gap-1.5 py-1.5"
                   data-testid={`badge-${badge.id}`}
                 >
                   <Icon className={`h-3.5 w-3.5 ${colorClass}`} aria-hidden="true" />
@@ -93,7 +93,7 @@ export function BadgeNotification({ badge }: { badge: BadgeType }) {
 
   return (
     <div
-      className="flex items-center gap-3 p-4 rounded-lg bg-card border"
+      className="card-surface flex items-center gap-3 p-4 rounded-2xl"
       data-testid={`notification-badge-${badge.id}`}
     >
       <div className={`p-2 rounded-full bg-muted ${colorClass}`}>
@@ -126,17 +126,17 @@ export function CompletionBanner({
   return (
     <div
       className={`
-        flex items-center gap-3 p-4 rounded-lg border
+        flex items-center gap-3 p-4 rounded-2xl border
         ${
           isNewCompletion
-            ? "bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400"
-            : "bg-muted border-border"
+            ? "bg-[hsl(var(--risk-low)/0.16)] border-[hsl(var(--risk-low)/0.4)] text-[hsl(var(--risk-low))]"
+            : "bg-muted/60 border-border/60"
         }
       `}
       data-testid="completion-banner"
     >
       <Trophy
-        className={`h-5 w-5 ${isNewCompletion ? "text-green-500" : "text-muted-foreground"}`}
+        className={`h-5 w-5 ${isNewCompletion ? "text-[hsl(var(--risk-low))]" : "text-muted-foreground"}`}
       />
       <div>
         <p className="font-medium">

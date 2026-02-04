@@ -97,12 +97,12 @@ export function DeviceCard({
       aria-label={ariaLabel}
       data-testid={`card-device-${device.id}`}
       className={`
-        relative flex flex-wrap items-center gap-2 p-3 cursor-grab active:cursor-grabbing
+        device-card relative flex flex-wrap items-center gap-2 p-3 cursor-grab active:cursor-grabbing rounded-xl
         transition-all duration-200 ease-out
         hover-elevate active-elevate-2
         focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
         ${isDragging ? "opacity-50 scale-95" : ""}
-        ${isFlagged ? "bg-amber-100 dark:bg-amber-900/30 border-amber-400 dark:border-amber-600" : ""}
+        ${isFlagged ? "bg-[hsl(var(--accent)/0.18)] border-[hsl(var(--accent)/0.6)]" : ""}
       `}
     >
       <div className="flex-shrink-0 text-muted-foreground">
@@ -111,7 +111,7 @@ export function DeviceCard({
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
+          <div className="flex-shrink-0 p-2 rounded-lg bg-muted/70 border border-border/60 cursor-help">
             <DeviceIcon className="h-5 w-5 text-foreground" aria-hidden="true" />
           </div>
         </TooltipTrigger>
@@ -170,7 +170,7 @@ export function DeviceCard({
           onValueChange={(value) => onZoneChange(device.id, value as ZoneId)}
         >
           <SelectTrigger
-            className="w-auto min-w-[80px] h-8 text-xs"
+            className="w-auto min-w-[88px] h-8 text-xs rounded-full"
             data-testid={`select-zone-${device.id}`}
             aria-label={t("devices.moveToZone", { device: deviceLabel })}
           >
@@ -201,7 +201,11 @@ export function DeviceCard({
                 }}
                 data-testid={`button-flag-${device.id}`}
                 aria-label={isFlagged ? t("actions.unflagDevice") : t("actions.flagDevice")}
-                className={isFlagged ? "bg-amber-500 hover:bg-amber-600 text-white" : ""}
+                className={
+                  isFlagged
+                    ? "bg-[hsl(var(--accent))] hover:bg-[hsl(var(--accent)/0.9)] text-white"
+                    : ""
+                }
               >
                 <Flag className="h-4 w-4" />
               </Button>

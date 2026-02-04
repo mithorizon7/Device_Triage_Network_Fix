@@ -82,20 +82,20 @@ export function PasswordTrainingDialog({
 
   const strengthConfigs: Record<PasswordStrength, StrengthConfig> = {
     weak: {
-      color: "bg-red-500",
-      textColor: "text-red-600 dark:text-red-400",
+      color: "bg-[hsl(var(--risk-critical))]",
+      textColor: "text-[hsl(var(--risk-critical))]",
       progress: 33,
       label: t("passwordTraining.strengthWeak"),
     },
     medium: {
-      color: "bg-amber-500",
-      textColor: "text-amber-600 dark:text-amber-400",
+      color: "bg-[hsl(var(--risk-moderate))]",
+      textColor: "text-[hsl(var(--risk-moderate))]",
       progress: 66,
       label: t("passwordTraining.strengthMedium"),
     },
     strong: {
-      color: "bg-green-500",
-      textColor: "text-green-600 dark:text-green-400",
+      color: "bg-[hsl(var(--risk-low))]",
+      textColor: "text-[hsl(var(--risk-low))]",
       progress: 100,
       label: t("passwordTraining.strengthStrong"),
     },
@@ -141,7 +141,7 @@ export function PasswordTrainingDialog({
       >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
-            <div className="p-2 rounded-md bg-primary/10">
+            <div className="p-2 rounded-lg bg-primary/15 border border-primary/30">
               <Lock className="h-5 w-5 text-primary" />
             </div>
             {t("passwordTraining.title")}
@@ -153,15 +153,15 @@ export function PasswordTrainingDialog({
 
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-5">
-            <div className="space-y-3 p-4 rounded-md bg-muted/50">
+            <div className="space-y-3 p-4 rounded-xl bg-muted/40 border border-border/60">
               <div className="flex items-center gap-2 text-sm font-medium">
-                <Lightbulb className="h-4 w-4 text-amber-500" />
+                <Lightbulb className="h-4 w-4 text-[hsl(var(--accent))]" />
                 {t("passwordTraining.howBruteForceWorks")}
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {t("passwordTraining.bruteForceExplainer")}
               </p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 bg-background/50 p-2 rounded">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 bg-card/60 border border-border/60 p-2 rounded-lg">
                 <Info className="h-3 w-3 flex-shrink-0" />
                 <span>{t("passwordTraining.exponentialGrowth")}</span>
               </div>
@@ -189,7 +189,7 @@ export function PasswordTrainingDialog({
               </p>
             </div>
 
-            <div className="space-y-2 p-4 rounded-md border bg-card">
+            <div className="space-y-2 p-4 rounded-xl border border-border/60 bg-card/70">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">
                   {t("passwordTraining.originalPassword")}
@@ -203,11 +203,11 @@ export function PasswordTrainingDialog({
                   {showOriginal ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
-              <div className="p-3 rounded-md bg-red-500/10 border border-red-500/20">
-                <code className="text-sm text-red-600 dark:text-red-400">
+              <div className="p-3 rounded-lg bg-[hsl(var(--risk-critical)/0.15)] border border-[hsl(var(--risk-critical)/0.3)]">
+                <code className="text-sm text-[hsl(var(--risk-critical))]">
                   {showOriginal ? originalPassword : "••••••••"}
                 </code>
-                <Badge variant="outline" className="ml-2 text-red-600 dark:text-red-400">
+                <Badge variant="outline" className="ml-2 text-[hsl(var(--risk-critical))]">
                   {t("passwordTraining.veryWeak")}
                 </Badge>
               </div>
@@ -222,7 +222,7 @@ export function PasswordTrainingDialog({
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Timer className="h-3 w-3 text-red-500" />
+                  <Timer className="h-3 w-3 text-[hsl(var(--risk-critical))]" />
                   <span>
                     {t("passwordTraining.metricWithValue", {
                       label: t("passwordTraining.crackTime"),
@@ -265,7 +265,7 @@ export function PasswordTrainingDialog({
             </div>
 
             {analysis && currentStrengthConfig && (
-              <div className="space-y-4 p-4 rounded-md border bg-card">
+              <div className="space-y-4 p-4 rounded-xl border border-border/60 bg-card/70">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">{t("passwordTraining.strength")}</span>
@@ -284,7 +284,7 @@ export function PasswordTrainingDialog({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 p-3 rounded-md bg-muted/50">
+                <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-muted/50 border border-border/60">
                   <div className="space-y-1">
                     <div className="text-xs text-muted-foreground">
                       {t("passwordTraining.detectedLength")}
@@ -312,7 +312,7 @@ export function PasswordTrainingDialog({
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-2 text-sm">
                       {analysis.hasLowercase ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-[hsl(var(--risk-low))] flex-shrink-0" />
                       ) : (
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
@@ -329,7 +329,7 @@ export function PasswordTrainingDialog({
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       {analysis.hasUppercase ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-[hsl(var(--risk-low))] flex-shrink-0" />
                       ) : (
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
@@ -346,7 +346,7 @@ export function PasswordTrainingDialog({
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       {analysis.hasNumbers ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-[hsl(var(--risk-low))] flex-shrink-0" />
                       ) : (
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
@@ -363,7 +363,7 @@ export function PasswordTrainingDialog({
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       {analysis.hasSymbols ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-[hsl(var(--risk-low))] flex-shrink-0" />
                       ) : (
                         <XCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
@@ -381,7 +381,7 @@ export function PasswordTrainingDialog({
                   </div>
                 </div>
 
-                <div className="space-y-3 p-3 rounded-md bg-gradient-to-r from-primary/5 to-primary/10 border">
+                <div className="space-y-3 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-border/60">
                   <div className="text-sm font-medium flex items-center gap-2">
                     <Timer className="h-4 w-4" />
                     {t("passwordTraining.estimatedCrackTime")}
@@ -394,10 +394,10 @@ export function PasswordTrainingDialog({
                       <div
                         className={`text-lg font-bold ${
                           analysis.strength === "strong"
-                            ? "text-green-600 dark:text-green-400"
+                            ? "text-[hsl(var(--risk-low))]"
                             : analysis.strength === "medium"
-                              ? "text-amber-600 dark:text-amber-400"
-                              : "text-red-600 dark:text-red-400"
+                              ? "text-[hsl(var(--risk-moderate))]"
+                              : "text-[hsl(var(--risk-critical))]"
                         }`}
                       >
                         {formatCrackTime(analysis.crackTimeEstimate.avgTimeFormatted)}
@@ -416,35 +416,35 @@ export function PasswordTrainingDialog({
 
                 <div className="space-y-1">
                   {analysis.isCommonPassword && (
-                    <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                    <div className="flex items-center gap-2 text-sm text-[hsl(var(--risk-moderate))]">
                       <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                       <span>{t("passwordTraining.warnCommon")}</span>
                     </div>
                   )}
                   {analysis.hasSequentialChars && (
-                    <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                    <div className="flex items-center gap-2 text-sm text-[hsl(var(--risk-moderate))]">
                       <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                       <span>{t("passwordTraining.warnSequential")}</span>
                     </div>
                   )}
                   {analysis.hasRepeatingChars && (
-                    <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                    <div className="flex items-center gap-2 text-sm text-[hsl(var(--risk-moderate))]">
                       <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                       <span>{t("passwordTraining.warnRepeating")}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="p-3 rounded-md bg-amber-500/10 border border-amber-500/20">
-                  <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300">
+                <div className="p-3 rounded-xl bg-[hsl(var(--accent)/0.16)] border border-[hsl(var(--accent)/0.3)]">
+                  <div className="flex items-start gap-2 text-sm text-[hsl(var(--risk-moderate))]">
                     <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                     <span>{t("passwordTraining.dictionaryWarning")}</span>
                   </div>
                 </div>
 
                 {analysis.strength === "strong" && (
-                  <div className="p-3 rounded-md bg-green-500/10 border border-green-500/20">
-                    <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
+                  <div className="p-3 rounded-xl bg-[hsl(var(--risk-low)/0.16)] border border-[hsl(var(--risk-low)/0.3)]">
+                    <div className="flex items-center gap-2 text-sm text-[hsl(var(--risk-low))]">
                       <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
                       <span>{t("passwordTraining.strongPasswordCongrats")}</span>
                     </div>
@@ -454,19 +454,19 @@ export function PasswordTrainingDialog({
             )}
 
             {!analysis && (
-              <div className="space-y-3 p-4 rounded-md border bg-card">
+              <div className="space-y-3 p-4 rounded-xl border border-border/60 bg-card/70">
                 <div className="text-sm font-medium">{t("passwordTraining.bestPractices")}</div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <Zap className="h-4 w-4 text-[hsl(var(--accent))] mt-0.5 flex-shrink-0" />
                     <span>{t("passwordTraining.tipLength")}</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <Zap className="h-4 w-4 text-[hsl(var(--accent))] mt-0.5 flex-shrink-0" />
                     <span>{t("passwordTraining.tipMix")}</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Zap className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <Zap className="h-4 w-4 text-[hsl(var(--accent))] mt-0.5 flex-shrink-0" />
                     <span>{t("passwordTraining.tipPassphrase")}</span>
                   </li>
                 </ul>

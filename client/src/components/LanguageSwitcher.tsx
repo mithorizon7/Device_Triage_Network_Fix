@@ -36,7 +36,7 @@ export function LanguageSwitcher() {
             key={lang.code}
             onClick={() => handleLanguageChange(lang.code)}
             data-testid={`menu-language-${lang.code}`}
-            className={i18n.language === lang.code ? "bg-accent" : ""}
+            className={i18n.language === lang.code ? "bg-accent/60 text-accent-foreground" : ""}
           >
             <span className="font-medium">{lang.nativeName}</span>
             <span className="ml-2 text-muted-foreground text-sm">

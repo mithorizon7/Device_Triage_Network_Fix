@@ -71,7 +71,7 @@ function DynamicZoneGrid({
   const mainZone = zones.find((z) => z.id === "main")!;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" data-testid="zones-container">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-testid="zones-container">
       <ZoneDropTarget
         zone={mainZone}
         devices={devices}
@@ -543,18 +543,20 @@ export default function Home() {
 
   if (isLoading && !currentScenario) {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="min-h-screen app-shell">
+        <header className="app-header">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Target className="h-6 w-6 text-muted-foreground" />
-              <h1 className="text-lg font-semibold">{t("app.title")}</h1>
+              <Target className="h-6 w-6 text-[hsl(var(--primary))]" />
+              <h1 className="text-lg font-semibold font-display tracking-[0.16em] uppercase">
+                {t("app.title")}
+              </h1>
             </div>
             <Skeleton className="h-9 w-[280px]" />
             <ThemeToggle />
           </div>
         </header>
-        <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 space-y-4">
               <Skeleton className="h-[200px] rounded-lg" />
@@ -571,12 +573,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <div className="min-h-screen app-shell">
+      <header className="app-header">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Target className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-            <h1 className="text-lg font-semibold">{t("app.title")}</h1>
+            <Target className="h-6 w-6 text-[hsl(var(--primary))]" aria-hidden="true" />
+            <h1 className="text-lg font-semibold font-display tracking-[0.16em] uppercase">
+              {t("app.title")}
+            </h1>
           </div>
 
           <div className="flex items-center gap-3">
@@ -603,7 +607,7 @@ export default function Home() {
               </Button>
             </Link>
             <div
-              className="flex items-center border rounded-md"
+              className="flex items-center rounded-full border border-border/60 bg-card/60 p-1 shadow-[inset_0_1px_0_hsl(var(--foreground)/0.06)]"
               role="group"
               aria-label={t("header.viewMode")}
             >
@@ -614,7 +618,7 @@ export default function Home() {
                 data-testid="button-view-grid"
                 aria-pressed={viewMode === "grid"}
                 aria-label={t("header.gridViewAriaLabel")}
-                className="rounded-r-none border-r"
+                className="rounded-full"
               >
                 <LayoutGrid className="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -625,7 +629,7 @@ export default function Home() {
                 data-testid="button-view-list"
                 aria-pressed={viewMode === "list"}
                 aria-label={t("header.listViewAriaLabel")}
-                className="rounded-l-none"
+                className="rounded-full"
               >
                 <List className="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -637,11 +641,13 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
         {currentScenario?.learningObjectives && currentScenario.learningObjectives.length > 0 && (
-          <div className="mb-8 text-center" data-testid="goals-section">
-            <h2 className="text-2xl font-semibold mb-6">{t("goals.title")}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <div className="mb-10 text-center" data-testid="goals-section">
+            <h2 className="text-2xl font-semibold font-display tracking-[0.16em] uppercase mb-6">
+              {t("goals.title")}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
               {currentScenario.learningObjectives.map((objective, index) => {
                 const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
                 const translated = t(translationKey, { defaultValue: objective });
@@ -649,8 +655,8 @@ export default function Home() {
 
                 return (
                   <Card key={index} className="text-center" data-testid={`card-goal-${index}`}>
-                    <CardContent className="pt-6">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold mx-auto mb-3">
+                    <CardContent className="pt-6 pb-6">
+                      <div className="w-11 h-11 rounded-full bg-primary/15 text-primary flex items-center justify-center text-lg font-semibold mx-auto mb-3 font-display">
                         {index + 1}
                       </div>
                       <p className="text-sm text-muted-foreground">{displayText}</p>
@@ -662,7 +668,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             {viewMode === "grid" ? (
               <DynamicZoneGrid
@@ -687,7 +693,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-4 space-y-5">
             {meetsWinCondition && (
               <CompletionBanner score={scoreResult.total} isNewCompletion={isNewCompletion} />
             )}
@@ -747,8 +753,8 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t mt-12">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <footer className="border-t border-border/60 mt-14">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-xs text-muted-foreground text-center">{t("footer.disclaimer")}</p>
         </div>
       </footer>

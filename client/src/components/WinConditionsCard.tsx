@@ -102,8 +102,8 @@ export function WinConditionsCard({
       data-testid="win-conditions-card"
     >
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Target className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        <CardTitle className="text-sm font-medium flex items-center gap-2 font-display tracking-[0.12em] uppercase">
+          <Target className="h-4 w-4 text-[hsl(var(--primary))]" aria-hidden="true" />
           {t("goals.title")}
           {allRequirementsMet && (
             <Badge variant="default" className="ml-auto">
@@ -127,9 +127,9 @@ export function WinConditionsCard({
                 })}
               </span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-muted">
+            <div className="h-1.5 w-full rounded-full bg-muted/70">
               <div
-                className="h-1.5 rounded-full bg-primary/60"
+                className="h-1.5 rounded-full bg-primary/80"
                 style={{ width: `${progressPercent}%` }}
                 aria-hidden="true"
               />

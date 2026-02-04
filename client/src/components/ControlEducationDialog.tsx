@@ -81,7 +81,7 @@ export function ControlEducationDialog({
       >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
-            <div className="p-2 rounded-md bg-primary/10">
+            <div className="p-2 rounded-lg bg-primary/15 border border-primary/30">
               <Icon className="h-5 w-5 text-primary" />
             </div>
             {title}
@@ -93,7 +93,7 @@ export function ControlEducationDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <HelpCircle className="h-4 w-4 text-blue-500" />
+                <HelpCircle className="h-4 w-4 text-[hsl(var(--primary))]" />
                 <span>{t("education.whatIsThis")}</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed pl-6">{whatContent}</p>
@@ -101,7 +101,7 @@ export function ControlEducationDialog({
 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Lightbulb className="h-4 w-4 text-amber-500" />
+                <Lightbulb className="h-4 w-4 text-[hsl(var(--accent))]" />
                 <span>{t("education.whyMatters")}</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed pl-6">{whyContent}</p>
@@ -109,7 +109,7 @@ export function ControlEducationDialog({
 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-[hsl(var(--risk-low))]" />
                 <span>{t("education.howToDo")}</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed pl-6">{howContent}</p>

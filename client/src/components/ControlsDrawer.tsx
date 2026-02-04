@@ -73,8 +73,8 @@ function ControlItem({ icon: Icon, label, description, tooltip, children }: Cont
     <div className="flex items-start gap-3 py-3">
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
-            <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+          <div className="flex-shrink-0 p-2 rounded-lg bg-muted/70 border border-border/60 cursor-help">
+            <Icon className="h-5 w-5 text-foreground/80" aria-hidden="true" />
           </div>
         </TooltipTrigger>
         <TooltipContent side="left" className="max-w-[280px]">
@@ -222,7 +222,10 @@ export function ControlsDrawer({
           value={controls.wifiSecurity || (control.default as Controls["wifiSecurity"]) || "WPA2"}
           onValueChange={handleWifiSecurityChange}
         >
-          <SelectTrigger className="w-[100px] text-xs" data-testid="select-wifi-security">
+          <SelectTrigger
+            className="w-[100px] text-xs rounded-full"
+            data-testid="select-wifi-security"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -342,7 +345,10 @@ export function ControlsDrawer({
       >
         <div className="flex items-center gap-1">
           <Select value={controls.wifiSecurity || "WPA2"} onValueChange={handleWifiSecurityChange}>
-            <SelectTrigger className="w-[100px] text-xs" data-testid="select-wifi-security">
+            <SelectTrigger
+              className="w-[100px] text-xs rounded-full"
+              data-testid="select-wifi-security"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -682,8 +688,8 @@ export function ControlsDrawer({
       />
       <Card data-testid="controls-drawer">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Shield className="h-5 w-5 text-muted-foreground" />
+          <CardTitle className="text-base font-semibold flex items-center gap-2 font-display tracking-[0.12em] uppercase">
+            <Shield className="h-5 w-5 text-[hsl(var(--primary))]" />
             {t("controls.title")}
           </CardTitle>
         </CardHeader>

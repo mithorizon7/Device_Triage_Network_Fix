@@ -95,13 +95,13 @@ export function ExplainScorePanel({
   const content = (
     <div className="space-y-2" data-testid="explain-content">
       {actionText && (
-        <div className="rounded-md border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+        <div className="rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
           <span className="font-medium text-foreground/80">{t("explain.recentActionLabel")}</span>{" "}
           {actionText}
         </div>
       )}
       {Object.keys(totalsBySubscore).length > 0 && (
-        <div className="rounded-md border border-border/60 bg-card px-3 py-2">
+        <div className="rounded-xl border border-border/60 bg-card/70 px-3 py-2">
           <p className="text-xs font-medium text-muted-foreground mb-2">
             {t("explain.subscoreSummary")}
           </p>
@@ -134,7 +134,7 @@ export function ExplainScorePanel({
         </div>
       )}
       {topDrivers.length > 0 && (
-        <div className="rounded-md border border-border/60 bg-card px-3 py-2">
+        <div className="rounded-xl border border-border/60 bg-card/70 px-3 py-2">
           <p className="text-xs font-medium text-muted-foreground mb-2">
             {t("explain.topDrivers")}
           </p>
@@ -177,13 +177,13 @@ export function ExplainScorePanel({
               >
                 <div
                   className={`
-                  flex-shrink-0 p-1.5 rounded-md mt-0.5
+                  flex-shrink-0 p-1.5 rounded-lg mt-0.5
                   ${
                     isPositive
-                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                      ? "bg-[hsl(var(--risk-low)/0.15)] text-[hsl(var(--risk-low))]"
                       : isNegative
-                        ? "bg-red-500/10 text-red-600 dark:text-red-400"
-                        : "bg-muted text-muted-foreground"
+                        ? "bg-[hsl(var(--risk-critical)/0.15)] text-[hsl(var(--risk-critical))]"
+                        : "bg-muted/70 text-muted-foreground"
                   }
                 `}
                 >
@@ -204,9 +204,9 @@ export function ExplainScorePanel({
                   flex-shrink-0 text-sm font-semibold tabular-nums
                   ${
                     isPositive
-                      ? "text-emerald-600 dark:text-emerald-400"
+                      ? "text-[hsl(var(--risk-low))]"
                       : isNegative
-                        ? "text-red-600 dark:text-red-400"
+                        ? "text-[hsl(var(--risk-critical))]"
                         : "text-muted-foreground"
                   }
                 `}
@@ -221,11 +221,11 @@ export function ExplainScorePanel({
           {hasPositiveImpact && hasNegativeImpact && (
             <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
               <div className="flex items-center gap-1">
-                <TrendingDown className="h-3 w-3 text-emerald-500" />
+                <TrendingDown className="h-3 w-3 text-[hsl(var(--risk-low))]" />
                 <span>{t("explain.reducesRisk")}</span>
               </div>
               <div className="flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 text-red-500" />
+                <TrendingUp className="h-3 w-3 text-[hsl(var(--risk-critical))]" />
                 <span>{t("explain.increasesRisk")}</span>
               </div>
             </div>

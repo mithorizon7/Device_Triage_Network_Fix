@@ -88,20 +88,16 @@ export function ZoneDropTarget({
       data-testid={`zone-${zone.id}`}
       style={minHeight ? { minHeight: `${minHeight}px` } : undefined}
       className={`
-        relative flex flex-col rounded-lg border-2 border-dashed
+        zone-panel relative flex flex-col rounded-2xl
         transition-all duration-300 ease-out
-        ${!minHeight && (isEmpty ? "min-h-[120px]" : "min-h-0")}
-        ${
-          isDragOver
-            ? `${zone.borderClass} ${zone.bgClass} border-solid`
-            : "border-border bg-card/30"
-        }
+        ${!minHeight && (isEmpty ? "min-h-[140px]" : "min-h-0")}
+        ${isDragOver ? `is-dragover ${zone.borderClass} ${zone.bgClass}` : ""}
       `}
     >
       <div
         className={`
-        flex items-center gap-2 px-4 py-3 border-b
-        ${isDragOver ? "border-transparent" : "border-border"}
+        flex items-center gap-3 px-5 py-4 border-b
+        ${isDragOver ? "border-transparent" : "border-border/60"}
       `}
       >
         <Tooltip>
@@ -115,13 +111,15 @@ export function ZoneDropTarget({
           </TooltipContent>
         </Tooltip>
         <div className="flex-1">
-          <h3 className={`text-sm font-semibold ${zone.colorClass}`}>{label}</h3>
+          <h3
+            className={`text-sm font-semibold font-display tracking-[0.12em] uppercase ${zone.colorClass}`}
+          >
+            {label}
+          </h3>
           <p className="text-xs text-muted-foreground">{description}</p>
           <p className="text-[11px] text-muted-foreground/80">{realWorldLabel}</p>
         </div>
-        <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-full">
-          {devicesInZone.length}
-        </span>
+        <span className="hud-chip">{devicesInZone.length}</span>
       </div>
 
       <div
@@ -131,8 +129,8 @@ export function ZoneDropTarget({
       >
         {devicesInZone.length === 0 ? (
           <div className="flex items-center justify-center h-full text-center flex-col min-h-[72px]">
-            <div className={`p-2 rounded-full ${zone.bgClass} mb-1`}>
-              <ZoneIcon className={`h-5 w-5 ${zone.colorClass} opacity-60`} aria-hidden="true" />
+            <div className={`p-3 rounded-full ${zone.bgClass} mb-2`}>
+              <ZoneIcon className={`h-5 w-5 ${zone.colorClass} opacity-70`} aria-hidden="true" />
             </div>
             <p className="text-muted-foreground text-sm">{t("zones.dropHere")}</p>
           </div>
@@ -157,9 +155,9 @@ export function ZoneDropTarget({
       </div>
 
       {isDragOver && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-2xl">
           <div
-            className={`px-4 py-2 rounded-full ${zone.bgClass} ${zone.colorClass} font-medium text-sm`}
+            className={`px-4 py-2 rounded-full ${zone.bgClass} ${zone.colorClass} font-semibold text-sm border border-border/60 bg-card/80`}
           >
             {t("zones.dropToMove")}
           </div>

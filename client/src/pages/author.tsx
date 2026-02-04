@@ -290,9 +290,9 @@ export default function AuthorPage() {
 
   if (editingScenario) {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="min-h-screen app-shell">
+        <header className="app-header">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -302,8 +302,10 @@ export default function AuthorPage() {
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <Pencil className="h-5 w-5 text-muted-foreground" />
-              <h1 className="text-lg font-semibold">{t("author.editScenario")}</h1>
+              <Pencil className="h-5 w-5 text-[hsl(var(--primary))]" />
+              <h1 className="text-lg font-semibold font-display tracking-[0.16em] uppercase">
+                {t("author.editScenario")}
+              </h1>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={handleCancel} data-testid="button-cancel">
@@ -318,10 +320,12 @@ export default function AuthorPage() {
           </div>
         </header>
 
-        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 reveal">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t("author.basicInfo")}</CardTitle>
+              <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
+                {t("author.basicInfo")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -381,8 +385,8 @@ export default function AuthorPage() {
 
           <Card data-testid="author-lint-card">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-base flex items-center gap-2 font-display tracking-[0.12em] uppercase">
+                <AlertTriangle className="h-4 w-4 text-[hsl(var(--accent))]" />
                 {t("author.lint.title")}
                 {lintWarnings.length > 0 && (
                   <Badge variant="secondary" className="ml-auto">
@@ -402,7 +406,10 @@ export default function AuthorPage() {
                       className="flex items-start gap-2 text-sm"
                       data-testid={`author-lint-${warning.code}`}
                     >
-                      <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5" aria-hidden="true" />
+                      <AlertTriangle
+                        className="h-4 w-4 text-[hsl(var(--accent))] mt-0.5"
+                        aria-hidden="true"
+                      />
                       <span>{t(`author.lint.${warning.code}`, warning.params || {})}</span>
                     </div>
                   ))}
@@ -413,7 +420,7 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2">
-              <CardTitle className="text-base">
+              <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
                 {t("author.devicesCount", { count: editingScenario.devices.length })}
               </CardTitle>
               <Button
@@ -438,10 +445,10 @@ export default function AuthorPage() {
                     return (
                       <div
                         key={device.id}
-                        className="flex flex-wrap items-start gap-3 p-3 border rounded-lg bg-muted/30"
+                        className="flex flex-wrap items-start gap-3 p-3 border rounded-2xl bg-card/60 border-border/70"
                         data-testid={`device-row-${device.id}`}
                       >
-                        <div className="flex-shrink-0 p-2 bg-muted rounded-md">
+                        <div className="flex-shrink-0 p-2 bg-muted/70 border border-border/60 rounded-lg">
                           <DeviceIcon className="h-5 w-5" />
                         </div>
 
@@ -522,7 +529,9 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2">
-              <CardTitle className="text-base">{t("author.learningObjectives")}</CardTitle>
+              <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
+                {t("author.learningObjectives")}
+              </CardTitle>
               <Button
                 variant="outline"
                 size="sm"
@@ -568,7 +577,9 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t("author.initialControls")}</CardTitle>
+              <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
+                {t("author.initialControls")}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -629,7 +640,9 @@ export default function AuthorPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t("author.winConditions")}</CardTitle>
+              <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
+                {t("author.winConditions")}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -661,9 +674,9 @@ export default function AuthorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <div className="min-h-screen app-shell">
+      <header className="app-header">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -673,8 +686,10 @@ export default function AuthorPage() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <FileText className="h-5 w-5 text-muted-foreground" />
-            <h1 className="text-lg font-semibold">{t("author.title")}</h1>
+            <FileText className="h-5 w-5 text-[hsl(var(--primary))]" />
+            <h1 className="text-lg font-semibold font-display tracking-[0.16em] uppercase">
+              {t("author.title")}
+            </h1>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
@@ -693,9 +708,9 @@ export default function AuthorPage() {
         </div>
       </header>
 
-      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
         {importError && (
-          <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+          <div className="mb-5 p-4 rounded-2xl bg-destructive/10 border border-destructive/30 text-destructive text-sm">
             {importError}
             <Button variant="ghost" size="sm" className="ml-2" onClick={() => setImportError(null)}>
               {t("author.dismiss")}
@@ -706,8 +721,10 @@ export default function AuthorPage() {
         {customScenarios.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h2 className="text-lg font-medium mb-2">{t("author.noScenariosYet")}</h2>
+              <Target className="h-12 w-12 mx-auto mb-4 text-[hsl(var(--primary))] opacity-60" />
+              <h2 className="text-lg font-medium mb-2 font-display tracking-[0.16em] uppercase">
+                {t("author.noScenariosYet")}
+              </h2>
               <p className="text-muted-foreground mb-6">{t("author.noScenariosDesc")}</p>
               <div className="flex justify-center gap-3">
                 <Button variant="outline" asChild>
@@ -725,17 +742,19 @@ export default function AuthorPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {customScenarios.map((scenario) => (
               <Card
                 key={scenario.id}
-                className="hover-elevate"
+                className="hover-elevate transition-transform duration-200 hover:-translate-y-1"
                 data-testid={`card-scenario-${scenario.id}`}
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base truncate">{scenario.title}</CardTitle>
+                      <CardTitle className="text-base truncate font-display tracking-[0.08em]">
+                        {scenario.title}
+                      </CardTitle>
                       <Badge variant="secondary" className="mt-1">
                         {t(`environmentTypes.${scenario.environment.type}`, {
                           defaultValue: scenario.environment.type,

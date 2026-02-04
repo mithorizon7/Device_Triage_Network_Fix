@@ -79,7 +79,7 @@ export function DeviceListView({
       {devicesByZone.map(({ zone, label, description, devices: zoneDevices }) => (
         <Card key={zone.id} data-testid={`list-zone-${zone.id}`}>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
+            <CardTitle className="text-base font-medium flex items-center gap-2 font-display tracking-[0.12em] uppercase">
               <span
                 className={`w-3 h-3 rounded-full flex-shrink-0 ${zone.bgClass}`}
                 aria-hidden="true"
@@ -105,13 +105,13 @@ export function DeviceListView({
                   return (
                     <li
                       key={device.id}
-                      className={`py-3 first:pt-0 last:pb-0 ${flaggedDevices.has(device.id) ? "bg-amber-100/50 dark:bg-amber-900/20 -mx-4 px-4 rounded-md" : ""}`}
+                      className={`py-3 first:pt-0 last:pb-0 ${flaggedDevices.has(device.id) ? "bg-[hsl(var(--accent)/0.12)] -mx-4 px-4 rounded-xl border border-[hsl(var(--accent)/0.25)]" : ""}`}
                       data-testid={`list-device-${device.id}`}
                     >
                       <div className="flex items-center gap-3">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div className="flex-shrink-0 p-2 rounded-md bg-muted cursor-help">
+                            <div className="flex-shrink-0 p-2 rounded-lg bg-muted/70 border border-border/60 cursor-help">
                               <DeviceIcon className="h-5 w-5 text-foreground" aria-hidden="true" />
                             </div>
                           </TooltipTrigger>
@@ -167,7 +167,7 @@ export function DeviceListView({
                           >
                             <SelectTrigger
                               id={`zone-select-${device.id}`}
-                              className="w-[130px] text-xs"
+                              className="w-[140px] text-xs rounded-full"
                               data-testid={`list-select-zone-${device.id}`}
                             >
                               <SelectValue />
@@ -196,7 +196,7 @@ export function DeviceListView({
                                   }
                                   className={
                                     flaggedDevices.has(device.id)
-                                      ? "bg-amber-500 hover:bg-amber-600 text-white"
+                                      ? "bg-[hsl(var(--accent))] hover:bg-[hsl(var(--accent)/0.9)] text-white"
                                       : ""
                                   }
                                 >

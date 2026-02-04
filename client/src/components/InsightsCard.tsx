@@ -35,8 +35,8 @@ export function InsightsCard({
   return (
     <Card data-testid="insights-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Lightbulb className="h-4 w-4" />
+        <CardTitle className="text-base flex items-center gap-2 font-display tracking-[0.12em] uppercase">
+          <Lightbulb className="h-4 w-4 text-[hsl(var(--primary))]" />
           {t("insights.title")}
         </CardTitle>
       </CardHeader>

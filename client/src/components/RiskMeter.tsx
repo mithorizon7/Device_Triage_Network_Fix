@@ -16,28 +16,28 @@ function getRiskLevel(
   if (score <= 25) {
     return {
       label: t("riskMeter.low"),
-      colorClass: "text-emerald-600 dark:text-emerald-400",
-      bgClass: "bg-emerald-500",
+      colorClass: "text-[hsl(var(--risk-low))]",
+      bgClass: "bg-[hsl(var(--risk-low))]",
     };
   }
   if (score <= 50) {
     return {
       label: t("riskMeter.medium"),
-      colorClass: "text-amber-600 dark:text-amber-400",
-      bgClass: "bg-amber-500",
+      colorClass: "text-[hsl(var(--risk-moderate))]",
+      bgClass: "bg-[hsl(var(--risk-moderate))]",
     };
   }
   if (score <= 75) {
     return {
       label: t("riskMeter.high"),
-      colorClass: "text-orange-600 dark:text-orange-400",
-      bgClass: "bg-orange-500",
+      colorClass: "text-[hsl(var(--risk-high))]",
+      bgClass: "bg-[hsl(var(--risk-high))]",
     };
   }
   return {
     label: t("riskMeter.critical"),
-    colorClass: "text-red-600 dark:text-red-400",
-    bgClass: "bg-red-500",
+    colorClass: "text-[hsl(var(--risk-critical))]",
+    bgClass: "bg-[hsl(var(--risk-critical))]",
   };
 }
 
@@ -67,7 +67,7 @@ function SubscoreBar({
             <Icon className={`h-4 w-4 ${color}`} aria-hidden="true" />
             <span className="text-xs text-muted-foreground truncate">{label}</span>
           </div>
-          <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+          <div className="flex-1 h-2 bg-muted/70 rounded-full overflow-hidden">
             <div
               className={`h-full ${color.replace("text-", "bg-")} transition-all duration-300 ease-out rounded-full`}
               style={{ width: `${clampedValue}%` }}
@@ -99,10 +99,10 @@ export function RiskMeter({ subscores, total }: RiskMeterProps) {
     <div className="space-y-4" data-testid="risk-meter">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-sm text-muted-foreground mb-1">{t("riskMeter.title")}</p>
+          <p className="eyebrow mb-2">{t("riskMeter.title")}</p>
           <div className="flex items-baseline gap-2">
             <span
-              className="text-5xl font-bold tabular-nums tracking-tight"
+              className="text-5xl font-bold tabular-nums tracking-tight font-display"
               data-testid="text-total-risk"
             >
               {Math.round(clampedTotal)}
@@ -110,9 +110,9 @@ export function RiskMeter({ subscores, total }: RiskMeterProps) {
             <span className="text-lg text-muted-foreground">{t("riskMeter.of100")}</span>
           </div>
         </div>
-        <div className={`px-3 py-1.5 rounded-full ${riskLevel.bgClass}/20`}>
+        <div className={`px-3 py-1.5 rounded-full ${riskLevel.bgClass}/15 border border-border/60`}>
           <span
-            className={`text-sm font-medium ${riskLevel.colorClass}`}
+            className={`text-xs font-semibold tracking-[0.12em] uppercase ${riskLevel.colorClass}`}
             data-testid="text-risk-level"
           >
             {riskLevel.label}
@@ -120,7 +120,7 @@ export function RiskMeter({ subscores, total }: RiskMeterProps) {
         </div>
       </div>
 
-      <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+      <div className="relative h-3 bg-muted/70 rounded-full overflow-hidden">
         <div
           className={`absolute inset-y-0 left-0 ${riskLevel.bgClass} transition-all duration-500 ease-out rounded-full`}
           style={{ width: `${clampedTotal}%` }}
@@ -143,21 +143,21 @@ export function RiskMeter({ subscores, total }: RiskMeterProps) {
           label={t("riskMeter.exposure")}
           value={subscores.exposure}
           icon={Shield}
-          color="text-red-500 dark:text-red-400"
+          color="text-[hsl(var(--risk-critical))]"
           t={t}
         />
         <SubscoreBar
           label={t("riskMeter.credential")}
           value={subscores.credentialAccount}
           icon={Key}
-          color="text-amber-500 dark:text-amber-400"
+          color="text-[hsl(var(--risk-moderate))]"
           t={t}
         />
         <SubscoreBar
           label={t("riskMeter.hygiene")}
           value={subscores.hygiene}
           icon={Wrench}
-          color="text-blue-500 dark:text-blue-400"
+          color="text-[hsl(var(--risk-low))]"
           t={t}
         />
       </div>
