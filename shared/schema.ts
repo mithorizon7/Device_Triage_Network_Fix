@@ -1,12 +1,24 @@
 import { z } from "zod";
 
 export const deviceTypeSchema = z.enum([
-  "router", "laptop", "phone", "tablet", "tv", "speaker", 
-  "thermostat", "camera", "printer", "iot", "unknown"
+  "router",
+  "laptop",
+  "phone",
+  "tablet",
+  "tv",
+  "speaker",
+  "thermostat",
+  "camera",
+  "printer",
+  "iot",
+  "unknown",
 ]);
 
 export const riskFlagSchema = z.enum([
-  "unknown_device", "iot_device", "visitor_device", "trusted_work_device"
+  "unknown_device",
+  "iot_device",
+  "visitor_device",
+  "trusted_work_device",
 ]);
 
 export const zoneIdSchema = z.enum(["main", "guest", "iot"]);
@@ -18,7 +30,7 @@ export const deviceSchema = z.object({
   networkId: z.string(),
   ip: z.string().optional(),
   localId: z.string().optional(),
-  riskFlags: z.array(riskFlagSchema)
+  riskFlags: z.array(riskFlagSchema),
 });
 
 export const networkSchema = z.object({
@@ -27,7 +39,7 @@ export const networkSchema = z.object({
   ssid: z.string().nullable(),
   security: z.string().nullable(),
   subnet: z.string().nullable(),
-  enabled: z.boolean()
+  enabled: z.boolean(),
 });
 
 export const baseControlsSchema = z.object({
@@ -44,7 +56,7 @@ export const baseControlsSchema = z.object({
   fileSharingDisabled: z.boolean().optional(),
   bluetoothDisabled: z.boolean().optional(),
   httpsOnly: z.boolean().optional(),
-  verifyNetworkAuthenticity: z.boolean().optional()
+  verifyNetworkAuthenticity: z.boolean().optional(),
 });
 
 export const controlsSchema = baseControlsSchema;
@@ -60,16 +72,18 @@ export const controlDefinitionSchema = z.object({
   labelKey: z.string(),
   descriptionKey: z.string(),
   educationKey: z.string(),
-  hasInteractiveTraining: z.boolean().optional()
+  hasInteractiveTraining: z.boolean().optional(),
 });
 
 export const controlsRegistrySchema = z.object({
   version: z.string(),
-  controlCategories: z.record(z.object({
-    labelKey: z.string(),
-    order: z.number()
-  })),
-  controls: z.array(controlDefinitionSchema)
+  controlCategories: z.record(
+    z.object({
+      labelKey: z.string(),
+      order: z.number(),
+    })
+  ),
+  controls: z.array(controlDefinitionSchema),
 });
 
 export const scenarioSchema = z.object({
@@ -79,35 +93,45 @@ export const scenarioSchema = z.object({
     type: z.string(),
     isp: z.string().optional(),
     publicIp: z.string().optional(),
-    notes: z.string().optional()
+    notes: z.string().optional(),
   }),
   networks: z.array(networkSchema),
   initialControls: controlsSchema,
   devices: z.array(deviceSchema),
   learningObjectives: z.array(z.string()).optional(),
-  suggestedWinConditions: z.object({
-    maxTotalRisk: z.number().optional(),
-    requires: z.array(z.object({
-      control: z.string(),
-      value: z.union([z.boolean(), z.string()])
-    })).optional()
-  }).optional()
+  suggestedWinConditions: z
+    .object({
+      maxTotalRisk: z.number().optional(),
+      requires: z
+        .array(
+          z.object({
+            control: z.string(),
+            value: z.union([z.boolean(), z.string()]),
+          })
+        )
+        .optional(),
+    })
+    .optional(),
 });
 
 export const subscoreSchema = z.object({
   exposure: z.number(),
   credentialAccount: z.number(),
-  hygiene: z.number()
+  hygiene: z.number(),
 });
 
 export const scoreResultSchema = z.object({
   subscores: subscoreSchema,
   total: z.number(),
-  explanations: z.array(z.object({
-    ruleId: z.string(),
-    delta: z.record(z.string(), z.number()),
-    explain: z.string()
-  }))
+  explanations: z.array(
+    z.object({
+      ruleId: z.string(),
+      delta: z.record(z.string(), z.number()),
+      explain: z.string(),
+      explainKey: z.string().optional(),
+      explainParams: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
+    })
+  ),
 });
 
 export type DeviceType = z.infer<typeof deviceTypeSchema>;

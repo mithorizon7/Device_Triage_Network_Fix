@@ -1,9 +1,20 @@
 import { describe, it, expect } from "vitest";
 import { calculateScore, type ScoringRules } from "./scoringEngine";
 
-type DeviceType = "router" | "laptop" | "phone" | "tablet" | "tv" | "speaker" | "thermostat" | "camera" | "printer" | "iot" | "unknown";
+type DeviceType =
+  | "router"
+  | "laptop"
+  | "phone"
+  | "tablet"
+  | "tv"
+  | "speaker"
+  | "thermostat"
+  | "camera"
+  | "printer"
+  | "iot"
+  | "unknown";
 type RiskFlag = "unknown_device" | "iot_device" | "visitor_device" | "trusted_work_device";
-type ZoneId = "main" | "guest" | "iot" | "investigate";
+type ZoneId = "main" | "guest" | "iot";
 
 interface Device {
   id: string;
@@ -32,86 +43,93 @@ const testRules: ScoringRules = {
     weights: {
       exposure: 0.5,
       credentialAccount: 0.3,
-      hygiene: 0.2
+      hygiene: 0.2,
     },
     caps: {
       exposure: { min: 0, max: 100 },
       credentialAccount: { min: 0, max: 100 },
       hygiene: { min: 0, max: 100 },
-      total: { min: 0, max: 100 }
-    }
+      total: { min: 0, max: 100 },
+    },
   },
   defaults: {
     baseline: {
       exposure: 25,
       credentialAccount: 15,
-      hygiene: 15
+      hygiene: 15,
     },
-    allowedZones: ["main", "guest", "iot", "investigate"]
+    allowedZones: ["main", "guest", "iot"],
   },
   zoneRules: [
     {
-      id: "unknown_not_in_investigate",
-      when: { deviceHasFlag: "unknown_device", zoneNot: "investigate" },
+      id: "unknown_not_flagged",
+      when: { deviceHasFlag: "unknown_device", notFlaggedForInvestigation: true },
       add: { exposure: 35 },
-      explain: "Unknown device is not quarantined for investigation."
+      explain: "Unknown device is not flagged for review.",
     },
     {
-      id: "unknown_in_investigate",
-      when: { deviceHasFlag: "unknown_device", zoneIs: "investigate" },
+      id: "unknown_flagged",
+      when: { deviceHasFlag: "unknown_device", flaggedForInvestigation: true },
       add: { exposure: -15 },
-      explain: "Unknown device quarantined for investigation reduces immediate exposure."
+      explain: "Unknown device flagged for review reduces immediate exposure.",
     },
     {
       id: "iot_on_main",
       when: { deviceHasFlag: "iot_device", zoneIs: "main" },
       add: { exposure: 12 },
-      explain: "IoT device placed on main network increases blast radius."
+      explain: "IoT device placed on main network increases blast radius.",
     },
     {
       id: "visitor_on_main",
       when: { deviceHasFlag: "visitor_device", zoneIs: "main" },
       add: { exposure: 10 },
-      explain: "Visitor device on main network increases exposure."
-    }
+      explain: "Visitor device on main network increases exposure.",
+    },
   ],
   controlRules: [
     {
       id: "wifi_security_open",
       when: { controlIs: "wifiSecurity", valueIs: "OPEN" },
       add: { exposure: 25, hygiene: 10 },
-      explain: "Open Wi-Fi removes link-layer protection."
+      explain: "Open Wi-Fi removes link-layer protection.",
     },
     {
       id: "wifi_security_wpa3",
       when: { controlIs: "wifiSecurity", valueIs: "WPA3" },
       add: { exposure: -2 },
-      explain: "WPA3 provides stronger Wi-Fi protections."
+      explain: "WPA3 provides stronger Wi-Fi protections.",
     },
     {
       id: "strong_wifi_password_on",
       when: { controlIs: "strongWifiPassword", valueIs: true },
       add: { hygiene: -10 },
-      explain: "Strong Wi-Fi password reduces opportunistic access."
+      explain: "Strong Wi-Fi password reduces opportunistic access.",
     },
     {
       id: "strong_wifi_password_off",
       when: { controlIs: "strongWifiPassword", valueIs: false },
       add: { hygiene: 10 },
-      explain: "Weak Wi-Fi passwords increase risk."
+      explain: "Weak Wi-Fi passwords increase risk.",
     },
     {
       id: "mfa_on",
       when: { controlIs: "mfaEnabled", valueIs: true },
       add: { credentialAccount: -12 },
-      explain: "MFA reduces account takeover risk."
+      explain: "MFA reduces account takeover risk.",
     },
     {
       id: "mfa_off",
       when: { controlIs: "mfaEnabled", valueIs: false },
       add: { credentialAccount: 12 },
-      explain: "No MFA increases account takeover risk."
-    }
+      explain: "No MFA increases account takeover risk.",
+    },
+    {
+      id: "hotel_mfa_bonus",
+      scenarioTypes: ["hotel"],
+      when: { controlIs: "mfaEnabled", valueIs: true },
+      add: { credentialAccount: -5 },
+      explain: "Hotel-only MFA bonus.",
+    },
   ],
   synergyRules: [
     {
@@ -119,29 +137,31 @@ const testRules: ScoringRules = {
       when: {
         all: [
           { controlIs: "iotNetworkEnabled", valueIs: true },
-          { pctOfDevicesWithFlagInZoneAtLeast: { flag: "iot_device", zone: "iot", pct: 0.7 } }
-        ]
+          { pctOfDevicesWithFlagInZoneAtLeast: { flag: "iot_device", zone: "iot", pct: 0.7 } },
+        ],
       },
       add: { exposure: -10 },
-      explain: "Most IoT devices isolated into IoT zone reduces blast radius."
+      explain: "Most IoT devices isolated into IoT zone reduces blast radius.",
     },
     {
       id: "guest_network_used_bonus",
       when: {
         all: [
           { controlIs: "guestNetworkEnabled", valueIs: true },
-          { countDevicesWithFlagInZoneAtLeast: { flag: "visitor_device", zone: "guest", count: 1 } }
-        ]
+          {
+            countDevicesWithFlagInZoneAtLeast: { flag: "visitor_device", zone: "guest", count: 1 },
+          },
+        ],
       },
       add: { exposure: -6 },
-      explain: "Visitor devices on guest network reduces main exposure."
-    }
+      explain: "Visitor devices on guest network reduces main exposure.",
+    },
   ],
   explainPanel: {
     maxItems: 8,
     sortOrder: "largestAbsoluteImpactFirst",
-    include: ["baseline", "zoneRules", "controlRules", "synergyRules"]
-  }
+    include: ["baseline", "zoneRules", "controlRules", "synergyRules"],
+  },
 };
 
 const createDevice = (overrides: Partial<Device>): Device => ({
@@ -152,7 +172,7 @@ const createDevice = (overrides: Partial<Device>): Device => ({
   ip: "192.168.1.10",
   localId: "AA:AA:AA:AA:AA:01",
   riskFlags: [],
-  ...overrides
+  ...overrides,
 });
 
 const createControls = (overrides: Partial<Controls>): Controls => ({
@@ -163,7 +183,7 @@ const createControls = (overrides: Partial<Controls>): Controls => ({
   mfaEnabled: false,
   autoUpdatesEnabled: false,
   defaultPasswordsAddressed: false,
-  ...overrides
+  ...overrides,
 });
 
 describe("Scoring Engine", () => {
@@ -178,18 +198,18 @@ describe("Scoring Engine", () => {
       expect(result.subscores.exposure).toBeGreaterThanOrEqual(0);
       expect(result.subscores.credentialAccount).toBeGreaterThanOrEqual(0);
       expect(result.subscores.hygiene).toBeGreaterThanOrEqual(0);
-      expect(result.explanations.some(e => e.ruleId === "baseline")).toBe(true);
+      expect(result.explanations.some((e) => e.ruleId === "baseline")).toBe(true);
     });
 
     it("should include baseline explanation", () => {
       const result = calculateScore(testRules, [], {}, createControls({}));
-      const baselineExp = result.explanations.find(e => e.ruleId === "baseline");
-      
+      const baselineExp = result.explanations.find((e) => e.ruleId === "baseline");
+
       expect(baselineExp).toBeDefined();
       expect(baselineExp?.delta).toEqual({
         exposure: 25,
         credentialAccount: 15,
-        hygiene: 15
+        hygiene: 15,
       });
     });
   });
@@ -233,57 +253,62 @@ describe("Scoring Engine", () => {
       const resultNoMfa = calculateScore(testRules, [], {}, controlsNoMfa);
       const resultMfa = calculateScore(testRules, [], {}, controlsMfa);
 
-      expect(resultMfa.subscores.credentialAccount).toBeLessThan(resultNoMfa.subscores.credentialAccount);
+      expect(resultMfa.subscores.credentialAccount).toBeLessThan(
+        resultNoMfa.subscores.credentialAccount
+      );
+    });
+
+    it("should apply scenario-scoped control rules only for matching scenario type", () => {
+      const controlsMfa = createControls({ mfaEnabled: true });
+
+      const resultHome = calculateScore(testRules, [], {}, controlsMfa, new Set(), "home");
+      const resultHotel = calculateScore(testRules, [], {}, controlsMfa, new Set(), "hotel");
+
+      expect(resultHotel.subscores.credentialAccount).toBeLessThan(
+        resultHome.subscores.credentialAccount
+      );
     });
   });
 
   describe("Zone Rules", () => {
-    it("should penalize unknown device not in investigate zone", () => {
+    it("should penalize unknown device not flagged for review", () => {
       const unknownDevice = createDevice({
         id: "unknown1",
         type: "unknown",
-        riskFlags: ["unknown_device"]
+        riskFlags: ["unknown_device"],
       });
       const controls = createControls({});
 
-      const resultMain = calculateScore(
+      const resultUnflagged = calculateScore(
         testRules,
         [unknownDevice],
         { unknown1: "main" },
-        controls
-      );
-      
-      const resultInvestigate = calculateScore(
-        testRules,
-        [unknownDevice],
-        { unknown1: "investigate" },
-        controls
+        controls,
+        new Set()
       );
 
-      expect(resultMain.subscores.exposure).toBeGreaterThan(resultInvestigate.subscores.exposure);
+      const resultFlagged = calculateScore(
+        testRules,
+        [unknownDevice],
+        { unknown1: "main" },
+        controls,
+        new Set(["unknown1"])
+      );
+
+      expect(resultUnflagged.subscores.exposure).toBeGreaterThan(resultFlagged.subscores.exposure);
     });
 
     it("should penalize IoT device on main network", () => {
       const iotDevice = createDevice({
         id: "iot1",
         type: "tv",
-        riskFlags: ["iot_device"]
+        riskFlags: ["iot_device"],
       });
       const controls = createControls({});
 
-      const resultMain = calculateScore(
-        testRules,
-        [iotDevice],
-        { iot1: "main" },
-        controls
-      );
-      
-      const resultIot = calculateScore(
-        testRules,
-        [iotDevice],
-        { iot1: "iot" },
-        controls
-      );
+      const resultMain = calculateScore(testRules, [iotDevice], { iot1: "main" }, controls);
+
+      const resultIot = calculateScore(testRules, [iotDevice], { iot1: "iot" }, controls);
 
       expect(resultMain.subscores.exposure).toBeGreaterThan(resultIot.subscores.exposure);
     });
@@ -292,17 +317,12 @@ describe("Scoring Engine", () => {
       const visitorDevice = createDevice({
         id: "visitor1",
         type: "phone",
-        riskFlags: ["visitor_device"]
+        riskFlags: ["visitor_device"],
       });
       const controls = createControls({});
 
-      const resultMain = calculateScore(
-        testRules,
-        [visitorDevice],
-        { visitor1: "main" },
-        controls
-      );
-      
+      const resultMain = calculateScore(testRules, [visitorDevice], { visitor1: "main" }, controls);
+
       const resultGuest = calculateScore(
         testRules,
         [visitorDevice],
@@ -319,7 +339,7 @@ describe("Scoring Engine", () => {
       const iotDevices = [
         createDevice({ id: "iot1", riskFlags: ["iot_device"] }),
         createDevice({ id: "iot2", riskFlags: ["iot_device"] }),
-        createDevice({ id: "iot3", riskFlags: ["iot_device"] })
+        createDevice({ id: "iot3", riskFlags: ["iot_device"] }),
       ];
       const controls = createControls({ iotNetworkEnabled: true });
 
@@ -338,13 +358,13 @@ describe("Scoring Engine", () => {
       );
 
       expect(resultFull.subscores.exposure).toBeLessThan(resultPartial.subscores.exposure);
-      expect(resultFull.explanations.some(e => e.ruleId === "iot_isolation_bonus")).toBe(true);
+      expect(resultFull.explanations.some((e) => e.ruleId === "iot_isolation_bonus")).toBe(true);
     });
 
     it("should apply guest network bonus when visitor in guest zone", () => {
       const visitorDevice = createDevice({
         id: "visitor1",
-        riskFlags: ["visitor_device"]
+        riskFlags: ["visitor_device"],
       });
       const controlsEnabled = createControls({ guestNetworkEnabled: true });
       const controlsDisabled = createControls({ guestNetworkEnabled: false });
@@ -363,7 +383,9 @@ describe("Scoring Engine", () => {
         controlsDisabled
       );
 
-      expect(resultWithBonus.subscores.exposure).toBeLessThan(resultWithoutBonus.subscores.exposure);
+      expect(resultWithBonus.subscores.exposure).toBeLessThan(
+        resultWithoutBonus.subscores.exposure
+      );
     });
   });
 
@@ -373,11 +395,13 @@ describe("Scoring Engine", () => {
         createDevice({
           id: `unknown${i}`,
           type: "unknown",
-          riskFlags: ["unknown_device"]
+          riskFlags: ["unknown_device"],
         })
       );
       const deviceZones: Record<string, ZoneId> = {};
-      manyUnknownDevices.forEach(d => { deviceZones[d.id] = "main"; });
+      manyUnknownDevices.forEach((d) => {
+        deviceZones[d.id] = "main";
+      });
 
       const controlsBad = createControls({ wifiSecurity: "OPEN" });
 
@@ -397,7 +421,7 @@ describe("Scoring Engine", () => {
         iotNetworkEnabled: true,
         mfaEnabled: true,
         autoUpdatesEnabled: true,
-        defaultPasswordsAddressed: true
+        defaultPasswordsAddressed: true,
       });
 
       const result = calculateScore(testRules, [], {}, controls);
@@ -414,9 +438,13 @@ describe("Scoring Engine", () => {
       const devices = [
         createDevice({ id: "laptop1", riskFlags: [] }),
         createDevice({ id: "iot1", riskFlags: ["iot_device"] }),
-        createDevice({ id: "visitor1", riskFlags: ["visitor_device"] })
+        createDevice({ id: "visitor1", riskFlags: ["visitor_device"] }),
       ];
-      const deviceZones = { laptop1: "main" as ZoneId, iot1: "iot" as ZoneId, visitor1: "guest" as ZoneId };
+      const deviceZones = {
+        laptop1: "main" as ZoneId,
+        iot1: "iot" as ZoneId,
+        visitor1: "guest" as ZoneId,
+      };
       const controls = createControls({ mfaEnabled: true, strongWifiPassword: true });
 
       const result1 = calculateScore(testRules, devices, deviceZones, controls);
@@ -449,7 +477,7 @@ describe("Scoring Engine", () => {
     it("should calculate weighted total correctly", () => {
       const result = calculateScore(testRules, [], {}, createControls({}));
 
-      const expectedTotal = 
+      const expectedTotal =
         result.subscores.exposure * 0.5 +
         result.subscores.credentialAccount * 0.3 +
         result.subscores.hygiene * 0.2;
@@ -462,7 +490,7 @@ describe("Scoring Engine", () => {
     it("should filter out zero-impact rules from explanations", () => {
       const result = calculateScore(testRules, [], {}, createControls({}));
 
-      result.explanations.forEach(exp => {
+      result.explanations.forEach((exp) => {
         if (exp.ruleId !== "baseline") {
           const totalDelta = Object.values(exp.delta).reduce((sum, val) => sum + val, 0);
           expect(totalDelta).not.toBe(0);
@@ -474,7 +502,7 @@ describe("Scoring Engine", () => {
       const iotDevice = createDevice({
         id: "smart_tv",
         label: "Smart TV",
-        riskFlags: ["iot_device"]
+        riskFlags: ["iot_device"],
       });
 
       const result = calculateScore(
@@ -484,8 +512,8 @@ describe("Scoring Engine", () => {
         createControls({})
       );
 
-      const iotExplanation = result.explanations.find(e => 
-        e.ruleId.includes("iot_on_main") && e.ruleId.includes("smart_tv")
+      const iotExplanation = result.explanations.find(
+        (e) => e.ruleId.includes("iot_on_main") && e.ruleId.includes("smart_tv")
       );
 
       expect(iotExplanation).toBeDefined();

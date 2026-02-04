@@ -1,0 +1,17 @@
+node_modules
+.npm
+.dist
+.dist/**
+dist
+client/dist
+server/dist
+coverage
+.vite
+.next
+.cache
+.tmp
+build
+**/*.min.js
+**/*.min.css
+**/*.map
+package-lock.json

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -10,22 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Wifi, Lock, Users, Shield, Key, RefreshCw, KeyRound, Info, HelpCircle,
-  Smartphone, ShieldCheck, FolderX, BluetoothOff, Search
+import {
+  Wifi,
+  Lock,
+  Users,
+  Shield,
+  Key,
+  RefreshCw,
+  KeyRound,
+  Info,
+  HelpCircle,
+  Smartphone,
+  ShieldCheck,
+  FolderX,
+  BluetoothOff,
+  Search,
+  Cpu,
 } from "lucide-react";
-import type { Controls } from "@shared/schema";
+import type { ControlDefinition, Controls, ControlsRegistry } from "@shared/schema";
 import { useControlEducation } from "@/hooks/useControlEducation";
 import { ControlEducationDialog } from "./ControlEducationDialog";
 import { PasswordTrainingDialog } from "./PasswordTrainingDialog";
+import { getScenarioControlDefinitions } from "@/lib/controlsRegistry";
 
-type EducatableControlKey = 
+type EducatableControlKey =
   | "strongWifiPassword"
   | "guestNetworkEnabled"
   | "iotNetworkEnabled"
@@ -47,6 +57,7 @@ interface ControlsDrawerProps {
   guestNetworkAvailable: boolean;
   iotNetworkAvailable: boolean;
   scenarioType: string;
+  controlsRegistry?: ControlsRegistry;
 }
 
 interface ControlItemProps {
@@ -74,9 +85,7 @@ function ControlItem({ icon: Icon, label, description, tooltip, children }: Cont
         <p className="text-sm font-medium">{label}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
       </div>
-      <div className="flex-shrink-0">
-        {children}
-      </div>
+      <div className="flex-shrink-0">{children}</div>
     </div>
   );
 }
@@ -86,11 +95,16 @@ export function ControlsDrawer({
   onControlChange,
   guestNetworkAvailable,
   iotNetworkAvailable,
-  scenarioType
+  scenarioType,
+  controlsRegistry,
 }: ControlsDrawerProps) {
   const { t } = useTranslation();
   const [passwordTrainingOpen, setPasswordTrainingOpen] = useState(false);
-  
+  const controlDefinitions = useMemo(
+    () => getScenarioControlDefinitions(controlsRegistry, scenarioType),
+    [controlsRegistry, scenarioType]
+  );
+
   const {
     activeControl,
     dontShowAgain,
@@ -100,18 +114,27 @@ export function ControlsDrawer({
     shouldShowEducation,
   } = useControlEducation();
 
-  const isHotelScenario = scenarioType === 'hotel';
+  const isHotelScenario = scenarioType === "hotel";
+  const shouldUseRegistry = controlDefinitions.length > 0;
 
   const handleBooleanControlChange = (controlKey: EducatableControlKey, checked: boolean) => {
-    if (controlKey === 'strongWifiPassword' && checked) {
-      onControlChange('strongWifiPassword', true);
+    if (controlKey === "strongWifiPassword" && checked) {
+      onControlChange("strongWifiPassword", true);
       setPasswordTrainingOpen(true);
       return;
     }
-    
+
     onControlChange(controlKey as keyof Controls, checked as Controls[keyof Controls]);
-    const educatableKeys = ['strongWifiPassword', 'guestNetworkEnabled', 'iotNetworkEnabled', 'mfaEnabled', 'autoUpdatesEnabled', 'defaultPasswordsAddressed', 'wifiSecurity'] as const;
-    type EducatableKey = typeof educatableKeys[number];
+    const educatableKeys = [
+      "strongWifiPassword",
+      "guestNetworkEnabled",
+      "iotNetworkEnabled",
+      "mfaEnabled",
+      "autoUpdatesEnabled",
+      "defaultPasswordsAddressed",
+      "wifiSecurity",
+    ] as const;
+    type EducatableKey = (typeof educatableKeys)[number];
     if (checked && educatableKeys.includes(controlKey as EducatableKey)) {
       if (shouldShowEducation(controlKey as EducatableKey)) {
         showEducation(controlKey as EducatableKey);
@@ -121,7 +144,7 @@ export function ControlsDrawer({
 
   const handlePasswordTrainingComplete = (accepted: boolean) => {
     if (!accepted) {
-      onControlChange('strongWifiPassword', false);
+      onControlChange("strongWifiPassword", false);
     }
     setPasswordTrainingOpen(false);
   };
@@ -138,7 +161,7 @@ export function ControlsDrawer({
     const previousValue = controls.wifiSecurity;
     const typedValue = value as Controls["wifiSecurity"];
     onControlChange("wifiSecurity", typedValue);
-    if ((previousValue === "OPEN" && value !== "OPEN") && shouldShowEducation("wifiSecurity")) {
+    if (previousValue === "OPEN" && value !== "OPEN" && shouldShowEducation("wifiSecurity")) {
       showEducation("wifiSecurity");
     }
   };
@@ -156,48 +179,195 @@ export function ControlsDrawer({
     closeEducation();
   };
 
+  const iconMap: Record<string, typeof Wifi> = {
+    Wifi,
+    Lock,
+    Users,
+    Shield,
+    Key,
+    RefreshCw,
+    KeyRound,
+    Smartphone,
+    ShieldCheck,
+    FolderX,
+    BluetoothOff,
+    Search,
+    Cpu,
+  };
+
+  const getTooltipKey = (controlId: string) =>
+    controlId === "verifyNetworkAuthenticity"
+      ? "tooltips.controls.verifyNetwork"
+      : `tooltips.controls.${controlId}`;
+
+  const getControlDescription = (control: ControlDefinition) => {
+    if (control.id === "guestNetworkEnabled") {
+      return guestNetworkAvailable ? t(control.descriptionKey) : t("controls.enableInSettings");
+    }
+    if (control.id === "iotNetworkEnabled") {
+      return iotNetworkAvailable ? t(control.descriptionKey) : t("controls.enableInSettings");
+    }
+    return t(control.descriptionKey);
+  };
+
+  const renderWifiSecurity = (control: ControlDefinition) => (
+    <ControlItem
+      icon={iconMap[control.icon] || Wifi}
+      label={t(control.labelKey)}
+      description={t(control.descriptionKey)}
+      tooltip={t(getTooltipKey(control.id))}
+    >
+      <div className="flex items-center gap-1">
+        <Select
+          value={controls.wifiSecurity || (control.default as Controls["wifiSecurity"]) || "WPA2"}
+          onValueChange={handleWifiSecurityChange}
+        >
+          <SelectTrigger className="w-[100px] text-xs" data-testid="select-wifi-security">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectItem value="OPEN">{t("controls.wifiSecurityOpen")}</SelectItem>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[280px]">
+                <p className="text-sm">{t("tooltips.wifiSecurity.open")}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectItem value="WPA2">{t("controls.wifiSecurityWPA2")}</SelectItem>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[280px]">
+                <p className="text-sm">{t("tooltips.wifiSecurity.wpa2")}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectItem value="WPA3">{t("controls.wifiSecurityWPA3")}</SelectItem>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[280px]">
+                <p className="text-sm">{t("tooltips.wifiSecurity.wpa3")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </SelectContent>
+        </Select>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[280px]">
+            <p className="text-sm font-medium mb-1">{t("controls.wifiSecurityOpen")}</p>
+            <p className="text-xs text-muted-foreground mb-2">{t("tooltips.wifiSecurity.open")}</p>
+            <p className="text-sm font-medium mb-1">{t("controls.wifiSecurityWPA2")}</p>
+            <p className="text-xs text-muted-foreground mb-2">{t("tooltips.wifiSecurity.wpa2")}</p>
+            <p className="text-sm font-medium mb-1">{t("controls.wifiSecurityWPA3")}</p>
+            <p className="text-xs text-muted-foreground">{t("tooltips.wifiSecurity.wpa3")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </ControlItem>
+  );
+
+  const renderToggleControl = (control: ControlDefinition) => {
+    const controlKey = control.id as EducatableControlKey;
+    const isStrongPassword = control.id === "strongWifiPassword";
+    const shouldDisable =
+      control.id === "guestNetworkEnabled"
+        ? !guestNetworkAvailable
+        : control.id === "iotNetworkEnabled"
+          ? !iotNetworkAvailable
+          : false;
+    const controlValue = controls[control.id as keyof Controls];
+    const checked = typeof controlValue === "boolean" ? controlValue : false;
+
+    return (
+      <ControlItem
+        icon={iconMap[control.icon] || Shield}
+        label={t(control.labelKey)}
+        description={getControlDescription(control)}
+        tooltip={t(getTooltipKey(control.id))}
+      >
+        <div className="flex items-center gap-1">
+          {isStrongPassword && control.hasInteractiveTraining && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={openPasswordTraining}
+                  data-testid="button-password-training"
+                >
+                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-sm">{t("passwordTraining.title")}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          <Switch
+            checked={checked}
+            onCheckedChange={(checked) => handleBooleanControlChange(controlKey, checked)}
+            disabled={shouldDisable}
+            data-testid={`switch-${control.id}`}
+            aria-label={t(control.labelKey)}
+          />
+        </div>
+      </ControlItem>
+    );
+  };
+
+  const renderRegistryControls = () => (
+    <>
+      {controlDefinitions.map((control, index) => (
+        <div key={control.id}>
+          {control.type === "select" && control.id === "wifiSecurity"
+            ? renderWifiSecurity(control)
+            : renderToggleControl(control)}
+          {index < controlDefinitions.length - 1 && <Separator />}
+        </div>
+      ))}
+    </>
+  );
+
   const renderHomeOfficeControls = () => (
     <>
       <ControlItem
         icon={Wifi}
-        label={t('controls.wifiSecurity')}
-        description={t('controls.wifiSecurityDesc')}
-        tooltip={t('tooltips.controls.wifiSecurity')}
+        label={t("controls.wifiSecurity")}
+        description={t("controls.wifiSecurityDesc")}
+        tooltip={t("tooltips.controls.wifiSecurity")}
       >
         <div className="flex items-center gap-1">
-          <Select
-            value={controls.wifiSecurity || "WPA2"}
-            onValueChange={handleWifiSecurityChange}
-          >
-            <SelectTrigger 
-              className="w-[100px] text-xs"
-              data-testid="select-wifi-security"
-            >
+          <Select value={controls.wifiSecurity || "WPA2"} onValueChange={handleWifiSecurityChange}>
+            <SelectTrigger className="w-[100px] text-xs" data-testid="select-wifi-security">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <SelectItem value="OPEN">{t('controls.wifiSecurityOpen')}</SelectItem>
+                  <SelectItem value="OPEN">{t("controls.wifiSecurityOpen")}</SelectItem>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[280px]">
-                  <p className="text-sm">{t('tooltips.wifiSecurity.open')}</p>
+                  <p className="text-sm">{t("tooltips.wifiSecurity.open")}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <SelectItem value="WPA2">{t('controls.wifiSecurityWPA2')}</SelectItem>
+                  <SelectItem value="WPA2">{t("controls.wifiSecurityWPA2")}</SelectItem>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[280px]">
-                  <p className="text-sm">{t('tooltips.wifiSecurity.wpa2')}</p>
+                  <p className="text-sm">{t("tooltips.wifiSecurity.wpa2")}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <SelectItem value="WPA3">{t('controls.wifiSecurityWPA3')}</SelectItem>
+                  <SelectItem value="WPA3">{t("controls.wifiSecurityWPA3")}</SelectItem>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[280px]">
-                  <p className="text-sm">{t('tooltips.wifiSecurity.wpa3')}</p>
+                  <p className="text-sm">{t("tooltips.wifiSecurity.wpa3")}</p>
                 </TooltipContent>
               </Tooltip>
             </SelectContent>
@@ -207,12 +377,16 @@ export function ControlsDrawer({
               <Info className="h-4 w-4 text-muted-foreground cursor-help" />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[280px]">
-              <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityOpen')}</p>
-              <p className="text-xs text-muted-foreground mb-2">{t('tooltips.wifiSecurity.open')}</p>
-              <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityWPA2')}</p>
-              <p className="text-xs text-muted-foreground mb-2">{t('tooltips.wifiSecurity.wpa2')}</p>
-              <p className="text-sm font-medium mb-1">{t('controls.wifiSecurityWPA3')}</p>
-              <p className="text-xs text-muted-foreground">{t('tooltips.wifiSecurity.wpa3')}</p>
+              <p className="text-sm font-medium mb-1">{t("controls.wifiSecurityOpen")}</p>
+              <p className="text-xs text-muted-foreground mb-2">
+                {t("tooltips.wifiSecurity.open")}
+              </p>
+              <p className="text-sm font-medium mb-1">{t("controls.wifiSecurityWPA2")}</p>
+              <p className="text-xs text-muted-foreground mb-2">
+                {t("tooltips.wifiSecurity.wpa2")}
+              </p>
+              <p className="text-sm font-medium mb-1">{t("controls.wifiSecurityWPA3")}</p>
+              <p className="text-xs text-muted-foreground">{t("tooltips.wifiSecurity.wpa3")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -222,9 +396,9 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Lock}
-        label={t('controls.strongWifiPassword')}
-        description={t('controls.strongWifiPasswordDesc')}
-        tooltip={t('tooltips.controls.strongWifiPassword')}
+        label={t("controls.strongWifiPassword")}
+        description={t("controls.strongWifiPasswordDesc")}
+        tooltip={t("tooltips.controls.strongWifiPassword")}
       >
         <div className="flex items-center gap-1">
           <Tooltip>
@@ -240,14 +414,14 @@ export function ControlsDrawer({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              <p className="text-sm">{t('passwordTraining.title')}</p>
+              <p className="text-sm">{t("passwordTraining.title")}</p>
             </TooltipContent>
           </Tooltip>
           <Switch
             checked={controls.strongWifiPassword || false}
             onCheckedChange={(checked) => handleBooleanControlChange("strongWifiPassword", checked)}
             data-testid="switch-strongWifiPassword"
-            aria-label={t('controls.strongWifiPassword')}
+            aria-label={t("controls.strongWifiPassword")}
           />
         </div>
       </ControlItem>
@@ -256,19 +430,18 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Users}
-        label={t('controls.guestNetworkEnabled')}
-        description={guestNetworkAvailable 
-          ? t('controls.guestNetworkDesc')
-          : t('controls.enableInSettings')
+        label={t("controls.guestNetworkEnabled")}
+        description={
+          guestNetworkAvailable ? t("controls.guestNetworkDesc") : t("controls.enableInSettings")
         }
-        tooltip={t('tooltips.controls.guestNetworkEnabled')}
+        tooltip={t("tooltips.controls.guestNetworkEnabled")}
       >
         <Switch
           checked={controls.guestNetworkEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("guestNetworkEnabled", checked)}
           disabled={!guestNetworkAvailable}
           data-testid="switch-guestNetworkEnabled"
-          aria-label={t('controls.guestNetworkEnabled')}
+          aria-label={t("controls.guestNetworkEnabled")}
         />
       </ControlItem>
 
@@ -276,19 +449,18 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Shield}
-        label={t('controls.iotNetworkEnabled')}
-        description={iotNetworkAvailable 
-          ? t('controls.iotNetworkDesc')
-          : t('controls.enableInSettings')
+        label={t("controls.iotNetworkEnabled")}
+        description={
+          iotNetworkAvailable ? t("controls.iotNetworkDesc") : t("controls.enableInSettings")
         }
-        tooltip={t('tooltips.controls.iotNetworkEnabled')}
+        tooltip={t("tooltips.controls.iotNetworkEnabled")}
       >
         <Switch
           checked={controls.iotNetworkEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("iotNetworkEnabled", checked)}
           disabled={!iotNetworkAvailable}
           data-testid="switch-iotNetworkEnabled"
-          aria-label={t('controls.iotNetworkEnabled')}
+          aria-label={t("controls.iotNetworkEnabled")}
         />
       </ControlItem>
 
@@ -296,15 +468,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Key}
-        label={t('controls.mfaEnabled')}
-        description={t('controls.mfaDesc')}
-        tooltip={t('tooltips.controls.mfaEnabled')}
+        label={t("controls.mfaEnabled")}
+        description={t("controls.mfaDesc")}
+        tooltip={t("tooltips.controls.mfaEnabled")}
       >
         <Switch
           checked={controls.mfaEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("mfaEnabled", checked)}
           data-testid="switch-mfaEnabled"
-          aria-label={t('controls.mfaEnabled')}
+          aria-label={t("controls.mfaEnabled")}
         />
       </ControlItem>
 
@@ -312,15 +484,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={RefreshCw}
-        label={t('controls.autoUpdatesEnabled')}
-        description={t('controls.autoUpdatesDesc')}
-        tooltip={t('tooltips.controls.autoUpdatesEnabled')}
+        label={t("controls.autoUpdatesEnabled")}
+        description={t("controls.autoUpdatesDesc")}
+        tooltip={t("tooltips.controls.autoUpdatesEnabled")}
       >
         <Switch
           checked={controls.autoUpdatesEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("autoUpdatesEnabled", checked)}
           data-testid="switch-autoUpdatesEnabled"
-          aria-label={t('controls.autoUpdatesEnabled')}
+          aria-label={t("controls.autoUpdatesEnabled")}
         />
       </ControlItem>
 
@@ -328,15 +500,17 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={KeyRound}
-        label={t('controls.defaultPasswordsAddressed')}
-        description={t('controls.defaultPasswordsDesc')}
-        tooltip={t('tooltips.controls.defaultPasswordsAddressed')}
+        label={t("controls.defaultPasswordsAddressed")}
+        description={t("controls.defaultPasswordsDesc")}
+        tooltip={t("tooltips.controls.defaultPasswordsAddressed")}
       >
         <Switch
           checked={controls.defaultPasswordsAddressed || false}
-          onCheckedChange={(checked) => handleBooleanControlChange("defaultPasswordsAddressed", checked)}
+          onCheckedChange={(checked) =>
+            handleBooleanControlChange("defaultPasswordsAddressed", checked)
+          }
           data-testid="switch-defaultPasswordsAddressed"
-          aria-label={t('controls.defaultPasswordsAddressed')}
+          aria-label={t("controls.defaultPasswordsAddressed")}
         />
       </ControlItem>
     </>
@@ -346,15 +520,15 @@ export function ControlsDrawer({
     <>
       <ControlItem
         icon={Shield}
-        label={t('controls.vpnEnabled')}
-        description={t('controls.vpnEnabledDesc')}
-        tooltip={t('tooltips.controls.vpnEnabled')}
+        label={t("controls.vpnEnabled")}
+        description={t("controls.vpnEnabledDesc")}
+        tooltip={t("tooltips.controls.vpnEnabled")}
       >
         <Switch
           checked={controls.vpnEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("vpnEnabled", checked)}
           data-testid="switch-vpnEnabled"
-          aria-label={t('controls.vpnEnabled')}
+          aria-label={t("controls.vpnEnabled")}
         />
       </ControlItem>
 
@@ -362,15 +536,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Smartphone}
-        label={t('controls.personalHotspot')}
-        description={t('controls.personalHotspotDesc')}
-        tooltip={t('tooltips.controls.personalHotspot')}
+        label={t("controls.personalHotspot")}
+        description={t("controls.personalHotspotDesc")}
+        tooltip={t("tooltips.controls.personalHotspot")}
       >
         <Switch
           checked={controls.personalHotspot || false}
           onCheckedChange={(checked) => handleBooleanControlChange("personalHotspot", checked)}
           data-testid="switch-personalHotspot"
-          aria-label={t('controls.personalHotspot')}
+          aria-label={t("controls.personalHotspot")}
         />
       </ControlItem>
 
@@ -378,15 +552,17 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Search}
-        label={t('controls.verifyNetwork')}
-        description={t('controls.verifyNetworkDesc')}
-        tooltip={t('tooltips.controls.verifyNetwork')}
+        label={t("controls.verifyNetwork")}
+        description={t("controls.verifyNetworkDesc")}
+        tooltip={t("tooltips.controls.verifyNetwork")}
       >
         <Switch
           checked={controls.verifyNetworkAuthenticity || false}
-          onCheckedChange={(checked) => handleBooleanControlChange("verifyNetworkAuthenticity", checked)}
+          onCheckedChange={(checked) =>
+            handleBooleanControlChange("verifyNetworkAuthenticity", checked)
+          }
           data-testid="switch-verifyNetworkAuthenticity"
-          aria-label={t('controls.verifyNetwork')}
+          aria-label={t("controls.verifyNetwork")}
         />
       </ControlItem>
 
@@ -394,15 +570,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={ShieldCheck}
-        label={t('controls.firewallEnabled')}
-        description={t('controls.firewallEnabledDesc')}
-        tooltip={t('tooltips.controls.firewallEnabled')}
+        label={t("controls.firewallEnabled")}
+        description={t("controls.firewallEnabledDesc")}
+        tooltip={t("tooltips.controls.firewallEnabled")}
       >
         <Switch
           checked={controls.firewallEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("firewallEnabled", checked)}
           data-testid="switch-firewallEnabled"
-          aria-label={t('controls.firewallEnabled')}
+          aria-label={t("controls.firewallEnabled")}
         />
       </ControlItem>
 
@@ -410,15 +586,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={FolderX}
-        label={t('controls.fileSharingDisabled')}
-        description={t('controls.fileSharingDisabledDesc')}
-        tooltip={t('tooltips.controls.fileSharingDisabled')}
+        label={t("controls.fileSharingDisabled")}
+        description={t("controls.fileSharingDisabledDesc")}
+        tooltip={t("tooltips.controls.fileSharingDisabled")}
       >
         <Switch
           checked={controls.fileSharingDisabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("fileSharingDisabled", checked)}
           data-testid="switch-fileSharingDisabled"
-          aria-label={t('controls.fileSharingDisabled')}
+          aria-label={t("controls.fileSharingDisabled")}
         />
       </ControlItem>
 
@@ -426,15 +602,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={BluetoothOff}
-        label={t('controls.bluetoothDisabled')}
-        description={t('controls.bluetoothDisabledDesc')}
-        tooltip={t('tooltips.controls.bluetoothDisabled')}
+        label={t("controls.bluetoothDisabled")}
+        description={t("controls.bluetoothDisabledDesc")}
+        tooltip={t("tooltips.controls.bluetoothDisabled")}
       >
         <Switch
           checked={controls.bluetoothDisabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("bluetoothDisabled", checked)}
           data-testid="switch-bluetoothDisabled"
-          aria-label={t('controls.bluetoothDisabled')}
+          aria-label={t("controls.bluetoothDisabled")}
         />
       </ControlItem>
 
@@ -442,15 +618,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Lock}
-        label={t('controls.httpsOnly')}
-        description={t('controls.httpsOnlyDesc')}
-        tooltip={t('tooltips.controls.httpsOnly')}
+        label={t("controls.httpsOnly")}
+        description={t("controls.httpsOnlyDesc")}
+        tooltip={t("tooltips.controls.httpsOnly")}
       >
         <Switch
           checked={controls.httpsOnly || false}
           onCheckedChange={(checked) => handleBooleanControlChange("httpsOnly", checked)}
           data-testid="switch-httpsOnly"
-          aria-label={t('controls.httpsOnly')}
+          aria-label={t("controls.httpsOnly")}
         />
       </ControlItem>
 
@@ -458,15 +634,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={Key}
-        label={t('controls.mfaEnabled')}
-        description={t('controls.mfaDesc')}
-        tooltip={t('tooltips.controls.mfaEnabled')}
+        label={t("controls.mfaEnabled")}
+        description={t("controls.mfaDesc")}
+        tooltip={t("tooltips.controls.mfaEnabled")}
       >
         <Switch
           checked={controls.mfaEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("mfaEnabled", checked)}
           data-testid="switch-mfaEnabled"
-          aria-label={t('controls.mfaEnabled')}
+          aria-label={t("controls.mfaEnabled")}
         />
       </ControlItem>
 
@@ -474,15 +650,15 @@ export function ControlsDrawer({
 
       <ControlItem
         icon={RefreshCw}
-        label={t('controls.autoUpdatesEnabled')}
-        description={t('controls.autoUpdatesDesc')}
-        tooltip={t('tooltips.controls.autoUpdatesEnabled')}
+        label={t("controls.autoUpdatesEnabled")}
+        description={t("controls.autoUpdatesDesc")}
+        tooltip={t("tooltips.controls.autoUpdatesEnabled")}
       >
         <Switch
           checked={controls.autoUpdatesEnabled || false}
           onCheckedChange={(checked) => handleBooleanControlChange("autoUpdatesEnabled", checked)}
           data-testid="switch-autoUpdatesEnabled"
-          aria-label={t('controls.autoUpdatesEnabled')}
+          aria-label={t("controls.autoUpdatesEnabled")}
         />
       </ControlItem>
     </>
@@ -490,31 +666,35 @@ export function ControlsDrawer({
 
   return (
     <>
-    <PasswordTrainingDialog
-      isOpen={passwordTrainingOpen}
-      onComplete={handlePasswordTrainingComplete}
-      onClose={handlePasswordTrainingClose}
-    />
-    <ControlEducationDialog
-      controlKey={activeControl}
-      isOpen={activeControl !== null}
-      dontShowAgain={dontShowAgain}
-      onDontShowAgainChange={setDontShowAgain}
-      onKeepEnabled={handleKeepEnabled}
-      onTurnOff={handleTurnOff}
-      onClose={closeEducation}
-    />
-    <Card data-testid="controls-drawer">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold flex items-center gap-2">
-          <Shield className="h-5 w-5 text-muted-foreground" />
-          {t('controls.title')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1">
-        {isHotelScenario ? renderHotelControls() : renderHomeOfficeControls()}
-      </CardContent>
-    </Card>
+      <PasswordTrainingDialog
+        isOpen={passwordTrainingOpen}
+        onComplete={handlePasswordTrainingComplete}
+        onClose={handlePasswordTrainingClose}
+      />
+      <ControlEducationDialog
+        controlKey={activeControl}
+        isOpen={activeControl !== null}
+        dontShowAgain={dontShowAgain}
+        onDontShowAgainChange={setDontShowAgain}
+        onKeepEnabled={handleKeepEnabled}
+        onTurnOff={handleTurnOff}
+        onClose={closeEducation}
+      />
+      <Card data-testid="controls-drawer">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <Shield className="h-5 w-5 text-muted-foreground" />
+            {t("controls.title")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1">
+          {shouldUseRegistry
+            ? renderRegistryControls()
+            : isHotelScenario
+              ? renderHotelControls()
+              : renderHomeOfficeControls()}
+        </CardContent>
+      </Card>
     </>
   );
 }

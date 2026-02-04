@@ -10,7 +10,7 @@ import {
   Router,
   Cpu,
   HelpCircle,
-  type LucideIcon
+  type LucideIcon,
 } from "lucide-react";
 import type { DeviceType } from "@shared/schema";
 
@@ -25,7 +25,7 @@ export const deviceIconMap: Record<DeviceType, LucideIcon> = {
   camera: Camera,
   printer: Printer,
   iot: Cpu,
-  unknown: HelpCircle
+  unknown: HelpCircle,
 };
 
 export function getDeviceIcon(type: DeviceType): LucideIcon {

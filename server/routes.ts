@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import type { Server } from "http";
 import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 
@@ -41,18 +41,17 @@ function loadScenarioById(id: string) {
   return undefined;
 }
 
-export async function registerRoutes(
-  httpServer: Server,
-  app: Express
-): Promise<Server> {
+export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   app.get("/api/scenarios", (_req, res) => {
     try {
       const scenarios = loadScenarios();
-      const summaries = scenarios.map((s: { id: string; title: string; environment: { type: string } }) => ({
-        id: s.id,
-        title: s.title,
-        environment: { type: s.environment.type }
-      }));
+      const summaries = scenarios.map(
+        (s: { id: string; title: string; environment: { type: string } }) => ({
+          id: s.id,
+          title: s.title,
+          environment: { type: s.environment.type },
+        })
+      );
       res.json(summaries);
     } catch (error) {
       console.error("Error loading scenarios:", error);

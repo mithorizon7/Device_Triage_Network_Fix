@@ -4,16 +4,16 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
 import type { TranslationKey } from './i18n-keys';
 
-import en from '../locales/en.json';
-import lv from '../locales/lv.json';
-import ru from '../locales/ru.json';
+import en from "../locales/en.json";
+import lv from "../locales/lv.json";
+import ru from "../locales/ru.json";
 
 export type { TranslationKey } from './i18n-keys';
 
 const resources = {
   en: { translation: en },
   lv: { translation: lv },
-  ru: { translation: ru }
+  ru: { translation: ru },
 };
 
 i18n
@@ -23,32 +23,30 @@ i18n
   .init({
     resources,
     fallbackLng: {
-      'lv': ['en'],
-      'ru': ['en', 'lv'],
-      'default': ['en']
+      lv: ["en"],
+      ru: ["en", "lv"],
+      default: ["en"],
     },
-    supportedLngs: ['en', 'lv', 'ru'],
-    load: 'languageOnly',
+    supportedLngs: ["en", "lv", "ru"],
+    load: "languageOnly",
     interpolation: {
-      escapeValue: false
+      escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      lookupLocalStorage: 'deviceTriage_language',
-      caches: ['localStorage']
+      order: ["localStorage", "navigator"],
+      lookupLocalStorage: "deviceTriage_language",
+      caches: ["localStorage"],
     },
     react: {
-      useSuspense: false
+      useSuspense: false,
     },
     saveMissing: import.meta.env.DEV,
-    missingKeyHandler: import.meta.env.DEV 
+    missingKeyHandler: import.meta.env.DEV
       ? (lngs, ns, key) => {
-          console.warn(`[MISSING:${key}] in ${lngs.join(', ')}`);
+          console.warn(`[MISSING:${key}] in ${lngs.join(", ")}`);
         }
       : undefined,
-    parseMissingKeyHandler: import.meta.env.DEV 
-      ? (key) => `[MISSING:${key}]`
-      : undefined
+    parseMissingKeyHandler: import.meta.env.DEV ? (key) => `[MISSING:${key}]` : undefined,
   });
 
 export default i18n;
@@ -74,9 +72,9 @@ export function useTypedTranslation() {
 }
 
 export const languages = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'lv', name: 'Latvian', nativeName: 'Latviešu' },
-  { code: 'ru', name: 'Russian', nativeName: 'Русский' }
+  { code: "en", labelKey: "languages.en", nativeName: "English" },
+  { code: "lv", labelKey: "languages.lv", nativeName: "Latviešu" },
+  { code: "ru", labelKey: "languages.ru", nativeName: "Русский" },
 ];
 
 export function formatNumber(value: number, locale?: string): string {
@@ -85,9 +83,9 @@ export function formatNumber(value: number, locale?: string): string {
 
 export function formatDate(date: Date, locale?: string): string {
   return new Intl.DateTimeFormat(locale || i18n.language, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   }).format(date);
 }
 
@@ -99,6 +97,6 @@ export function getDeviceDisplayLabel(
 ): string {
   if (!scenarioId) return deviceLabel;
   const key = `deviceLabels.${scenarioId}.${deviceId}`;
-  const translated = t(key, { defaultValue: '' });
+  const translated = t(key, { defaultValue: "" });
   return translated || deviceLabel;
 }

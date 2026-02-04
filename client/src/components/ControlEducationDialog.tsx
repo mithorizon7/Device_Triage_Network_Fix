@@ -11,21 +11,21 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Lock, 
-  Users, 
-  Shield, 
-  Key, 
-  RefreshCw, 
-  KeyRound, 
+import {
+  Lock,
+  Users,
+  Shield,
+  Key,
+  RefreshCw,
+  KeyRound,
   Wifi,
   HelpCircle,
   Lightbulb,
-  CheckCircle2
+  CheckCircle2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-type ControlKey = 
+type ControlKey =
   | "strongWifiPassword"
   | "guestNetworkEnabled"
   | "iotNetworkEnabled"
@@ -75,7 +75,7 @@ export function ControlEducationDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent 
+      <DialogContent
         className="max-w-lg max-h-[90vh] flex flex-col"
         data-testid={`dialog-education-${controlKey}`}
       >
@@ -86,9 +86,7 @@ export function ControlEducationDialog({
             </div>
             {title}
           </DialogTitle>
-          <DialogDescription className="sr-only">
-            {t('common.learnMore')}
-          </DialogDescription>
+          <DialogDescription className="sr-only">{t("common.learnMore")}</DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="flex-1 pr-4">
@@ -96,31 +94,25 @@ export function ControlEducationDialog({
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <HelpCircle className="h-4 w-4 text-blue-500" />
-                <span>{t('education.whatIsThis')}</span>
+                <span>{t("education.whatIsThis")}</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed pl-6">
-                {whatContent}
-              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed pl-6">{whatContent}</p>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <Lightbulb className="h-4 w-4 text-amber-500" />
-                <span>{t('education.whyMatters')}</span>
+                <span>{t("education.whyMatters")}</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed pl-6">
-                {whyContent}
-              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed pl-6">{whyContent}</p>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
-                <span>{t('education.howToDo')}</span>
+                <span>{t("education.howToDo")}</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed pl-6">
-                {howContent}
-              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed pl-6">{howContent}</p>
             </div>
           </div>
         </ScrollArea>
@@ -132,27 +124,17 @@ export function ControlEducationDialog({
             onCheckedChange={(checked) => onDontShowAgainChange(checked === true)}
             data-testid="checkbox-dont-show-again"
           />
-          <Label 
-            htmlFor="dont-show-again" 
-            className="text-sm text-muted-foreground cursor-pointer"
-          >
-            {t('education.dontShowAgain')}
+          <Label htmlFor="dont-show-again" className="text-sm text-muted-foreground cursor-pointer">
+            {t("education.dontShowAgain")}
           </Label>
         </div>
 
         <DialogFooter className="flex-shrink-0 gap-2 sm:gap-2">
-          <Button 
-            variant="outline" 
-            onClick={onTurnOff}
-            data-testid="button-turn-off"
-          >
-            {t('education.turnOff')}
+          <Button variant="outline" onClick={onTurnOff} data-testid="button-turn-off">
+            {t("education.turnOff")}
           </Button>
-          <Button 
-            onClick={onKeepEnabled}
-            data-testid="button-keep-enabled"
-          >
-            {t('education.keepEnabled')}
+          <Button onClick={onKeepEnabled} data-testid="button-keep-enabled">
+            {t("education.keepEnabled")}
           </Button>
         </DialogFooter>
       </DialogContent>

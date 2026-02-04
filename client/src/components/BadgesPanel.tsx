@@ -1,8 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Award, Star, Shield, Zap, Target, BookOpen, FileText, Trophy
-} from "lucide-react";
+import { Award, Star, Shield, Zap, Target, BookOpen, FileText, Trophy } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Badge as BadgeType, UserProgress } from "@/lib/progressTracking";
 
@@ -17,7 +15,7 @@ const badgeIcons: Record<string, typeof Award> = {
   iot_master: Shield,
   quick_learner: Zap,
   persistent: BookOpen,
-  custom_creator: FileText
+  custom_creator: FileText,
 };
 
 const badgeColors: Record<string, string> = {
@@ -27,7 +25,7 @@ const badgeColors: Record<string, string> = {
   iot_master: "text-blue-500",
   quick_learner: "text-orange-500",
   persistent: "text-pink-500",
-  custom_creator: "text-cyan-500"
+  custom_creator: "text-cyan-500",
 };
 
 export function BadgesPanel({ progress }: BadgesPanelProps) {
@@ -43,20 +41,24 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Award className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          {t('badges.title')}
+          {t("badges.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5">
             <Trophy className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium" data-testid="text-completions">{totalCompletions}</span>
-            <span className="text-muted-foreground">{t('badges.completed')}</span>
+            <span className="font-medium" data-testid="text-completions">
+              {totalCompletions}
+            </span>
+            <span className="text-muted-foreground">{t("badges.completed")}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Award className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium" data-testid="text-badges-count">{badges.length}</span>
-            <span className="text-muted-foreground">{t('badges.badgesCount')}</span>
+            <span className="font-medium" data-testid="text-badges-count">
+              {badges.length}
+            </span>
+            <span className="text-muted-foreground">{t("badges.badgesCount")}</span>
           </div>
         </div>
 
@@ -66,8 +68,8 @@ export function BadgesPanel({ progress }: BadgesPanelProps) {
               const Icon = badgeIcons[badge.id] || Award;
               const colorClass = badgeColors[badge.id] || "text-foreground";
               return (
-                <Badge 
-                  key={badge.id} 
+                <Badge
+                  key={badge.id}
                   variant="secondary"
                   className="gap-1.5 py-1"
                   data-testid={`badge-${badge.id}`}
@@ -90,47 +92,58 @@ export function BadgeNotification({ badge }: { badge: BadgeType }) {
   const colorClass = badgeColors[badge.id] || "text-foreground";
 
   return (
-    <div className="flex items-center gap-3 p-4 rounded-lg bg-card border" data-testid={`notification-badge-${badge.id}`}>
+    <div
+      className="flex items-center gap-3 p-4 rounded-lg bg-card border"
+      data-testid={`notification-badge-${badge.id}`}
+    >
       <div className={`p-2 rounded-full bg-muted ${colorClass}`}>
         <Icon className="h-6 w-6" />
       </div>
       <div>
-        <p className="font-medium">{t('badges.badgeEarned')}</p>
-        <p className="text-sm text-muted-foreground">{t(badge.name)}: {t(badge.description)}</p>
+        <p className="font-medium">{t("badges.badgeEarned")}</p>
+        <p className="text-sm text-muted-foreground">
+          {t("badges.badgeEarnedDetail", {
+            name: t(badge.name),
+            description: t(badge.description),
+          })}
+        </p>
       </div>
     </div>
   );
 }
 
-export function CompletionBanner({ 
-  score, 
-  isNewCompletion 
-}: { 
-  score: number; 
+export function CompletionBanner({
+  score,
+  isNewCompletion,
+}: {
+  score: number;
   isNewCompletion: boolean;
 }) {
   const { t } = useTranslation();
-  
+
   if (score > 35) return null;
 
   return (
-    <div 
+    <div
       className={`
         flex items-center gap-3 p-4 rounded-lg border
-        ${isNewCompletion 
-          ? "bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400" 
-          : "bg-muted border-border"
+        ${
+          isNewCompletion
+            ? "bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400"
+            : "bg-muted border-border"
         }
       `}
       data-testid="completion-banner"
     >
-      <Trophy className={`h-5 w-5 ${isNewCompletion ? "text-green-500" : "text-muted-foreground"}`} />
+      <Trophy
+        className={`h-5 w-5 ${isNewCompletion ? "text-green-500" : "text-muted-foreground"}`}
+      />
       <div>
         <p className="font-medium">
-          {isNewCompletion ? t('notifications.scenarioComplete') : t('badges.winConditionMet')}
+          {isNewCompletion ? t("notifications.scenarioComplete") : t("badges.winConditionMet")}
         </p>
         <p className="text-sm opacity-80">
-          {t('badges.riskScoreTarget', { score: Math.round(score), target: 35 })}
+          {t("badges.riskScoreTarget", { score: Math.round(score), target: 35 })}
         </p>
       </div>
     </div>

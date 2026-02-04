@@ -1,3 +1,5 @@
+import type { Controls } from "@shared/schema";
+
 const PROGRESS_KEY = "device_triage_progress";
 const TUTORIAL_KEY = "device_triage_tutorial_completed";
 
@@ -28,36 +30,36 @@ export interface Badge {
 export const BADGE_DEFINITIONS: Record<string, { nameKey: string; descriptionKey: string }> = {
   first_completion: {
     nameKey: "badges.firstSteps",
-    descriptionKey: "badges.firstStepsDesc"
+    descriptionKey: "badges.firstStepsDesc",
   },
   all_builtin: {
     nameKey: "badges.zoneMaster",
-    descriptionKey: "badges.zoneMasterDesc"
+    descriptionKey: "badges.zoneMasterDesc",
   },
   perfect_score: {
     nameKey: "badges.perfectScore",
-    descriptionKey: "badges.perfectScoreDesc"
+    descriptionKey: "badges.perfectScoreDesc",
   },
   iot_master: {
     nameKey: "badges.iotWrangler",
-    descriptionKey: "badges.iotWranglerDesc"
+    descriptionKey: "badges.iotWranglerDesc",
   },
   quick_learner: {
     nameKey: "badges.speedDemon",
-    descriptionKey: "badges.speedDemonDesc"
+    descriptionKey: "badges.speedDemonDesc",
   },
   persistent: {
     nameKey: "badges.persistent",
-    descriptionKey: "badges.persistentDesc"
+    descriptionKey: "badges.persistentDesc",
   },
   custom_creator: {
     nameKey: "badges.scenarioAuthor",
-    descriptionKey: "badges.scenarioAuthorDesc"
+    descriptionKey: "badges.scenarioAuthorDesc",
   },
   security_expert: {
     nameKey: "badges.securityExpert",
-    descriptionKey: "badges.securityExpertDesc"
-  }
+    descriptionKey: "badges.securityExpertDesc",
+  },
 };
 
 export function getProgress(): UserProgress {
@@ -68,7 +70,7 @@ export function getProgress(): UserProgress {
         scenarios: {},
         badges: [],
         totalCompletions: 0,
-        firstCompletedAt: null
+        firstCompletedAt: null,
       };
     }
     return JSON.parse(stored);
@@ -77,7 +79,7 @@ export function getProgress(): UserProgress {
       scenarios: {},
       badges: [],
       totalCompletions: 0,
-      firstCompletedAt: null
+      firstCompletedAt: null,
     };
   }
 }
@@ -96,7 +98,7 @@ export function recordAttempt(
   score: number,
   meetsWinCondition: boolean,
   iotIsolated: boolean = false
-): { newBadges: Badge[], isNewCompletion: boolean } {
+): { newBadges: Badge[]; isNewCompletion: boolean } {
   const progress = getProgress();
   const now = new Date().toISOString();
   const newBadges: Badge[] = [];
@@ -108,7 +110,7 @@ export function recordAttempt(
     bestScore: 100,
     completedAt: null,
     attempts: 0,
-    lastAttemptAt: now
+    lastAttemptAt: now,
   };
 
   existing.attempts += 1;
@@ -143,7 +145,7 @@ export function recordAttempt(
     }
 
     const builtInScenarios = ["family_iot_sprawl_v1", "small_office_v1", "hotel_public_v1"];
-    const completedBuiltIn = builtInScenarios.filter(id => progress.scenarios[id]?.completedAt);
+    const completedBuiltIn = builtInScenarios.filter((id) => progress.scenarios[id]?.completedAt);
     if (builtInScenarios.includes(scenarioId)) {
       completedBuiltIn.push(scenarioId);
     }
@@ -153,7 +155,7 @@ export function recordAttempt(
     }
   }
 
-  if (score <= 20 && !hasBadge(progress, "perfect_score")) {
+  if (score <= 10 && meetsWinCondition && !hasBadge(progress, "perfect_score")) {
     const badge = awardBadge(progress, "perfect_score", scenarioId);
     if (badge) newBadges.push(badge);
   }
@@ -164,7 +166,9 @@ export function recordAttempt(
   }
 
   // Security Expert badge: Complete 5 different scenarios
-  const completedScenarioCount = Object.values(progress.scenarios).filter(s => s.completedAt !== null).length;
+  const completedScenarioCount = Object.values(progress.scenarios).filter(
+    (s) => s.completedAt !== null
+  ).length;
   if (completedScenarioCount >= 5 && !hasBadge(progress, "security_expert")) {
     const badge = awardBadge(progress, "security_expert");
     if (badge) newBadges.push(badge);
@@ -186,12 +190,12 @@ export function recordCustomScenarioCreated(): Badge | null {
 }
 
 function hasBadge(progress: UserProgress, badgeId: string): boolean {
-  return progress.badges.some(b => b.id === badgeId);
+  return progress.badges.some((b) => b.id === badgeId);
 }
 
 function awardBadge(progress: UserProgress, badgeId: string, scenarioId?: string): Badge | null {
   if (hasBadge(progress, badgeId)) return null;
-  
+
   const definition = BADGE_DEFINITIONS[badgeId];
   if (!definition) return null;
 
@@ -200,7 +204,7 @@ function awardBadge(progress: UserProgress, badgeId: string, scenarioId?: string
     name: definition.nameKey,
     description: definition.descriptionKey,
     earnedAt: new Date().toISOString(),
-    scenarioId
+    scenarioId,
   };
 
   progress.badges.push(badge);
@@ -209,9 +213,19 @@ function awardBadge(progress: UserProgress, badgeId: string, scenarioId?: string
 
 export function checkWinCondition(
   score: number,
-  maxRisk: number = 35
+  maxRisk: number = 35,
+  requires: Array<{ control: string; value: boolean | string }> = [],
+  controls?: Controls | null
 ): boolean {
-  return score <= maxRisk;
+  const scoreMet = score <= maxRisk;
+  if (!requires.length) return scoreMet;
+  if (!controls) return false;
+
+  const requirementsMet = requires.every(
+    (req) => controls[req.control as keyof Controls] === req.value
+  );
+
+  return scoreMet && requirementsMet;
 }
 
 export function getTutorialCompleted(): boolean {
@@ -237,7 +251,7 @@ export function getBadgeDefinitions() {
 export function getCompletedScenarioIds(): string[] {
   const progress = getProgress();
   return Object.keys(progress.scenarios).filter(
-    id => progress.scenarios[id].completedAt !== null
+    (id) => progress.scenarios[id].completedAt !== null
   );
 }
 

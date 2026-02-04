@@ -4,11 +4,7 @@ import type { Device, ZoneId } from "@shared/schema";
 import type { ZoneConfig } from "@/lib/zones";
 import { DeviceCard } from "./DeviceCard";
 import { Network, Shield, Users } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ZoneDropTargetProps {
   zone: ZoneConfig;
@@ -25,7 +21,7 @@ interface ZoneDropTargetProps {
 const zoneIcons: Record<ZoneId, typeof Network> = {
   main: Network,
   guest: Users,
-  iot: Shield
+  iot: Shield,
 };
 
 export function ZoneDropTarget({
@@ -37,17 +33,18 @@ export function ZoneDropTarget({
   scenarioId,
   minHeight,
   flaggedDevices = new Set(),
-  onFlagToggle
+  onFlagToggle,
 }: ZoneDropTargetProps) {
   const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
   const [draggingDeviceId, setDraggingDeviceId] = useState<string | null>(null);
 
-  const devicesInZone = devices.filter(d => deviceZones[d.id] === zone.id);
+  const devicesInZone = devices.filter((d) => deviceZones[d.id] === zone.id);
   const ZoneIcon = zoneIcons[zone.id];
   const label = t(zone.labelKey);
   const description = t(zone.descriptionKey);
-  
+  const realWorldLabel = t(`zones.realWorld.${zone.id}`);
+
   const isEmpty = devicesInZone.length === 0;
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -87,23 +84,26 @@ export function ZoneDropTarget({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       role="region"
-      aria-label={t('zones.zoneWithDevices', { zone: label, count: devicesInZone.length })}
+      aria-label={t("zones.zoneWithDevices", { zone: label, count: devicesInZone.length })}
       data-testid={`zone-${zone.id}`}
       style={minHeight ? { minHeight: `${minHeight}px` } : undefined}
       className={`
         relative flex flex-col rounded-lg border-2 border-dashed
         transition-all duration-300 ease-out
         ${!minHeight && (isEmpty ? "min-h-[120px]" : "min-h-0")}
-        ${isDragOver 
-          ? `${zone.borderClass} ${zone.bgClass} border-solid` 
-          : "border-border bg-card/30"
+        ${
+          isDragOver
+            ? `${zone.borderClass} ${zone.bgClass} border-solid`
+            : "border-border bg-card/30"
         }
       `}
     >
-      <div className={`
+      <div
+        className={`
         flex items-center gap-2 px-4 py-3 border-b
         ${isDragOver ? "border-transparent" : "border-border"}
-      `}>
+      `}
+      >
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="cursor-help">
@@ -115,12 +115,9 @@ export function ZoneDropTarget({
           </TooltipContent>
         </Tooltip>
         <div className="flex-1">
-          <h3 className={`text-sm font-semibold ${zone.colorClass}`}>
-            {label}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {description}
-          </p>
+          <h3 className={`text-sm font-semibold ${zone.colorClass}`}>{label}</h3>
+          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-[11px] text-muted-foreground/80">{realWorldLabel}</p>
         </div>
         <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-full">
           {devicesInZone.length}
@@ -130,16 +127,14 @@ export function ZoneDropTarget({
       <div
         className="flex-1 overflow-auto p-3"
         role="list"
-        aria-label={t('devices.in', { zone: label })}
+        aria-label={t("devices.in", { zone: label })}
       >
         {devicesInZone.length === 0 ? (
           <div className="flex items-center justify-center h-full text-center flex-col min-h-[72px]">
             <div className={`p-2 rounded-full ${zone.bgClass} mb-1`}>
               <ZoneIcon className={`h-5 w-5 ${zone.colorClass} opacity-60`} aria-hidden="true" />
             </div>
-            <p className="text-muted-foreground text-sm">
-              {t('zones.dropHere')}
-            </p>
+            <p className="text-muted-foreground text-sm">{t("zones.dropHere")}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -163,8 +158,10 @@ export function ZoneDropTarget({
 
       {isDragOver && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg">
-          <div className={`px-4 py-2 rounded-full ${zone.bgClass} ${zone.colorClass} font-medium text-sm`}>
-            {t('zones.dropToMove')}
+          <div
+            className={`px-4 py-2 rounded-full ${zone.bgClass} ${zone.colorClass} font-medium text-sm`}
+          >
+            {t("zones.dropToMove")}
           </div>
         </div>
       )}

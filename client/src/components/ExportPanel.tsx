@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  generateExportData, 
-  exportAsJson, 
-  exportAsHtml,
-  type ExportData 
-} from "@/lib/exportUtils";
+import { generateExportData, exportAsJson, exportAsHtml } from "@/lib/exportUtils";
+import { useTranslation } from "react-i18next";
+import { formatExplanation } from "@/lib/explanationFormatter";
 import { Download, FileJson, FileText } from "lucide-react";
 import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
+import { getScenarioDisplayTitle } from "@/lib/scenarioTitles";
 
 interface ExportPanelProps {
   scenario: Scenario;
@@ -16,20 +14,28 @@ interface ExportPanelProps {
   scoreResult: ScoreResult;
 }
 
-export function ExportPanel({ 
-  scenario, 
-  deviceZones, 
-  controls, 
-  scoreResult 
-}: ExportPanelProps) {
+export function ExportPanel({ scenario, deviceZones, controls, scoreResult }: ExportPanelProps) {
+  const { t, i18n } = useTranslation();
+  const scenarioTitle = getScenarioDisplayTitle(scenario, t);
+
   const handleExportJson = () => {
-    const data = generateExportData(scenario, deviceZones, controls, scoreResult);
-    exportAsJson(data);
+    const data = generateExportData(scenario, deviceZones, controls, scoreResult, {
+      formatExplanation: (explanation) => formatExplanation(explanation, t),
+      scenarioTitle,
+    });
+    exportAsJson(data, { fileNamePrefix: t("export.report.fileNameDataPrefix") });
   };
 
   const handleExportHtml = () => {
-    const data = generateExportData(scenario, deviceZones, controls, scoreResult);
-    exportAsHtml(data);
+    const data = generateExportData(scenario, deviceZones, controls, scoreResult, {
+      formatExplanation: (explanation) => formatExplanation(explanation, t),
+      scenarioTitle,
+    });
+    exportAsHtml(data, {
+      t,
+      locale: i18n.language,
+      fileNamePrefix: t("export.report.fileNameReportPrefix"),
+    });
   };
 
   return (
@@ -37,7 +43,7 @@ export function ExportPanel({
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Download className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          Export Report
+          {t("export.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
@@ -49,7 +55,7 @@ export function ExportPanel({
           data-testid="button-export-html"
         >
           <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
-          Download Report (HTML)
+          {t("export.htmlReport")}
         </Button>
         <Button
           variant="ghost"
@@ -59,7 +65,7 @@ export function ExportPanel({
           data-testid="button-export-json"
         >
           <FileJson className="h-4 w-4 mr-2" aria-hidden="true" />
-          Export Data (JSON)
+          {t("export.jsonData")}
         </Button>
       </CardContent>
     </Card>

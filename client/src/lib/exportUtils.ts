@@ -1,4 +1,5 @@
-import type { Scenario, Controls, ZoneId, ScoreResult } from "@shared/schema";
+import type { Scenario, Controls, ZoneId, ScoreResult, RiskFlag } from "@shared/schema";
+import type { TFunction } from "i18next";
 
 export interface ExportData {
   exportedAt: string;
@@ -29,61 +30,75 @@ export interface ExportData {
     devicesInMainZone: number;
     devicesInGuestZone: number;
     devicesInIoTZone: number;
-    devicesInInvestigateZone: number;
     devicesMoved: number;
     controlsEnabled: number;
     controlsTotal: number;
   };
 }
 
+export interface GenerateExportDataOptions {
+  formatExplanation?: (explanation: ScoreResult["explanations"][number]) => string;
+  scenarioTitle?: string;
+}
+
+export interface ExportFileOptions {
+  fileNamePrefix?: string;
+}
+
+export interface ExportHtmlOptions extends ExportFileOptions {
+  t: TFunction;
+  locale?: string;
+}
+
 export function generateExportData(
   scenario: Scenario,
   deviceZones: Record<string, ZoneId>,
   controls: Controls,
-  scoreResult: ScoreResult
+  scoreResult: ScoreResult,
+  options?: GenerateExportDataOptions
 ): ExportData {
-  const devicePlacements = scenario.devices.map(device => ({
+  const scenarioTitle = options?.scenarioTitle ?? scenario.title;
+  const formatExplanation = options?.formatExplanation;
+  const devicePlacements = scenario.devices.map((device) => ({
     deviceId: device.id,
     deviceName: device.label,
     deviceType: device.type,
     originalZone: device.networkId as ZoneId,
-    currentZone: deviceZones[device.id] || device.networkId as ZoneId,
+    currentZone: deviceZones[device.id] || (device.networkId as ZoneId),
     wasMoved: deviceZones[device.id] !== device.networkId,
-    riskFlags: device.riskFlags
+    riskFlags: device.riskFlags,
   }));
 
   const zoneCounts = {
     main: 0,
     guest: 0,
     iot: 0,
-    investigate: 0
   };
 
-  devicePlacements.forEach(d => {
+  devicePlacements.forEach((d) => {
     if (d.currentZone in zoneCounts) {
       zoneCounts[d.currentZone]++;
     }
   });
 
-  const devicesMoved = devicePlacements.filter(d => d.wasMoved).length;
-  
-  const booleanControls = [
-    controls.strongWifiPassword,
-    controls.guestNetworkEnabled,
-    controls.iotNetworkEnabled,
-    controls.mfaEnabled,
-    controls.autoUpdatesEnabled,
-    controls.defaultPasswordsAddressed
-  ];
-  
-  const booleanControlsEnabled = booleanControls.filter(Boolean).length;
-  const wifiSecurityScore = controls.wifiSecurity === "WPA3" ? 1 : controls.wifiSecurity === "WPA2" ? 0.5 : 0;
-  const controlsEnabled = booleanControlsEnabled + (wifiSecurityScore >= 0.5 ? 1 : 0);
+  const devicesMoved = devicePlacements.filter((d) => d.wasMoved).length;
+
+  const controlEntries = Object.entries(controls).filter(([, value]) => value !== undefined);
+  const controlsEnabled = controlEntries.reduce((count, [key, value]) => {
+    if (typeof value === "boolean") {
+      return count + (value ? 1 : 0);
+    }
+    if (key === "wifiSecurity") {
+      return count + (value === "OPEN" ? 0 : 1);
+    }
+    return count;
+  }, 0);
+  const controlsTotal = controlEntries.length;
 
   return {
     exportedAt: new Date().toISOString(),
     scenarioId: scenario.id,
-    scenarioTitle: scenario.title,
+    scenarioTitle,
     environment: scenario.environment.type,
     devicePlacements,
     controlStates: controls,
@@ -92,64 +107,128 @@ export function generateExportData(
       subscores: {
         exposure: Math.round(scoreResult.subscores.exposure * 10) / 10,
         credentialAccount: Math.round(scoreResult.subscores.credentialAccount * 10) / 10,
-        hygiene: Math.round(scoreResult.subscores.hygiene * 10) / 10
+        hygiene: Math.round(scoreResult.subscores.hygiene * 10) / 10,
       },
-      explanations: scoreResult.explanations.map(e => e.explain)
+      explanations: formatExplanation
+        ? scoreResult.explanations.map(formatExplanation)
+        : scoreResult.explanations.map((e) => e.explain),
     },
     summary: {
       totalDevices: scenario.devices.length,
       devicesInMainZone: zoneCounts.main,
       devicesInGuestZone: zoneCounts.guest,
       devicesInIoTZone: zoneCounts.iot,
-      devicesInInvestigateZone: zoneCounts.investigate,
       devicesMoved,
       controlsEnabled,
-      controlsTotal: 7
-    }
+      controlsTotal,
+    },
   };
 }
 
-export function exportAsJson(data: ExportData): void {
+export function exportAsJson(data: ExportData, options?: ExportFileOptions): void {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  
+
   const link = document.createElement("a");
+  const fileNamePrefix = options?.fileNamePrefix || "network-triage";
   link.href = url;
-  link.download = `network-triage-${data.scenarioId}-${Date.now()}.json`;
+  link.download = `${fileNamePrefix}-${data.scenarioId}-${Date.now()}.json`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
 
-const ZONE_NAMES: Record<ZoneId, string> = {
-  main: "Main Network",
-  guest: "Guest Network",
-  iot: "IoT Network",
-  investigate: "Investigate"
+const ZONE_LABEL_KEYS: Record<ZoneId, string> = {
+  main: "zones.main",
+  guest: "zones.guest",
+  iot: "zones.iot",
 };
 
-function getZoneName(zoneId: ZoneId): string {
-  return ZONE_NAMES[zoneId] || zoneId;
+const RISK_FLAG_LABEL_KEYS: Record<RiskFlag, string> = {
+  unknown_device: "devices.unknownFlag",
+  iot_device: "devices.iotFlag",
+  visitor_device: "devices.visitorFlag",
+  trusted_work_device: "devices.workFlag",
+};
+
+const WIFI_SECURITY_LABEL_KEYS: Record<string, string> = {
+  OPEN: "controls.wifiSecurityOpen",
+  WPA2: "controls.wifiSecurityWPA2",
+  WPA3: "controls.wifiSecurityWPA3",
+};
+
+function getZoneName(zoneId: ZoneId, t: TFunction): string {
+  const key = ZONE_LABEL_KEYS[zoneId];
+  return key ? t(key) : zoneId;
 }
 
-function getRiskLevel(score: number): string {
-  if (score <= 20) return "Low Risk";
-  if (score <= 40) return "Moderate Risk";
-  if (score <= 60) return "High Risk";
-  return "Critical Risk";
+function getRiskFlagLabel(flag: RiskFlag, t: TFunction): string {
+  const key = RISK_FLAG_LABEL_KEYS[flag];
+  return key ? t(key) : flag.replace(/_/g, " ");
 }
 
-export function exportAsHtml(data: ExportData): void {
-  const riskLevel = getRiskLevel(data.scoring.total);
-  
+function getDeviceTypeLabel(type: string, t: TFunction): string {
+  return t(`devices.${type}`, { defaultValue: type });
+}
+
+function getWifiSecurityLabel(value: string | undefined, t: TFunction): string {
+  if (!value) return "";
+  const key = WIFI_SECURITY_LABEL_KEYS[value];
+  return key ? t(key) : value;
+}
+
+function getEnvironmentLabel(environment: string, t: TFunction): string {
+  return t(`environmentTypes.${environment}`, { defaultValue: environment });
+}
+
+function getRiskLevel(score: number, t: TFunction): string {
+  if (score <= 20) return t("riskMeter.low");
+  if (score <= 40) return t("riskMeter.medium");
+  if (score <= 60) return t("riskMeter.high");
+  return t("riskMeter.critical");
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export function exportAsHtml(data: ExportData, options: ExportHtmlOptions): void {
+  const { t, locale, fileNamePrefix } = options;
+  const esc = (value: string | number) => escapeHtml(String(value));
+  const reportTitle = t("export.report.title");
+  const documentTitle = t("export.report.documentTitle", {
+    reportTitle,
+    title: data.scenarioTitle,
+  });
+  const riskLevel = getRiskLevel(data.scoring.total, t);
+  const environmentLabel = getEnvironmentLabel(data.environment, t);
+  const exportedAt = new Date(data.exportedAt).toLocaleString(locale || "en");
+  const safeScenarioTitle = esc(data.scenarioTitle);
+  const safeEnvironmentLabel = esc(environmentLabel);
+  const safeReportTitle = esc(reportTitle);
+  const safeDocumentTitle = esc(documentTitle);
+  const safeRiskLevel = esc(riskLevel);
+  const safeExportedAt = esc(exportedAt);
+  const wifiSecurityEnabled =
+    data.controlStates.wifiSecurity !== undefined
+      ? data.controlStates.wifiSecurity !== "OPEN"
+      : false;
+  const wifiSecurityLabel = getWifiSecurityLabel(data.controlStates.wifiSecurity, t);
+  const resolvedFileNamePrefix = fileNamePrefix || "network-triage-report";
+
   const html = `<!DOCTYPE html>
-<html lang="en">
+<html lang="${locale || "en"}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Network Triage Report - ${data.scenarioTitle}</title>
+  <title>${safeDocumentTitle}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
@@ -165,7 +244,7 @@ export function exportAsHtml(data: ExportData): void {
     .meta { color: #666; font-size: 0.875rem; margin-bottom: 1.5rem; }
     .score-section { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
     .score-card { flex: 1; min-width: 150px; padding: 1rem; border-radius: 6px; text-align: center; }
-    .score-card.total { background: ${data.scoring.total <= 35 ? '#dcfce7' : data.scoring.total <= 60 ? '#fef3c7' : '#fee2e2'}; }
+    .score-card.total { background: ${data.scoring.total <= 35 ? "#dcfce7" : data.scoring.total <= 60 ? "#fef3c7" : "#fee2e2"}; }
     .score-card.sub { background: #f3f4f6; }
     .score-value { font-size: 2rem; font-weight: bold; color: #111; }
     .score-label { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -192,122 +271,133 @@ export function exportAsHtml(data: ExportData): void {
 </head>
 <body>
   <div class="container">
-    <h1>Network Triage Report</h1>
+    <h1>${safeReportTitle}</h1>
     <p class="meta">
-      <strong>Scenario:</strong> ${data.scenarioTitle} (${data.environment})<br>
-      <strong>Generated:</strong> ${new Date(data.exportedAt).toLocaleString()}
+      <strong>${esc(t("export.report.metaScenario"))}:</strong> ${safeScenarioTitle} (${safeEnvironmentLabel})<br>
+      <strong>${esc(t("export.report.metaGenerated"))}:</strong> ${safeExportedAt}
     </p>
 
-    <h2>Risk Score</h2>
+    <h2>${esc(t("export.report.riskScore"))}</h2>
     <div class="score-section">
       <div class="score-card total">
-        <div class="score-value">${data.scoring.total}</div>
-        <div class="score-label">${riskLevel}</div>
+        <div class="score-value">${esc(data.scoring.total)}</div>
+        <div class="score-label">${safeRiskLevel}</div>
       </div>
       <div class="score-card sub">
-        <div class="score-value">${data.scoring.subscores.exposure}</div>
-        <div class="score-label">Exposure</div>
+        <div class="score-value">${esc(data.scoring.subscores.exposure)}</div>
+        <div class="score-label">${esc(t("riskMeter.exposure"))}</div>
       </div>
       <div class="score-card sub">
-        <div class="score-value">${data.scoring.subscores.credentialAccount}</div>
-        <div class="score-label">Credential</div>
+        <div class="score-value">${esc(data.scoring.subscores.credentialAccount)}</div>
+        <div class="score-label">${esc(t("riskMeter.credential"))}</div>
       </div>
       <div class="score-card sub">
-        <div class="score-value">${data.scoring.subscores.hygiene}</div>
-        <div class="score-label">Hygiene</div>
+        <div class="score-value">${esc(data.scoring.subscores.hygiene)}</div>
+        <div class="score-label">${esc(t("riskMeter.hygiene"))}</div>
       </div>
     </div>
 
-    <h2>Summary</h2>
+    <h2>${esc(t("export.report.summary"))}</h2>
     <div class="summary-grid">
       <div class="summary-item">
-        <div class="summary-value">${data.summary.totalDevices}</div>
-        <div class="summary-label">Total Devices</div>
+        <div class="summary-value">${esc(data.summary.totalDevices)}</div>
+        <div class="summary-label">${esc(t("export.report.summaryTotalDevices"))}</div>
       </div>
       <div class="summary-item">
-        <div class="summary-value">${data.summary.devicesMoved}</div>
-        <div class="summary-label">Devices Moved</div>
+        <div class="summary-value">${esc(data.summary.devicesMoved)}</div>
+        <div class="summary-label">${esc(t("export.report.summaryDevicesMoved"))}</div>
       </div>
       <div class="summary-item">
-        <div class="summary-value">${data.summary.controlsEnabled}/${data.summary.controlsTotal}</div>
-        <div class="summary-label">Controls Enabled</div>
+        <div class="summary-value">${esc(`${data.summary.controlsEnabled}/${data.summary.controlsTotal}`)}</div>
+        <div class="summary-label">${esc(t("export.report.summaryControlsEnabled"))}</div>
       </div>
       <div class="summary-item">
-        <div class="summary-value">${data.summary.devicesInMainZone}</div>
-        <div class="summary-label">In Main Zone</div>
+        <div class="summary-value">${esc(data.summary.devicesInMainZone)}</div>
+        <div class="summary-label">${esc(t("export.report.summaryInMainZone"))}</div>
       </div>
       <div class="summary-item">
-        <div class="summary-value">${data.summary.devicesInGuestZone}</div>
-        <div class="summary-label">In Guest Zone</div>
+        <div class="summary-value">${esc(data.summary.devicesInGuestZone)}</div>
+        <div class="summary-label">${esc(t("export.report.summaryInGuestZone"))}</div>
       </div>
       <div class="summary-item">
-        <div class="summary-value">${data.summary.devicesInIoTZone}</div>
-        <div class="summary-label">In IoT Zone</div>
+        <div class="summary-value">${esc(data.summary.devicesInIoTZone)}</div>
+        <div class="summary-label">${esc(t("export.report.summaryInIotZone"))}</div>
       </div>
     </div>
 
-    <h2>Security Controls</h2>
+    <h2>${esc(t("export.report.securityControls"))}</h2>
     <div class="control-grid">
       <div class="control-item">
-        <span class="control-check ${data.controlStates.wifiSecurity !== 'OPEN' ? 'on' : 'off'}">${data.controlStates.wifiSecurity !== 'OPEN' ? 'Y' : 'X'}</span>
-        <span>Wi-Fi Security: ${data.controlStates.wifiSecurity}</span>
+        <span class="control-check ${wifiSecurityEnabled ? "on" : "off"}">${esc(wifiSecurityEnabled ? t("export.report.on") : t("export.report.off"))}</span>
+        <span>${esc(t("export.report.controlWithValue", { control: t("controls.wifiSecurity"), value: wifiSecurityLabel || "-" }))}</span>
       </div>
       <div class="control-item">
-        <span class="control-check ${data.controlStates.strongWifiPassword ? 'on' : 'off'}">${data.controlStates.strongWifiPassword ? 'Y' : 'X'}</span>
-        <span>Strong Password</span>
+        <span class="control-check ${data.controlStates.strongWifiPassword ? "on" : "off"}">${esc(data.controlStates.strongWifiPassword ? t("export.report.on") : t("export.report.off"))}</span>
+        <span>${esc(t("controls.strongWifiPassword"))}</span>
       </div>
       <div class="control-item">
-        <span class="control-check ${data.controlStates.guestNetworkEnabled ? 'on' : 'off'}">${data.controlStates.guestNetworkEnabled ? 'Y' : 'X'}</span>
-        <span>Guest Network</span>
+        <span class="control-check ${data.controlStates.guestNetworkEnabled ? "on" : "off"}">${esc(data.controlStates.guestNetworkEnabled ? t("export.report.on") : t("export.report.off"))}</span>
+        <span>${esc(t("controls.guestNetworkEnabled"))}</span>
       </div>
       <div class="control-item">
-        <span class="control-check ${data.controlStates.iotNetworkEnabled ? 'on' : 'off'}">${data.controlStates.iotNetworkEnabled ? 'Y' : 'X'}</span>
-        <span>IoT Network</span>
+        <span class="control-check ${data.controlStates.iotNetworkEnabled ? "on" : "off"}">${esc(data.controlStates.iotNetworkEnabled ? t("export.report.on") : t("export.report.off"))}</span>
+        <span>${esc(t("controls.iotNetworkEnabled"))}</span>
       </div>
       <div class="control-item">
-        <span class="control-check ${data.controlStates.mfaEnabled ? 'on' : 'off'}">${data.controlStates.mfaEnabled ? 'Y' : 'X'}</span>
-        <span>MFA Enabled</span>
+        <span class="control-check ${data.controlStates.mfaEnabled ? "on" : "off"}">${esc(data.controlStates.mfaEnabled ? t("export.report.on") : t("export.report.off"))}</span>
+        <span>${esc(t("controls.mfaEnabled"))}</span>
       </div>
       <div class="control-item">
-        <span class="control-check ${data.controlStates.autoUpdatesEnabled ? 'on' : 'off'}">${data.controlStates.autoUpdatesEnabled ? 'Y' : 'X'}</span>
-        <span>Auto Updates</span>
+        <span class="control-check ${data.controlStates.autoUpdatesEnabled ? "on" : "off"}">${esc(data.controlStates.autoUpdatesEnabled ? t("export.report.on") : t("export.report.off"))}</span>
+        <span>${esc(t("controls.autoUpdatesEnabled"))}</span>
       </div>
     </div>
 
-    <h2>Device Placements</h2>
+    <h2>${esc(t("export.report.devicePlacements"))}</h2>
     <table>
       <thead>
         <tr>
-          <th>Device</th>
-          <th>Type</th>
-          <th>Zone</th>
-          <th>Status</th>
+          <th>${esc(t("export.report.tableDevice"))}</th>
+          <th>${esc(t("export.report.tableType"))}</th>
+          <th>${esc(t("export.report.tableZone"))}</th>
+          <th>${esc(t("export.report.tableStatus"))}</th>
         </tr>
       </thead>
       <tbody>
-        ${data.devicePlacements.map(d => `
+        ${data.devicePlacements
+          .map(
+            (d) => `
         <tr>
-          <td>${d.deviceName}</td>
-          <td>${d.deviceType}</td>
-          <td>${getZoneName(d.currentZone)}</td>
+          <td>${esc(d.deviceName)}</td>
+          <td>${esc(getDeviceTypeLabel(d.deviceType, t))}</td>
+          <td>${esc(getZoneName(d.currentZone, t))}</td>
           <td>
-            ${d.wasMoved ? `<span class="badge moved">Moved from ${getZoneName(d.originalZone)}</span>` : ''}
-            ${d.riskFlags.map(f => `<span class="badge risk">${f.replace(/_/g, ' ')}</span>`).join(' ')}
+            ${d.wasMoved ? `<span class="badge moved">${esc(t("export.report.movedFrom", { zone: getZoneName(d.originalZone, t) }))}</span>` : ""}
+            ${d.riskFlags.map((f) => `<span class="badge risk">${esc(getRiskFlagLabel(f as RiskFlag, t))}</span>`).join(" ")}
           </td>
         </tr>
-        `).join('')}
+        `
+          )
+          .join("")}
       </tbody>
     </table>
 
-    ${data.scoring.explanations.length > 0 ? `
-    <h2>Risk Factors</h2>
+    ${
+      data.scoring.explanations.length > 0
+        ? `
+    <h2>${esc(t("export.report.riskFactors"))}</h2>
     <ul class="explanations">
-      ${data.scoring.explanations.slice(0, 10).map(e => `<li>${e}</li>`).join('')}
+      ${data.scoring.explanations
+        .slice(0, 10)
+        .map((e) => `<li>${esc(e)}</li>`)
+        .join("")}
     </ul>
-    ` : ''}
+    `
+        : ""
+    }
 
     <div class="footer">
-      <p>Generated by Device Triage Planner. All data is fictional for training purposes.</p>
+      <p>${esc(t("export.report.footer", { appTitle: t("app.title") }))}</p>
     </div>
   </div>
 </body>
@@ -315,10 +405,10 @@ export function exportAsHtml(data: ExportData): void {
 
   const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
-  
+
   const link = document.createElement("a");
   link.href = url;
-  link.download = `network-triage-report-${data.scenarioId}-${Date.now()}.html`;
+  link.download = `${resolvedFileNamePrefix}-${data.scenarioId}-${Date.now()}.html`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

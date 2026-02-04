@@ -4,21 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
 import type { ScoreResult } from "@shared/schema";
+import { formatExplanation } from "@/lib/explanationFormatter";
 
 interface ExplainScorePanelProps {
   explanations: ScoreResult["explanations"];
   maxItems?: number;
+  sortOrder?: string;
   embedded?: boolean;
+  actionInsight?: { key: string; params?: Record<string, string | number> } | null;
 }
 
-function getDeltaDisplay(delta: Record<string, number>, t: (key: string) => string): { 
-  total: number; 
+function getDeltaDisplay(
+  delta: Record<string, number>,
+  t: (key: string) => string
+): {
+  total: number;
   breakdown: string[];
 } {
   const deltaKeyMap: Record<string, string> = {
-    credentialAccount: 'riskMeter.credential',
-    exposure: 'riskMeter.exposure',
-    hygiene: 'riskMeter.hygiene'
+    credentialAccount: "riskMeter.credential",
+    exposure: "riskMeter.exposure",
+    hygiene: "riskMeter.hygiene",
   };
 
   const entries = Object.entries(delta);
@@ -34,30 +40,126 @@ function getDeltaDisplay(delta: Record<string, number>, t: (key: string) => stri
   return { total, breakdown };
 }
 
-export function ExplainScorePanel({ 
-  explanations, 
+export function ExplainScorePanel({
+  explanations,
   maxItems = 8,
-  embedded = false
+  sortOrder = "largestAbsoluteImpactFirst",
+  embedded = false,
+  actionInsight,
 }: ExplainScorePanelProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const sortedExplanations = [...explanations]
-    .map(exp => ({
+  const actionText = actionInsight ? t(actionInsight.key, actionInsight.params || {}) : null;
+
+  const totalsBySubscore = explanations.reduce(
+    (totals, exp) => {
+      Object.entries(exp.delta).forEach(([key, value]) => {
+        totals[key] = (totals[key] || 0) + value;
+      });
+      return totals;
+    },
+    {} as Record<string, number>
+  );
+
+  const topDrivers = [...explanations]
+    .map((exp) => ({
       ...exp,
-      totalDelta: Object.values(exp.delta).reduce((sum, val) => sum + val, 0)
+      totalDelta: Object.values(exp.delta).reduce((sum, val) => sum + val, 0),
     }))
+    .filter((exp) => exp.totalDelta !== 0 && exp.ruleId !== "baseline")
     .sort((a, b) => Math.abs(b.totalDelta) - Math.abs(a.totalDelta))
+    .slice(0, 3);
+
+  const sortedExplanations = [...explanations]
+    .map((exp) => ({
+      ...exp,
+      totalDelta: Object.values(exp.delta).reduce((sum, val) => sum + val, 0),
+    }))
+    .sort((a, b) => {
+      switch (sortOrder) {
+        case "largestIncreaseFirst":
+          return b.totalDelta - a.totalDelta;
+        case "largestReductionFirst":
+          return a.totalDelta - b.totalDelta;
+        case "largestAbsoluteImpactFirst":
+        default:
+          return Math.abs(b.totalDelta) - Math.abs(a.totalDelta);
+      }
+    })
     .slice(0, maxItems);
 
-  const hasPositiveImpact = sortedExplanations.some(e => e.totalDelta < 0);
-  const hasNegativeImpact = sortedExplanations.some(e => e.totalDelta > 0);
+  const hasPositiveImpact = sortedExplanations.some((e) => e.totalDelta < 0);
+  const hasNegativeImpact = sortedExplanations.some((e) => e.totalDelta > 0);
 
   const content = (
     <div className="space-y-2" data-testid="explain-content">
+      {actionText && (
+        <div className="rounded-md border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground/80">{t("explain.recentActionLabel")}</span>{" "}
+          {actionText}
+        </div>
+      )}
+      {Object.keys(totalsBySubscore).length > 0 && (
+        <div className="rounded-md border border-border/60 bg-card px-3 py-2">
+          <p className="text-xs font-medium text-muted-foreground mb-2">
+            {t("explain.subscoreSummary")}
+          </p>
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            <span>
+              {t("explain.subscoreValue", {
+                label: t("riskMeter.exposure"),
+                value: totalsBySubscore.exposure
+                  ? `${totalsBySubscore.exposure > 0 ? "+" : ""}${totalsBySubscore.exposure}`
+                  : "0",
+              })}
+            </span>
+            <span>
+              {t("explain.subscoreValue", {
+                label: t("riskMeter.credential"),
+                value: totalsBySubscore.credentialAccount
+                  ? `${totalsBySubscore.credentialAccount > 0 ? "+" : ""}${totalsBySubscore.credentialAccount}`
+                  : "0",
+              })}
+            </span>
+            <span>
+              {t("explain.subscoreValue", {
+                label: t("riskMeter.hygiene"),
+                value: totalsBySubscore.hygiene
+                  ? `${totalsBySubscore.hygiene > 0 ? "+" : ""}${totalsBySubscore.hygiene}`
+                  : "0",
+              })}
+            </span>
+          </div>
+        </div>
+      )}
+      {topDrivers.length > 0 && (
+        <div className="rounded-md border border-border/60 bg-card px-3 py-2">
+          <p className="text-xs font-medium text-muted-foreground mb-2">
+            {t("explain.topDrivers")}
+          </p>
+          <div className="space-y-1 text-xs text-muted-foreground">
+            {topDrivers.map((driver) => {
+              const delta = driver.totalDelta;
+              return (
+                <div
+                  key={`driver-${driver.ruleId}`}
+                  className="flex items-center justify-between gap-2"
+                >
+                  <span className="flex-1 min-w-0">{formatExplanation(driver, t)}</span>
+                  <span className="tabular-nums">
+                    {delta > 0 ? "+" : ""}
+                    {delta}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {sortedExplanations.length === 0 ? (
         <div className="text-sm text-muted-foreground text-center py-4">
-          {t('explain.noFactors')}
+          {t("explain.noFactors")}
         </div>
       ) : (
         <>
@@ -66,27 +168,30 @@ export function ExplainScorePanel({
             const isPositive = total < 0;
             const isNegative = total > 0;
             const Icon = isPositive ? TrendingDown : isNegative ? TrendingUp : Minus;
-            
+
             return (
               <div
                 key={exp.ruleId}
                 className="flex items-start gap-3 py-2 border-b border-border/50 last:border-0"
                 data-testid={`explain-item-${index}`}
               >
-                <div className={`
+                <div
+                  className={`
                   flex-shrink-0 p-1.5 rounded-md mt-0.5
-                  ${isPositive 
-                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" 
-                    : isNegative 
-                      ? "bg-red-500/10 text-red-600 dark:text-red-400" 
-                      : "bg-muted text-muted-foreground"
+                  ${
+                    isPositive
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                      : isNegative
+                        ? "bg-red-500/10 text-red-600 dark:text-red-400"
+                        : "bg-muted text-muted-foreground"
                   }
-                `}>
+                `}
+                >
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm" data-testid={`text-explain-${index}`}>
-                    {exp.explain}
+                    {formatExplanation(exp, t)}
                   </p>
                   {breakdown.length > 0 && (
                     <p className="text-xs text-muted-foreground mt-1 font-mono">
@@ -94,16 +199,20 @@ export function ExplainScorePanel({
                     </p>
                   )}
                 </div>
-                <div className={`
+                <div
+                  className={`
                   flex-shrink-0 text-sm font-semibold tabular-nums
-                  ${isPositive 
-                    ? "text-emerald-600 dark:text-emerald-400" 
-                    : isNegative 
-                      ? "text-red-600 dark:text-red-400" 
-                      : "text-muted-foreground"
+                  ${
+                    isPositive
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : isNegative
+                        ? "text-red-600 dark:text-red-400"
+                        : "text-muted-foreground"
                   }
-                `}>
-                  {total > 0 ? "+" : ""}{total}
+                `}
+                >
+                  {total > 0 ? "+" : ""}
+                  {total}
                 </div>
               </div>
             );
@@ -113,11 +222,11 @@ export function ExplainScorePanel({
             <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
               <div className="flex items-center gap-1">
                 <TrendingDown className="h-3 w-3 text-emerald-500" />
-                <span>{t('explain.reducesRisk')}</span>
+                <span>{t("explain.reducesRisk")}</span>
               </div>
               <div className="flex items-center gap-1">
                 <TrendingUp className="h-3 w-3 text-red-500" />
-                <span>{t('explain.increasesRisk')}</span>
+                <span>{t("explain.increasesRisk")}</span>
               </div>
             </div>
           )}
@@ -136,7 +245,7 @@ export function ExplainScorePanel({
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Info className="h-5 w-5 text-muted-foreground" />
-            {t('explain.title')}
+            {t("explain.title")}
           </CardTitle>
           <Button
             variant="ghost"
@@ -144,27 +253,21 @@ export function ExplainScorePanel({
             onClick={() => setIsExpanded(!isExpanded)}
             data-testid="button-toggle-explain"
             aria-expanded={isExpanded}
-            aria-label={isExpanded ? t('explain.collapseExplanations') : t('explain.expandExplanations')}
+            aria-label={
+              isExpanded ? t("explain.collapseExplanations") : t("explain.expandExplanations")
+            }
           >
-            {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
+            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
         </div>
         {!isExpanded && (
           <p className="text-xs text-muted-foreground">
-            {t('explain.factorsAffecting', { count: sortedExplanations.length })}
+            {t("explain.factorsAffecting", { count: sortedExplanations.length })}
           </p>
         )}
       </CardHeader>
 
-      {isExpanded && (
-        <CardContent>
-          {content}
-        </CardContent>
-      )}
+      {isExpanded && <CardContent>{content}</CardContent>}
     </Card>
   );
 }

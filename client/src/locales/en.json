@@ -14,9 +14,19 @@
     "gridViewAriaLabel": "Grid view with drag and drop",
     "listViewAriaLabel": "Screen reader friendly list view"
   },
+  "languages": {
+    "en": "English",
+    "lv": "Latvian",
+    "ru": "Russian",
+    "parenthetical": "({language})"
+  },
+  "theme": {
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
   "actions": {
-    "flagDevice": "Flag for investigation",
-    "unflagDevice": "Remove investigation flag"
+    "flagDevice": "Flag for review",
+    "unflagDevice": "Remove review flag"
   },
   "scenarios": {
     "select": "Select scenario",
@@ -25,6 +35,15 @@
     "smallOffice": "Small Office Network",
     "hotelPublic": "Hotel / Public Wi-Fi"
   },
+  "environmentTypes": {
+    "home": "Home",
+    "office": "Office",
+    "hotel": "Hotel",
+    "school": "School",
+    "cafe": "Cafe",
+    "other": "Other",
+    "public": "Public"
+  },
   "zones": {
     "main": "Main Network",
     "mainDescription": "Trusted personal devices with full access",
@@ -32,6 +51,11 @@
     "guestDescription": "Visitor devices with internet-only access",
     "iot": "IoT Network",
     "iotDescription": "Smart devices isolated from main network",
+    "realWorld": {
+      "main": "On most routers this is your primary Wi-Fi or LAN.",
+      "guest": "Often labeled Guest Network or Guest Wi-Fi.",
+      "iot": "Often labeled IoT or Smart Home network."
+    },
     "dropHere": "Drop devices here",
     "dropToMove": "Drop to move here",
     "zoneWithDevices": "{zone} zone with {count, plural, one {# device} other {# devices}}"
@@ -57,7 +81,9 @@
     "unknownFlag": "Unknown",
     "iotFlag": "IoT",
     "visitorFlag": "Visitor",
-    "workFlag": "Work"
+    "workFlag": "Work",
+    "flagsList": "Flags: {flags}",
+    "flaggedForReview": "Flagged for review"
   },
   "deviceLabels": {
     "family_iot_sprawl_v1": {
@@ -115,7 +141,7 @@
     "iotNetworkEnabled": "IoT Network",
     "iotNetworkDesc": "Isolated network for smart devices",
     "mfaEnabled": "MFA on Accounts",
-    "mfaDesc": "Multi-factor auth for device accounts",
+    "mfaEnabledDesc": "Multi-factor auth for device accounts",
     "autoUpdatesEnabled": "Auto Updates",
     "autoUpdatesDesc": "Keep device firmware current",
     "defaultPasswordsAddressed": "Default Passwords Changed",
@@ -139,6 +165,8 @@
   "riskMeter": {
     "title": "Overall Risk Score",
     "of100": "/100",
+    "subscoreAria": "{label}: {value}%",
+    "subscoreTooltip": "{label}: {value} / 100",
     "low": "Low Risk",
     "medium": "Moderate",
     "high": "High",
@@ -149,12 +177,17 @@
   },
   "goals": {
     "title": "Your Goals",
+    "checklistTitle": "Checklist",
+    "progress": "{completed}/{total} complete",
     "reduceRiskTo": "Reduce risk score to {target} or below",
     "currentScore": "{current}/{target}",
     "enable": "Enable {control}",
     "disable": "Disable {control}",
     "setTo": "Set {control} to {value}",
-    "allComplete": "All goals complete!"
+    "allComplete": "All goals complete!",
+    "missingScore": "Still missing: reduce risk to {target} or below.",
+    "missingControls": "Still missing: {count, plural, one {# required control} other {# required controls}}.",
+    "missingBoth": "Still missing: reduce risk to {target} or below and {count, plural, one {# required control} other {# required controls}}."
   },
   "tooltips": {
     "deviceTypes": {
@@ -168,10 +201,10 @@
       "camera": "Security cameras should protect you, but if hacked, they let attackers watch your home. Keep firmware updated.",
       "printer": "Network printers are often overlooked but can store copies of documents and provide network access to attackers.",
       "iot": "IoT devices often have weak security, rarely get updates, and may use default passwords. Isolate them from main devices.",
-      "unknown": "An unrecognized device on your network. Could be a neighbor, a forgotten device, or an intruder. Investigate before trusting."
+      "unknown": "An unrecognized device on your network. Could be a neighbor, a forgotten device, or an intruder. Flag and review before trusting."
     },
     "riskFlags": {
-      "unknown_device": "This device wasn't expected on your network. It could be harmless (a guest's phone) or malicious. Keep it isolated until identified.",
+      "unknown_device": "This device is not recognized on your network. In practice that usually means a guest device, a forgotten device, or an unauthorized device. Treat it as untrusted and flag it for review until you identify it.",
       "iot_device": "IoT devices often have poor security: weak passwords, no encryption, rare updates. Put them on a separate network.",
       "visitor_device": "Visitor devices are outside your control. You don't know their security posture. Give them internet access but isolate from your main network.",
       "trusted_work_device": "Work devices typically have corporate security policies, regular updates, and IT oversight. They need reliable network access."
@@ -202,56 +235,56 @@
       "guest": "Internet-only access for visitors or untrusted devices. Can browse the web but can't access your main network devices.",
       "iot": "Isolated network for smart home devices. They get internet access but can't communicate with your main devices if compromised."
     },
-    "flagForInvestigation": "Click to flag this unknown device for investigation. Flagging devices you don't recognize reduces risk by ensuring they're reviewed before being trusted.",
-    "flagged": "This device is flagged for investigation. You've marked it as suspicious and it's being reviewed. Click to remove the flag if you've identified the device."
+    "flagForInvestigation": "Click to flag this unknown device for review. Flagging devices you do not recognize reduces risk by ensuring they are reviewed before being trusted.",
+    "flagged": "This device is flagged for review. You've marked it as suspicious and it's being reviewed. Click to remove the flag if you've identified the device."
   },
   "education": {
     "dontShowAgain": "Don't show this again",
     "keepEnabled": "Got it, keep enabled",
     "turnOff": "Turn off",
-    "whatIsThis": "What is this?",
-    "whyMatters": "Why does this matter?",
-    "howToDo": "How do I do this?",
+    "whatIsThis": "Definition",
+    "whyMatters": "Why it matters",
+    "howToDo": "How to do it",
     "strongWifiPassword": {
       "title": "Strong Wi-Fi Password",
       "what": "A strong Wi-Fi password is at least 12-16 characters long, combines uppercase letters, lowercase letters, numbers, and special symbols, and doesn't contain dictionary words, names, or predictable patterns like '123456' or 'password'.",
-      "why": "Weak passwords are the #1 way attackers gain access to home networks. With tools freely available online, hackers can guess millions of common passwords per second. Once on your network, they can intercept your banking, read your emails, and attack your devices. A neighbor or passerby could steal your internet bandwidth or worse - commit crimes through your connection that trace back to you.",
-      "how": "Create a passphrase instead of a password: string together 4-5 random words like 'correct-horse-battery-staple'. Or use a password manager to generate and remember a complex password. Write it down and store it somewhere safe at home. Share it with guests verbally - never text or email it."
+      "why": "Weak passwords are the #1 way attackers gain access to home networks. With tools freely available online, hackers can guess millions of common passwords per second. Once on your network, they can intercept your banking, read your emails, and attack your devices. A neighbor or passerby could steal your internet bandwidth or use your connection for criminal activity that traces back to you.",
+      "how": "Create a passphrase instead of a password: string together 4-5 random words like 'correct-horse-battery-staple'. Or use a password manager to generate and remember a complex password. Write it down and store it somewhere safe at home. Share it with guests verbally. Do not text or email it."
     },
     "guestNetworkEnabled": {
       "title": "Guest Network",
       "what": "A guest network is a separate Wi-Fi network that provides internet access but is isolated from your main network. Devices on the guest network cannot see or communicate with your computers, printers, or smart home devices.",
-      "why": "When visitors connect to your main network, their potentially infected devices can see everything: your shared folders, your smart TV, your network printer. Even well-meaning guests might have malware they don't know about. By 2024, the average home has 22 connected devices - that's a lot of attack surface. Guest networks put a wall between visitors and your digital life.",
+      "why": "When visitors connect to your main network, their potentially infected devices can see everything: your shared folders, your smart TV, your network printer. Even well-meaning guests might have malware they do not know about. Many homes now have 20+ connected devices. That is a large attack surface. Guest networks separate visitors from your core devices.",
       "how": "Most routers made after 2015 support guest networks. Log into your router (usually 192.168.1.1 or 192.168.0.1), look for 'Guest Network' or 'Guest Access' in wireless settings. Enable it with a different password than your main network. Some routers even let you limit bandwidth or set automatic shutoff times."
     },
     "iotNetworkEnabled": {
       "title": "IoT Network (Smart Device Isolation)",
-      "what": "An IoT network is a separate network segment specifically for your smart devices - thermostats, cameras, smart speakers, smart plugs, and other 'Internet of Things' devices. These devices can access the internet but cannot communicate with your main computers and phones.",
+      "what": "An IoT network is a separate network segment specifically for smart devices such as thermostats, cameras, smart speakers, smart plugs, and other Internet of Things devices. These devices can access the internet but cannot communicate with your main computers and phones.",
       "why": "Smart devices are notoriously insecure. Many use outdated software, have known vulnerabilities, and rarely receive updates. In 2016, the Mirai botnet infected millions of IoT devices and took down major websites. If your smart lightbulb gets hacked, an attacker could use it as a stepping stone to access your laptop with your banking information. Isolation prevents this lateral movement.",
       "how": "Many modern routers support IoT VLANs or a second network. Some mesh systems (like Eero, Google Nest WiFi) make this easy with one click. For older routers, you might use the guest network for IoT devices if you don't have visitors often. The key is keeping IoT devices away from your trusted computers."
     },
     "mfaEnabled": {
       "title": "Multi-Factor Authentication (MFA)",
       "what": "Multi-factor authentication requires two or more ways to prove your identity when logging in: something you know (password), something you have (phone or security key), or something you are (fingerprint). Even if someone steals your password, they still can't get in without the second factor.",
-      "why": "Passwords get stolen constantly - from data breaches, phishing emails, or shoulder surfing. Microsoft reports that MFA blocks 99.9% of automated account attacks. Your smart home devices, email, and cloud accounts are all protected by passwords. If an attacker compromises your email, they can reset passwords for everything else. MFA is your safety net.",
+      "why": "Passwords get stolen constantly through data breaches, phishing emails, or shoulder surfing. Microsoft reports that MFA blocks 99.9% of automated account attacks. Your smart home devices, email, and cloud accounts are all protected by passwords. If an attacker compromises your email, they can reset passwords for everything else. MFA is the safety net that stops that chain.",
       "how": "Enable MFA on your most important accounts first: email, banking, social media, and any smart home apps (Ring, Nest, etc.). Use an authenticator app (Google Authenticator, Microsoft Authenticator, Authy) rather than SMS when possible. Most services have MFA settings under 'Security' or 'Account Protection'. It takes 5 minutes per account."
     },
     "autoUpdatesEnabled": {
       "title": "Automatic Updates",
       "what": "Automatic updates allow your devices and software to download and install security patches without requiring manual action. This includes operating system updates, app updates, and firmware updates for routers and smart devices.",
-      "why": "Most successful cyberattacks exploit known vulnerabilities - security holes that have already been discovered and patched. The 2017 WannaCry ransomware infected 200,000 computers worldwide, but only those that hadn't installed a patch released months earlier. Every day you delay an update is another day attackers can use that vulnerability against you.",
+      "why": "Most successful cyberattacks exploit known vulnerabilities, which are security holes that have already been discovered and patched. The 2017 WannaCry ransomware infected 200,000 computers worldwide, but only those that had not installed a patch released months earlier. Every day you delay an update is another day attackers can use that vulnerability against you.",
       "how": "On your phone: Settings > General > Software Update > Automatic Updates. On Windows: Settings > Update & Security > Turn on automatic updates. On Mac: System Preferences > Software Update > Automatically keep my Mac up to date. For routers and smart devices, check manufacturer apps or web interfaces for 'Firmware Update' settings."
     },
     "defaultPasswordsAddressed": {
       "title": "Default Passwords Changed",
-      "what": "Default passwords are the factory-set credentials that come with devices - often 'admin/admin', 'admin/password', or printed on a sticker. These passwords are publicly documented and identical across millions of devices of the same model.",
+      "what": "Default passwords are the factory-set credentials that come with devices, often 'admin/admin', 'admin/password', or printed on a sticker. These passwords are publicly documented and identical across millions of devices of the same model.",
       "why": "Attackers maintain databases of default passwords for every device model. The Mirai botnet spread by simply trying default credentials on millions of devices. If your router still uses the default password, anyone can log in, change your DNS settings (redirecting you to fake banking sites), or disable your security. Smart cameras with default passwords have been accessed by strangers who watch and even talk through them.",
-      "how": "Start with your router - it's the most critical. Log into the admin interface and change both the admin password and the Wi-Fi password. Then check each smart device's app for password settings. Use unique passwords for each device. A password manager helps track them all. When you buy new devices, change the password during initial setup."
+      "how": "Start with your router. It is the most critical. Log into the admin interface and change both the admin password and the Wi-Fi password. Then check each smart device's app for password settings. Use unique passwords for each device. A password manager helps track them all. When you buy new devices, change the password during initial setup."
     },
     "wifiSecurity": {
       "title": "Wi-Fi Encryption Security",
       "what": "Wi-Fi security protocols (WPA2, WPA3) encrypt the data traveling between your devices and router. WPA3 is the latest standard (2018), offering stronger protection than WPA2 (2004). Open networks have no encryption at all.",
-      "why": "Without encryption, anyone within Wi-Fi range can capture your network traffic - passwords, emails, browsing history, everything. Even WPA2, while generally secure, has known vulnerabilities (KRACK attack, 2017) that WPA3 fixes. WPA3 also makes it much harder for attackers to guess your password through brute force attacks.",
+      "why": "Without encryption, anyone within Wi-Fi range can capture your network traffic, including passwords, emails, and browsing history. Even WPA2, while generally secure, has known vulnerabilities (KRACK attack, 2017) that WPA3 fixes. WPA3 also makes it much harder for attackers to guess your password through brute force attacks.",
       "how": "Log into your router's admin panel (usually 192.168.1.1). Look for 'Wireless Security' or 'Wi-Fi Settings'. Select WPA3 if available, or WPA2/WPA3 mixed mode if you have older devices. Avoid WPA (not WPA2) and never use 'Open' or WEP. If your router doesn't support WPA3 and is more than 5 years old, consider upgrading for better security."
     }
   },
@@ -259,7 +292,7 @@
     "title": "Password Training: Create a Strong Wi-Fi Password",
     "subtitle": "Learn what makes a password strong by creating one",
     "howBruteForceWorks": "How Brute Force Attacks Work",
-    "bruteForceExplainer": "Brute force attacks try every possible password combination. If an attacker steals a database of password hashes, they can use powerful GPUs to test billions of combinations per second. Your defense? Make the search space impossibly large.",
+    "bruteForceExplainer": "Brute force attacks try every possible password combination. If an attacker steals a database of password hashes, they can use powerful GPUs to test billions of combinations per second. The defense is to make the search space large enough to be impractical.",
     "exponentialGrowth": "Each character you add multiplies the combinations by the alphabet size (26-95x larger)",
     "attackScenario": "Attack Scenario",
     "presetFastHash": "Fast hash attack (worst case)",
@@ -267,7 +300,7 @@
     "presetBcrypt": "Modern bcrypt protection",
     "presetBcryptNotes": "Password stored with bcrypt (industry standard). Much slower: ~9,000 guesses per second even on powerful hardware.",
     "bestPractices": "Password Best Practices",
-    "tipLength": "Use at least 12-16 characters - each extra character multiplies cracking time",
+    "tipLength": "Use at least 12-16 characters. Each extra character multiplies cracking time.",
     "tipMix": "Mix uppercase, lowercase, numbers, and symbols to expand the search space",
     "tipPassphrase": "Consider passphrases: 'Sunset-Coffee-42-Rocket!' is strong AND memorable",
     "originalPassword": "Current (Weak) Password",
@@ -280,6 +313,7 @@
     "strengthMedium": "Medium",
     "strengthStrong": "Strong",
     "length": "Length",
+    "metricWithValue": "{label}: {value}",
     "detectedLength": "Password Length",
     "alphabetSize": "Alphabet Size",
     "totalCombinations": "Total Possible Combinations",
@@ -288,6 +322,7 @@
     "reqLowercase": "Lowercase",
     "reqNumbers": "Numbers",
     "reqSymbols": "Symbols",
+    "requirementWithCount": "{label} ({count})",
     "estimatedCrackTime": "Time to Crack (Brute Force)",
     "averageCase": "Average",
     "worstCase": "Maximum",
@@ -298,7 +333,7 @@
     "timeUnit_hours": "hours",
     "timeUnit_days": "days",
     "timeUnit_years": "years",
-    "warnCommon": "This password appears in common password lists - attackers try these first!",
+    "warnCommon": "This password appears in common password lists. Attackers try these first!",
     "warnSequential": "Contains sequential patterns (abc, 123) that attackers know to try",
     "warnRepeating": "Contains repeating characters (aaa, 111) that weaken entropy",
     "dictionaryWarning": "These estimates assume random passwords. Dictionary words, names, and patterns crack much faster than pure brute force.",
@@ -308,7 +343,7 @@
   },
   "learningObjectives": {
     "family_iot_sprawl_v1": {
-      "0": "Separate devices into trust zones (Main, Guest, IoT, Investigate).",
+      "0": "Separate devices into trust zones (Main, Guest, IoT) and flag unknown devices for review.",
       "1": "Enable high-impact controls (Wi-Fi security, guest/IoT networks, MFA, updates).",
       "2": "Interpret score changes using Explain panel."
     },
@@ -334,11 +369,70 @@
     "hideExplanations": "Hide Explanations",
     "noExplanations": "No explanations available",
     "noFactors": "No score factors to display. Make changes to see their impact.",
+    "recentAction": "Recent action",
+    "recentActionLabel": "Recent action:",
+    "subscoreSummary": "Subscore summary",
+    "subscoreValue": "{label}: {value}",
+    "topDrivers": "Top drivers",
     "factorsAffecting": "{count} factors affecting your score",
     "collapseExplanations": "Collapse explanations",
     "expandExplanations": "Expand explanations",
     "reducesRisk": "Reduces risk",
     "increasesRisk": "Increases risk"
+  },
+  "learning": {
+    "action": {
+      "deviceMoved": "{device} moved to {zone}",
+      "controlUpdated": "{control} set to {value}",
+      "unknownFlagged": "{device} marked for review",
+      "unknownUnflagged": "Review cleared for {device}"
+    },
+    "value": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
+  },
+  "scoring": {
+    "baseline": "Starting baseline risk scores",
+    "zone": {
+      "unknown_not_flagged": "{device}: Unknown device not flagged for review poses high risk.",
+      "unknown_flagged": "{device}: Flagging unknown device for review reduces immediate exposure.",
+      "iot_on_main": "{device}: IoT device placed on main network increases blast radius.",
+      "visitor_on_main": "{device}: Visitor device on main network increases exposure.",
+      "printer_on_guest_or_iot": "{device}: Printer placed off main network can create availability/workflow issues; keep justified.",
+      "trusted_work_device_on_guest": "{device}: Trusted work device on guest network can reduce security controls/visibility depending on policy."
+    },
+    "control": {
+      "wifi_security_open": "Open Wi-Fi removes link-layer protection and is a high-risk default.",
+      "wifi_security_wpa2": "WPA2 is a solid baseline; better than open, not best-in-class.",
+      "wifi_security_wpa3": "WPA3 provides stronger Wi-Fi protections where supported.",
+      "strong_wifi_password_on": "Strong Wi-Fi password reduces opportunistic access.",
+      "strong_wifi_password_off": "Weak Wi-Fi passwords increase risk of unauthorized access.",
+      "guest_network_enabled_on": "Guest networks reduce exposure of main devices to visitors.",
+      "iot_network_enabled_on": "Dedicated IoT zone reduces exposure of primary devices.",
+      "mfa_on": "MFA reduces account takeover risk for device cloud accounts.",
+      "mfa_off": "No MFA increases account takeover risk.",
+      "auto_updates_on": "Updates reduce known-vulnerability exposure over time.",
+      "auto_updates_off": "No updates increases risk from known vulnerabilities.",
+      "default_passwords_addressed_on": "Changing default device/app passwords reduces easy compromise.",
+      "default_passwords_addressed_off": "Leaving defaults increases easy compromise risk.",
+      "vpn_enabled_on": "VPN encrypts all traffic, protecting against eavesdropping on public networks.",
+      "vpn_enabled_off": "Without VPN, traffic on public Wi-Fi can be intercepted by attackers.",
+      "personal_hotspot_on": "Using personal hotspot avoids shared network risks entirely.",
+      "firewall_enabled_on": "Device firewall blocks unauthorized incoming connections.",
+      "firewall_enabled_off": "Without firewall, device accepts connections from anyone on the network.",
+      "file_sharing_disabled_on": "Disabling file sharing prevents unauthorized access to your files.",
+      "file_sharing_disabled_off": "File sharing on public networks exposes your files to strangers.",
+      "bluetooth_disabled_on": "Disabling Bluetooth prevents nearby device attacks.",
+      "https_only_on": "HTTPS-only mode ensures encrypted connections to websites.",
+      "verify_network_on": "Verifying network authenticity prevents evil twin attacks.",
+      "verify_network_off": "Without verification, you may connect to a fake network set up by attackers."
+    },
+    "synergy": {
+      "iot_isolation_bonus": "Most IoT devices isolated into IoT zone materially reduces blast radius.",
+      "guest_network_used_bonus": "Visitor devices actually placed on guest network reduces main exposure.",
+      "unknown_device_penalty_if_ignored": "Unknown devices present without being flagged for review increases risk."
+    }
   },
   "synergy": {
     "title": "Control Synergies",
@@ -346,14 +440,16 @@
     "activeSynergies": "Active Synergies",
     "availableSynergies": "Available Synergies",
     "suggestedActions": "Suggested Actions",
+    "reviewUnknownPrompt": "Review unknown devices before trusting them",
+    "reviewUnknownDetail": "Check names or vendor info in the router list. If you cannot identify a device, flag it for review.",
     "maxSynergiesActive": "Maximum Synergies Active",
     "allOptimized": "All control combinations are optimized",
     "iotIsolation": "IoT Isolation",
     "iotIsolationDesc": "IoT network enabled with devices properly segregated",
     "guestSegmentation": "Guest Segmentation",
     "guestSegmentationDesc": "Guest network enabled with visitors properly isolated",
-    "threatQuarantine": "Threat Quarantine",
-    "threatQuarantineDesc": "All unknown devices isolated for investigation",
+    "threatQuarantine": "Unknown Device Review",
+    "threatQuarantineDesc": "All unknown devices flagged for review",
     "defenseInDepth": "Defense in Depth",
     "defenseInDepthDesc": "Strong Wi-Fi security with MFA and WPA3",
     "activeMaintenance": "Active Maintenance",
@@ -362,7 +458,7 @@
     "componentDevicePlacement": "Device Placement",
     "componentGuestNetwork": "Guest Network",
     "componentVisitorDevices": "Visitor Devices",
-    "componentInvestigateZone": "Investigate Zone",
+    "componentInvestigateZone": "Review Flag",
     "componentUnknownDevices": "Unknown Devices",
     "componentWPA3": "WPA3",
     "componentStrongPassword": "Strong Password",
@@ -373,7 +469,14 @@
     "actionMoveIot": "Move IoT devices to IoT zone ({placed}/{total} placed)",
     "actionEnableGuest": "Enable Guest Network",
     "actionMoveVisitors": "Move visitor devices to Guest zone",
-    "actionQuarantineUnknown": "Quarantine unknown devices",
+    "actionQuarantineUnknown": "Flag unknown devices",
+    "actionEnableVpn": "Enable VPN",
+    "actionUseHotspot": "Use personal hotspot",
+    "actionVerifyNetwork": "Verify network name and login",
+    "actionEnableFirewall": "Enable firewall",
+    "actionEnableHttpsOnly": "Enable HTTPS-only mode",
+    "actionDisableFileSharing": "Disable file sharing",
+    "actionDisableBluetooth": "Disable Bluetooth",
     "actionUpgradeWifi": "Upgrade to WPA3",
     "actionEnableMfa": "Enable MFA on accounts",
     "actionEnableUpdates": "Enable auto-updates",
@@ -381,7 +484,14 @@
     "impactCompleteIot": "Complete IoT isolation for full synergy bonus",
     "impactSeparateVisitors": "Separate visitor devices from main network",
     "impactGuestSynergy": "Activate guest segmentation synergy",
-    "impactQuarantine": "Reduce exposure from unidentified devices",
+    "impactQuarantine": "Reduce exposure from unknown devices",
+    "impactVpnProtection": "Encrypt traffic on public Wi-Fi",
+    "impactAvoidPublicWifi": "Avoid shared Wi-Fi risks entirely",
+    "impactAvoidEvilTwin": "Reduce risk of fake networks",
+    "impactBlockInbound": "Block unsolicited inbound connections",
+    "impactEncryptWeb": "Ensure web traffic stays encrypted",
+    "impactReduceFileExposure": "Reduce exposure of shared files",
+    "impactReduceNearbyAttack": "Reduce nearby device attack surface",
     "impactStrongerEncryption": "Stronger wireless encryption",
     "impactProtectAccounts": "Protect cloud-connected devices from account compromise",
     "impactReduceVulnerability": "Reduce vulnerability exposure over time"
@@ -392,6 +502,7 @@
     "completed": "completed",
     "badgesCount": "badges",
     "badgeEarned": "Badge Earned!",
+    "badgeEarnedDetail": "{name}: {description}",
     "winConditionMet": "Win Condition Met",
     "riskScoreTarget": "Risk score: {score} (target: {target} or below)",
     "firstSteps": "First Steps",
@@ -414,13 +525,42 @@
   "export": {
     "title": "Export",
     "htmlReport": "HTML Report",
-    "jsonData": "JSON Data"
+    "jsonData": "JSON Data",
+    "report": {
+      "title": "Network Triage Report",
+      "documentTitle": "{reportTitle} - {title}",
+      "fileNameReportPrefix": "network-triage-report",
+      "fileNameDataPrefix": "network-triage-data",
+      "metaScenario": "Scenario",
+      "metaGenerated": "Generated",
+      "riskScore": "Risk Score",
+      "summary": "Summary",
+      "summaryTotalDevices": "Total Devices",
+      "summaryDevicesMoved": "Devices Moved",
+      "summaryControlsEnabled": "Controls Enabled",
+      "summaryInMainZone": "In Main Zone",
+      "summaryInGuestZone": "In Guest Zone",
+      "summaryInIotZone": "In IoT Zone",
+      "securityControls": "Security Controls",
+      "devicePlacements": "Device Placements",
+      "tableDevice": "Device",
+      "tableType": "Type",
+      "tableZone": "Zone",
+      "tableStatus": "Status",
+      "movedFrom": "Moved from {zone}",
+      "riskFactors": "Risk Factors",
+      "footer": "Generated by {appTitle}. All data is fictional for training purposes.",
+      "on": "On",
+      "off": "Off",
+      "controlWithValue": "{control}: {value}"
+    }
   },
   "notifications": {
     "riskReduced": "Risk Reduced",
     "riskIncreased": "Risk Increased",
     "riskDelta": "{delta} risk: {reason}",
     "riskDeltaGeneric": "{delta} risk from recent change",
+    "actionWhy": "Recent action: {action}",
     "badgeEarned": "Badge Earned!",
     "scenarioComplete": "Scenario Complete!"
   },
@@ -439,39 +579,39 @@
     "steps": {
       "welcome": {
         "title": "Your Network Has a Problem",
-        "content": "Most home networks have a dangerous flaw: every device connects to the same network. Your laptop, your smart TV, your kid's tablet, and that cheap security camera from overseas - all sharing the same connection. If one device gets compromised, attackers can reach everything. Let's fix that."
+        "content": "Most home networks have a dangerous flaw: every device connects to the same network. Your laptop, your smart TV, your kid's tablet, and that cheap security camera from overseas all share the same connection. If one device gets compromised, attackers can reach everything. We will fix that."
       },
       "scenarioSelector": {
         "title": "Choose Your Challenge",
-        "content": "Each scenario represents a real-world network problem. The Family IoT Sprawl is typical - a home where devices accumulated over time with no organization. Sound familiar?"
+        "content": "Each scenario represents a real network problem. The Family IoT Sprawl models a home where devices accumulated over time without organization or segmentation."
       },
       "theProblem": {
-        "title": "See the Problem?",
-        "content": "Look at the Main Network - it's overloaded with devices that shouldn't share the same access level. Smart speakers sitting next to your work laptop. A guest's phone with the same network access as your banking computer. This 'flat network' is exactly how most homes are set up, and it's a security nightmare."
+        "title": "Identify the Problem",
+        "content": "Look at the Main Network. It is overloaded with devices that should not share the same access level. Smart speakers sit next to your work laptop. A guest's phone has the same network access as your banking computer. This flat network is how many homes are set up, and it creates unnecessary risk."
       },
       "mainZone": {
         "title": "Main Network: Your Inner Circle",
-        "content": "The Main Network should ONLY contain devices you fully trust and that need to communicate with each other. Your personal laptop, phone, and tablet belong here. These are devices with regular security updates, accounts you control, and data you need to protect. Everything else? It needs to go somewhere safer."
+        "content": "The Main Network should contain devices you trust and that need to communicate with each other. Your personal laptop, phone, and tablet belong here because they receive regular security updates, use accounts you control, and hold sensitive data. Devices outside that trust boundary belong elsewhere."
       },
       "guestZone": {
         "title": "Guest Network: Friendly but Separate",
-        "content": "When friends visit, their devices shouldn't access your file shares or smart home controls. The Guest Network provides internet access without seeing your internal network. This is a real feature on most routers - you can set it up today. Visitors get online, but their potentially infected devices can't spread to yours."
+        "content": "When friends visit, their devices should not access your file shares or smart home controls. The Guest Network provides internet access without seeing your internal network. This is a standard router feature you can enable today. Visitors get online, but their devices cannot reach your main network."
       },
       "iotZone": {
         "title": "IoT Network: Contain the Risk",
-        "content": "Smart devices are convenient but often insecure. That smart doorbell may have unpatched vulnerabilities. That voice assistant is always listening. The IoT Network isolates these devices so even if one is compromised, attackers can't pivot to your main computers. Many routers support creating a separate IoT network - it's one of the highest-impact security changes you can make."
+        "content": "Smart devices are convenient but often insecure. Smart doorbells may have unpatched vulnerabilities. Voice assistants are always listening. The IoT Network isolates these devices so even if one is compromised, attackers cannot pivot to your main computers. Many routers support a separate IoT network, and enabling it is a high-impact security change."
       },
       "deviceCards": {
         "title": "Drag to Reorganize",
-        "content": "Now it's your turn to fix this network. Drag devices to their appropriate zones, or use the dropdown on each card. Think about each device: Do I fully trust it? Does it need to see my other devices? Could it be a risk if compromised?"
+        "content": "Drag devices to the appropriate zones or use the dropdown on each card. Classify each device by trust level and access need: trusted personal devices in Main, visitors in Guest, and IoT in IoT. If a device would raise risk if compromised, keep it out of Main."
       },
       "flagInvestigation": {
         "title": "Flag Unknown Devices",
-        "content": "See a device you don't recognize? Look for the flag button on devices marked as 'Unknown'. Flagging a suspicious device marks it for investigation - a critical first step when you spot something unexpected on your network. Don't trust unknown devices until you identify them. In the real world, this could be a neighbor piggybacking on your Wi-Fi or a forgotten gadget - but it could also be an intruder."
+        "content": "Unknown devices are labeled 'Unknown' and include a flag action. Flagging marks a device for review so it is treated as untrusted until identified. In practice, unknown devices are often a guest phone, a forgotten device, or an unauthorized device. Review the router list and only remove the flag once you can identify it."
       },
       "riskMeter": {
         "title": "Watch Your Risk Drop",
-        "content": "This score shows your network's current security risk. As you move devices to appropriate zones and enable security controls, watch the number drop. The goal is to get below 35 - that represents a well-segmented, properly secured network."
+        "content": "This score shows your network's current security risk. As you move devices to appropriate zones and enable security controls, the number should drop. The target is below 35, which represents a well-segmented, properly secured network."
       },
       "controls": {
         "title": "Security Controls: Defense in Depth",
@@ -479,11 +619,11 @@
       },
       "insightsPanel": {
         "title": "Learn Why It Matters",
-        "content": "This panel shows powerful control combinations (synergies) and explains exactly what's affecting your score. Use it to understand the 'why' behind network security - knowledge you can apply to your real network at home."
+        "content": "This panel shows control combinations (synergies) and explains what affects your score. Use it to connect each action to its risk impact and apply the same logic to your real network."
       },
       "complete": {
         "title": "Fix Your Real Network",
-        "content": "You now understand network segmentation - the practice of separating devices by trust level. This isn't just a game; these are real techniques you can implement today. Check your router settings for Guest Network and IoT Network options. Move your smart devices to a separate network. Your future self will thank you."
+        "content": "You now understand network segmentation, the practice of separating devices by trust level. This is a real technique you can implement today. Check your router settings for Guest Network and IoT Network options. Move your smart devices to a separate network to reduce risk immediately."
       }
     }
   },
@@ -524,14 +664,70 @@
     "duplicate": "Duplicate",
     "export": "Export",
     "copyTitle": "{title} (Copy)",
+    "defaults": {
+      "title": "New Custom Scenario",
+      "notes": "Custom scenario created by instructor",
+      "ssidMain": "MyNetwork_Main",
+      "ssidGuest": "MyNetwork_Guest",
+      "ssidIot": "MyNetwork_IoT",
+      "learningObjectives": {
+        "organizeDevices": "Organize devices into appropriate trust zones",
+        "applyControls": "Apply security controls to reduce risk",
+        "understandImpact": "Understand the impact of each control on overall security"
+      }
+    },
     "importError": "Failed to import scenario. Please check the file format.",
+    "importZoneWarningTitle": "Zones adjusted",
+    "importZoneWarning": "{count, plural, one {# device had} other {# devices had}} an unknown network zone and was moved to Main.",
     "deviceDefaultName": "Device {index}",
+    "lint": {
+      "title": "Scenario Checks",
+      "noIssues": "No issues found.",
+      "missingMainNetwork": "Missing required network zone: Main.",
+      "unknownNetworkIds": "Unknown network IDs: {ids}.",
+      "duplicateNetworkIds": "Duplicate network IDs: {ids}.",
+      "deviceInvalidNetwork": "{count, plural, one {# device uses} other {# devices use}} an invalid network zone. Default is Main.",
+      "deviceNetworkMissing": "{count, plural, one {# device references} other {# devices reference}} a network that isn't defined in this scenario.",
+      "deviceTypeInvalid": "Unknown device types: {types}.",
+      "deviceFlagInvalid": "Unknown device flags: {flags}.",
+      "controlMissing": "{count, plural, one {# required control} other {# required controls}} have no default value.",
+      "controlInvalidValue": "{count, plural, one {# control} other {# controls}} have invalid default values.",
+      "controlNotApplicable": "{count, plural, one {# control} other {# controls}} are set but not applicable to this scenario type.",
+      "winConditionNotApplicable": "{count, plural, one {# win condition control} other {# win condition controls}} are not applicable to this scenario type."
+    },
     "riskFlags": {
       "unknown_device": "unknown device",
       "iot_device": "IoT device",
       "visitor_device": "visitor device",
       "trusted_work_device": "trusted work device"
     }
+  },
+  "notFound": {
+    "title": "404 Page Not Found",
+    "description": "The requested page is not available in this app."
+  },
+  "carousel": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "roleDescription": "carousel",
+    "slideDescription": "slide"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "more": "More pages",
+    "goToPrevious": "Go to previous page",
+    "goToNext": "Go to next page"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "more": "More"
+  },
+  "sidebar": {
+    "title": "Sidebar",
+    "description": "Displays the mobile sidebar.",
+    "toggle": "Toggle Sidebar"
   },
   "common": {
     "start": "Start",
@@ -544,7 +740,8 @@
     "close": "Close",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "numberedItem": "{number}."
   },
   "footer": {
     "disclaimer": "All addresses and identifiers are fictional for training purposes. No real network data is collected."
