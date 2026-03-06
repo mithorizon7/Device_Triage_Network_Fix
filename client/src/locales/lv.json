@@ -574,56 +574,57 @@
     "skipAriaLabel": "Izlaist pamācību",
     "startAriaLabel": "Sākt pamācību",
     "stepOf": "{current}. solis no {total}",
+    "completeActionPrompt": "Pabeidziet izceltu darbību, lai turpinātu.",
     "getStarted": "Sākt darbu",
     "tutorial": "Pamācība",
     "steps": {
       "welcome": {
-        "title": "Jūsu tīklam ir problēma",
-        "content": "Vairumam mājas tīklu ir bīstams trūkums: visas ierīces pieslēdzas vienam tīklam. Jūsu dators, viedais televizors, bērna planšete un tā lētā drošības kamera no ārzemēm visi dalās vienā savienojumā. Ja viena ierīce tiek kompromitēta, uzbrucēji var sasniegt visu. Mēs to salabosim."
+        "title": "Jūsu pirmais tīkla triāžas uzdevums",
+        "content": "Mērķis: ātri samazināt risku ar četrām darbībām. Pārvietojiet vienu riskantu ierīci, atzīmējiet vienu nezināmu ierīci, ieslēdziet vienu drošības kontroli un pārliecinieties, ka riska vērtējums samazinās."
       },
       "scenarioSelector": {
-        "title": "Izvēlieties savu izaicinājumu",
-        "content": "Katrs scenārijs atspoguļo reālu tīkla problēmu. Ģimenes IoT haoss modelē māju, kur ierīces uzkrājās laika gaitā bez organizācijas vai segmentācijas."
+        "title": "Izvēlieties scenāriju",
+        "content": "Ja sākat pirmoreiz, izvēlieties Ģimenes IoT haosu. Scenāriji atspoguļo kompromisus mājās, birojā un publiskā Wi-Fi vidē."
       },
       "theProblem": {
-        "title": "Nosakiet problēmu",
-        "content": "Paskatieties uz Galveno tīklu. Tas ir pārpildīts ar ierīcēm, kurām nevajadzētu dalīties vienā piekļuves līmenī. Viedie skaļruņi blakus jūsu darba datoram. Viesa telefons ar tādu pašu tīkla piekļuvi kā jūsu bankas dators. Šis plakanais tīkls ir tipisks daudzām mājām un rada lieku risku."
+        "title": "Kāpēc segmentācija ir svarīga",
+        "content": "Ja visas ierīces ir vienā tīklā, viena vāja ierīce var apdraudēt stiprākas ierīces. Segmentācija ierobežo uzbrukuma ietekmes zonu."
       },
       "mainZone": {
-        "title": "Galvenais tīkls: jūsu iekšējais loks",
-        "content": "Galvenajam tīklam jāietver ierīces, kurām uzticaties un kurām jāsazinās savā starpā. Jūsu personālais dators, telefons un planšete pieder šeit, jo tiem ir regulāri drošības atjauninājumi, konti, kurus jūs kontrolējat, un dati, kas jāaizsargā. Ierīcēm ārpus šīs uzticamības robežas jābūt citās zonās."
+        "title": "Galvenais tīkls",
+        "content": "Šeit turiet uzticamas ierīces, kuras pārvaldāt paši. Tā ir jūsu augstākās uzticamības zona."
       },
       "guestZone": {
-        "title": "Viesu tīkls: draudzīgs, bet atsevišķs",
-        "content": "Kad draugi ciemojas, viņu ierīcēm nevajadzētu piekļūt jūsu failu koplietojumiem vai viedās mājas vadībai. Viesu tīkls nodrošina interneta piekļuvi bez piekļuves jūsu iekšējam tīklam. Tā ir standarta maršrutētāju funkcija, ko varat ieslēgt jau šodien. Apmeklētāji nokļūst tiešsaistē, bet viņu ierīces nevar sasniegt jūsu Galveno tīklu."
+        "title": "Viesu tīkls",
+        "content": "Šo zonu izmantojiet apmeklētāju ierīcēm, kurām vajag internetu, bet nevajag piekļuvi jūsu uzticamajām ierīcēm."
       },
       "iotZone": {
-        "title": "IoT tīkls: ierobežojiet risku",
-        "content": "Viedās ierīces ir ērtas, bet bieži nedrošas. Viedajiem durvju zvaniem var būt nelabotas ievainojamības. Balss asistenti vienmēr klausās. IoT tīkls izolē šīs ierīces, tāpēc pat ja viena tiek kompromitēta, uzbrucēji nevar pāriet uz jūsu galvenajiem datoriem. Daudzi maršrutētāji atbalsta atsevišķu IoT tīklu, un tā ieslēgšana dod augstu drošības ieguvumu."
+        "title": "IoT tīkls",
+        "content": "Pārvietojiet viedierīces šeit, lai izolētu tās no primārajām ierīcēm un samazinātu sānu pārvietošanās risku."
       },
       "deviceCards": {
-        "title": "Velciet, lai pārkārtotu",
-        "content": "Velciet ierīces uz atbilstošajām zonām vai izmantojiet nolaižamo izvēlni katrā kartē. Klasificējiet ierīces pēc uzticamības līmeņa un piekļuves vajadzības: uzticamas personīgās ierīces Galvenajā tīklā, viesi Viesu tīklā un IoT IoT tīklā. Ja ierīce palielinātu risku kompromitēšanas gadījumā, turiet to ārpus Galvenā tīkla."
+        "title": "Darbība: pārvietojiet vienu riskantu ierīci",
+        "content": "Pārvietojiet vismaz vienu IoT vai apmeklētāja ierīci ārpus Galvenā tīkla. Varat vilkt un nomest vai izmantot zonas izvēlni ierīces kartē."
       },
       "flagInvestigation": {
-        "title": "Atzīmējiet nezināmās ierīces",
-        "content": "Nezināmās ierīces ir atzīmētas kā 'Nezināms' un tām ir karodziņa darbība. Atzīmēšana nozīmē, ka ierīce tiek pārskatīta un tiek uzskatīta par neuzticamu, līdz tā ir identificēta. Praksē nezināmas ierīces bieži ir viesa tālrunis, aizmirsta ierīce vai neatļauta ierīce. Pārbaudiet maršrutētāja sarakstu un noņemiet atzīmi tikai pēc identifikācijas."
+        "title": "Darbība: atzīmējiet nezināmu ierīci",
+        "content": "Atrodiet ierīci ar atzīmi Nezināms un nospiediet karodziņa pogu. Nezināmas ierīces uzskatiet par neuzticamām, līdz tās ir identificētas."
       },
       "riskMeter": {
-        "title": "Vērojiet, kā krīt jūsu risks",
-        "content": "Šis vērtējums parāda jūsu tīkla pašreizējo drošības risku. Pārvietojot ierīces uz atbilstošām zonām un ieslēdzot drošības kontroles, skaitlim vajadzētu samazināties. Mērķis ir nokļūt zem 35, kas atspoguļo labi segmentētu un pareizi nodrošinātu tīklu."
+        "title": "Apstipriniet ietekmi",
+        "content": "Vērojiet riska vērtējumu darba laikā. Turpiniet, līdz vērtējums samazinās vai sasniedzat scenārija mērķus."
       },
       "controls": {
-        "title": "Drošības kontroles: aizsardzība dziļumā",
-        "content": "Ierīču pārvietošana ir tikai sākums. Šīs kontroles pievieno papildu aizsardzības slāņus: šifrēšanu, daudzfaktoru autentifikāciju, automātiskos atjauninājumus. Katra risina citu uzbrukuma vektoru. Ieslēdziet tās, lai izveidotu patiesi izturīgu tīklu."
+        "title": "Darbība: ieslēdziet vienu kontroli",
+        "content": "Drošības kontrolēs ieslēdziet vienu augstas ietekmes iestatījumu, piemēram, Viesu tīklu, IoT tīklu, VPN, MFA vai ugunsmūri."
       },
       "insightsPanel": {
-        "title": "Uzziniet, kāpēc tas ir svarīgi",
-        "content": "Šis panelis parāda kontroles kombinācijas (sinerģijas) un izskaidro, kas ietekmē jūsu vērtējumu. Izmantojiet to, lai sasaistītu katru darbību ar tās ietekmi uz risku un pielietotu to pašu loģiku savam tīklam."
+        "title": "Mācieties no rezultāta",
+        "content": "Atveriet Ieskatus, lai redzētu, kāpēc vērtējums mainījās un kuras darbības deva lielāko efektu."
       },
       "complete": {
-        "title": "Labojiet savu reālo tīklu",
-        "content": "Tagad jūs saprotat tīkla segmentāciju, praksi, kā atdalīt ierīces pēc uzticamības līmeņa. Tā ir reāla tehnika, kuru varat ieviest jau šodien. Pārbaudiet sava maršrutētāja iestatījumus Viesu tīkla un IoT tīkla opcijām. Pārvietojiet savas viedās ierīces uz atsevišķu tīklu, lai uzreiz samazinātu risku."
+        "title": "Pabeidziet pilnu scenāriju",
+        "content": "Tagad jūs zināt pamatciklu: sakārtojiet ierīces, pielietojiet kontroles, pārbaudiet ietekmi uz vērtējumu un atkārtojiet, līdz visi mērķi ir izpildīti."
       }
     }
   },

@@ -20,9 +20,10 @@ interface SpotlightRect {
 
 interface TutorialOverlayProps {
   onComplete: () => void;
+  actionProgress?: Record<string, { completed: boolean }>;
 }
 
-export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
+export function TutorialOverlay({ onComplete, actionProgress }: TutorialOverlayProps) {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
@@ -35,6 +36,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   const step = tutorialSteps[currentStep];
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === tutorialSteps.length - 1;
+  const canAdvance = step.action ? (actionProgress?.[step.action]?.completed ?? true) : true;
 
   const SPOTLIGHT_PADDING = 12;
 
@@ -242,6 +244,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   }, [handleComplete]);
 
   const handleNext = () => {
+    if (!canAdvance) return;
     if (isLastStep) {
       handleComplete();
     } else {
@@ -257,22 +260,13 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     handleComplete();
   };
 
-  // Click on backdrop (outside spotlight) dismisses tutorial
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    // Only close if clicking the actual backdrop, not the spotlight area
-    if (e.target === e.currentTarget) {
-      handleComplete();
-    }
-  };
-
   if (!isVisible) return null;
 
   return (
     <>
-      {/* Full-screen backdrop for click handling */}
+      {/* Non-interactive backdrop so learners can keep using the page */}
       <div
-        className="fixed inset-0 z-[100]"
-        onClick={handleBackdropClick}
+        className="fixed inset-0 z-[100] pointer-events-none"
         data-testid="tutorial-backdrop"
         aria-hidden="true"
       />
@@ -317,7 +311,7 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
       <div
         ref={tooltipRef}
         role="dialog"
-        aria-modal="true"
+        aria-modal="false"
         aria-labelledby="tutorial-title"
         aria-describedby="tutorial-content"
         className="fixed z-[101] w-[90vw] max-w-md"
@@ -352,6 +346,14 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
             <p id="tutorial-content" className="text-sm text-muted-foreground leading-relaxed">
               {t(step.contentKey)}
             </p>
+            {step.action && !canAdvance && (
+              <p
+                className="mt-3 text-xs font-medium text-primary"
+                data-testid="tutorial-action-hint"
+              >
+                {t("tutorial.completeActionPrompt")}
+              </p>
+            )}
           </CardContent>
           <CardFooter className="flex items-center justify-between gap-2 pt-0">
             <div
@@ -392,6 +394,8 @@ export function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 size="sm"
                 onClick={handleNext}
                 data-testid="button-tutorial-next"
+                disabled={!canAdvance}
+                aria-disabled={!canAdvance}
               >
                 {isLastStep ? t("tutorial.getStarted") : t("tutorial.next")}
                 {!isLastStep && <ChevronRight className="h-4 w-4 ml-1" aria-hidden="true" />}

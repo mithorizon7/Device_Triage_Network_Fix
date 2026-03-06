@@ -475,7 +475,7 @@ export function ControlsDrawer({
       <ControlItem
         icon={Key}
         label={t("controls.mfaEnabled")}
-        description={t("controls.mfaDesc")}
+        description={t("controls.mfaEnabledDesc")}
         tooltip={t("tooltips.controls.mfaEnabled")}
       >
         <Switch
@@ -641,7 +641,7 @@ export function ControlsDrawer({
       <ControlItem
         icon={Key}
         label={t("controls.mfaEnabled")}
-        description={t("controls.mfaDesc")}
+        description={t("controls.mfaEnabledDesc")}
         tooltip={t("tooltips.controls.mfaEnabled")}
       >
         <Switch

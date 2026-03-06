@@ -119,6 +119,7 @@ export default function Home() {
   const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
   const [isNewCompletion, setIsNewCompletion] = useState(false);
   const [flaggedDevices, setFlaggedDevices] = useState<Set<string>>(new Set());
+  const [scenarioStartRisk, setScenarioStartRisk] = useState<number | null>(null);
   const [lastAction, setLastAction] = useState<{
     type: "deviceMoved" | "controlUpdated" | "unknownFlagged" | "unknownUnflagged";
     deviceId?: string;
@@ -405,6 +406,7 @@ export default function Home() {
       setControls({ ...currentScenario.initialControls });
       setFlaggedDevices(new Set());
       setLastAction(null);
+      setScenarioStartRisk(null);
       resetTutorialState();
     }
   }, [currentScenario, resetTutorialState]);
@@ -432,6 +434,17 @@ export default function Home() {
 
   const guestNetworkAvailable = currentScenario?.networks.some((n) => n.id === "guest") ?? false;
   const iotNetworkAvailable = currentScenario?.networks.some((n) => n.id === "iot") ?? false;
+  const initialScenarioZones = useMemo<Record<string, ZoneId>>(() => {
+    if (!currentScenario) return {};
+    const allowedZoneIds = new Set(zones.map((zone) => zone.id));
+    const initialZones: Record<string, ZoneId> = {};
+    currentScenario.devices.forEach((device) => {
+      initialZones[device.id] = allowedZoneIds.has(device.networkId as ZoneId)
+        ? (device.networkId as ZoneId)
+        : "main";
+    });
+    return initialZones;
+  }, [currentScenario]);
 
   const iotDevicesInIotZone = useMemo(() => {
     if (!currentScenario) return false;
@@ -465,6 +478,72 @@ export default function Home() {
     scopedRequiredControls,
     controls
   );
+  const hasSegmentedRiskDevice = useMemo(() => {
+    if (!currentScenario) return true;
+    const candidateDevices = currentScenario.devices.filter(
+      (device) =>
+        (device.riskFlags.includes("iot_device") || device.riskFlags.includes("visitor_device")) &&
+        initialScenarioZones[device.id] === "main"
+    );
+    if (candidateDevices.length === 0) return true;
+    return candidateDevices.some((device) => deviceZones[device.id] !== "main");
+  }, [currentScenario, deviceZones, initialScenarioZones]);
+  const hasFlaggedUnknownDevice = useMemo(() => {
+    if (!currentScenario) return true;
+    const unknownDevices = currentScenario.devices.filter((device) =>
+      device.riskFlags.includes("unknown_device")
+    );
+    if (unknownDevices.length === 0) return true;
+    return unknownDevices.some((device) => flaggedDevices.has(device.id));
+  }, [currentScenario, flaggedDevices]);
+  const hasImprovedControl = useMemo(() => {
+    if (!currentScenario || !controls) return false;
+    const controlEntries = Object.entries(currentScenario.initialControls);
+    const hasImprovableControl = controlEntries.some(([controlId, initialValue]) => {
+      if (typeof initialValue === "boolean") {
+        return initialValue === false;
+      }
+      if (controlId === "wifiSecurity" && typeof initialValue === "string") {
+        return initialValue === "OPEN" || initialValue === "WPA2";
+      }
+      return false;
+    });
+    if (!hasImprovableControl) return true;
+
+    return controlEntries.some(([controlId, initialValue]) => {
+      const currentValue = controls[controlId as keyof Controls];
+      if (typeof initialValue === "boolean" && typeof currentValue === "boolean") {
+        return !initialValue && currentValue;
+      }
+      if (
+        controlId === "wifiSecurity" &&
+        typeof initialValue === "string" &&
+        typeof currentValue === "string"
+      ) {
+        if (initialValue === "OPEN") return currentValue !== "OPEN";
+        if (initialValue === "WPA2") return currentValue === "WPA3";
+      }
+      return false;
+    });
+  }, [currentScenario, controls]);
+  const rawRiskReduction = scenarioStartRisk === null ? 0 : scenarioStartRisk - scoreResult.total;
+  const hasLoweredRisk =
+    (scenarioStartRisk !== null && rawRiskReduction >= 0.5) || meetsWinCondition;
+  const tutorialActionProgress = useMemo(
+    () => ({
+      "segment-device": { completed: hasSegmentedRiskDevice },
+      "flag-unknown": { completed: hasFlaggedUnknownDevice },
+      "enable-control": { completed: hasImprovedControl },
+      "lower-risk": { completed: hasLoweredRisk },
+    }),
+    [hasSegmentedRiskDevice, hasFlaggedUnknownDevice, hasImprovedControl, hasLoweredRisk]
+  );
+
+  useEffect(() => {
+    if (!currentScenario || !controls || !scoringRules) return;
+    if (scenarioStartRisk !== null) return;
+    setScenarioStartRisk(scoreResult.total);
+  }, [currentScenario, controls, scoringRules, scenarioStartRisk, scoreResult.total]);
 
   useEffect(() => {
     if (!currentScenario || scoreResult.total === 0) return;
@@ -501,6 +580,7 @@ export default function Home() {
     setIsNewCompletion(false);
     setFlaggedDevices(new Set());
     setLastAction(null);
+    setScenarioStartRisk(null);
   }, [selectedScenarioId]);
 
   useEffect(() => {
@@ -753,7 +833,9 @@ export default function Home() {
         </div>
       </footer>
 
-      {showTutorial && <TutorialOverlay onComplete={completeTutorial} />}
+      {showTutorial && (
+        <TutorialOverlay onComplete={completeTutorial} actionProgress={tutorialActionProgress} />
+      )}
     </div>
   );
 }

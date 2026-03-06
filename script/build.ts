@@ -8,15 +8,15 @@ function runI18nChecks() {
   console.log("Validating i18n translations...");
   try {
     execSync("node scripts/i18n-validate.js", { stdio: "inherit" });
-  } catch (error) {
+  } catch {
     console.error("i18n validation failed! Fix translation issues before building.");
     process.exit(1);
   }
-  
+
   console.log("Generating i18n TypeScript types...");
   try {
     execSync("node scripts/generate-i18n-types.js", { stdio: "inherit" });
-  } catch (error) {
+  } catch {
     console.error("Failed to generate i18n types.");
     process.exit(1);
   }
@@ -55,7 +55,7 @@ const allowlist = [
 async function buildAll() {
   // Run i18n checks first - fails build if translations are missing
   runI18nChecks();
-  
+
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");

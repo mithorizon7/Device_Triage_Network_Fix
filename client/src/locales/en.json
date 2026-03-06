@@ -574,56 +574,57 @@
     "skipAriaLabel": "Skip tutorial",
     "startAriaLabel": "Start tutorial",
     "stepOf": "Step {current} of {total}",
+    "completeActionPrompt": "Complete the highlighted action to continue.",
     "getStarted": "Get Started",
     "tutorial": "Tutorial",
     "steps": {
       "welcome": {
-        "title": "Your Network Has a Problem",
-        "content": "Most home networks have a dangerous flaw: every device connects to the same network. Your laptop, your smart TV, your kid's tablet, and that cheap security camera from overseas all share the same connection. If one device gets compromised, attackers can reach everything. We will fix that."
+        "title": "Your First Network Triage",
+        "content": "Goal: lower risk fast by doing four actions. Move one risky device, flag one unknown device, enable one security control, then confirm your risk score drops."
       },
       "scenarioSelector": {
-        "title": "Choose Your Challenge",
-        "content": "Each scenario represents a real network problem. The Family IoT Sprawl models a home where devices accumulated over time without organization or segmentation."
+        "title": "Pick a Scenario",
+        "content": "Start with Family IoT Sprawl if you are new. Scenarios model home, office, and public Wi-Fi tradeoffs."
       },
       "theProblem": {
-        "title": "Identify the Problem",
-        "content": "Look at the Main Network. It is overloaded with devices that should not share the same access level. Smart speakers sit next to your work laptop. A guest's phone has the same network access as your banking computer. This flat network is how many homes are set up, and it creates unnecessary risk."
+        "title": "Why Segmentation Matters",
+        "content": "When every device sits on the same network, one weak device can expose stronger ones. Segmentation limits that blast radius."
       },
       "mainZone": {
-        "title": "Main Network: Your Inner Circle",
-        "content": "The Main Network should contain devices you trust and that need to communicate with each other. Your personal laptop, phone, and tablet belong here because they receive regular security updates, use accounts you control, and hold sensitive data. Devices outside that trust boundary belong elsewhere."
+        "title": "Main Network",
+        "content": "Keep trusted, personally managed devices here. This is your highest-trust zone."
       },
       "guestZone": {
-        "title": "Guest Network: Friendly but Separate",
-        "content": "When friends visit, their devices should not access your file shares or smart home controls. The Guest Network provides internet access without seeing your internal network. This is a standard router feature you can enable today. Visitors get online, but their devices cannot reach your main network."
+        "title": "Guest Network",
+        "content": "Use this for visitor devices that need internet but should not access your trusted devices."
       },
       "iotZone": {
-        "title": "IoT Network: Contain the Risk",
-        "content": "Smart devices are convenient but often insecure. Smart doorbells may have unpatched vulnerabilities. Voice assistants are always listening. The IoT Network isolates these devices so even if one is compromised, attackers cannot pivot to your main computers. Many routers support a separate IoT network, and enabling it is a high-impact security change."
+        "title": "IoT Network",
+        "content": "Move smart devices here to isolate them from your primary devices and reduce lateral movement risk."
       },
       "deviceCards": {
-        "title": "Drag to Reorganize",
-        "content": "Drag devices to the appropriate zones or use the dropdown on each card. Classify each device by trust level and access need: trusted personal devices in Main, visitors in Guest, and IoT in IoT. If a device would raise risk if compromised, keep it out of Main."
+        "title": "Do: Move One Risky Device",
+        "content": "Move at least one IoT or visitor device out of Main Network. You can drag-and-drop or use the zone selector on the device card."
       },
       "flagInvestigation": {
-        "title": "Flag Unknown Devices",
-        "content": "Unknown devices are labeled 'Unknown' and include a flag action. Flagging marks a device for review so it is treated as untrusted until identified. In practice, unknown devices are often a guest phone, a forgotten device, or an unauthorized device. Review the router list and only remove the flag once you can identify it."
+        "title": "Do: Flag an Unknown Device",
+        "content": "Find a device marked Unknown and click its flag button. Treat unknown devices as untrusted until you identify them."
       },
       "riskMeter": {
-        "title": "Watch Your Risk Drop",
-        "content": "This score shows your network's current security risk. As you move devices to appropriate zones and enable security controls, the number should drop. The target is below 35, which represents a well-segmented, properly secured network."
+        "title": "Confirm the Impact",
+        "content": "Watch the risk score as you work. Continue until the score drops or you meet the scenario goals."
       },
       "controls": {
-        "title": "Security Controls: Defense in Depth",
-        "content": "Moving devices is just the start. These controls add additional layers of protection: encryption, multi-factor authentication, automatic updates. Each one addresses a different attack vector. Enable them to build a truly resilient network."
+        "title": "Do: Enable One Control",
+        "content": "In Security Controls, enable one high-impact setting such as Guest or IoT network, VPN, MFA, or firewall."
       },
       "insightsPanel": {
-        "title": "Learn Why It Matters",
-        "content": "This panel shows control combinations (synergies) and explains what affects your score. Use it to connect each action to its risk impact and apply the same logic to your real network."
+        "title": "Learn From the Result",
+        "content": "Open Insights to see why your score changed and which actions had the biggest effect."
       },
       "complete": {
-        "title": "Fix Your Real Network",
-        "content": "You now understand network segmentation, the practice of separating devices by trust level. This is a real technique you can implement today. Check your router settings for Guest Network and IoT Network options. Move your smart devices to a separate network to reduce risk immediately."
+        "title": "Run the Full Scenario",
+        "content": "You now know the core loop: triage devices, apply controls, verify score impact, and iterate until all goals are complete."
       }
     }
   },
