@@ -564,6 +564,62 @@
     "badgeEarned": "Nopelnīta nozīmīte!",
     "scenarioComplete": "Scenārijs pabeigts!"
   },
+  "onboardingGuide": {
+    "title": "Sāciet šeit",
+    "subtitle": "Sekojiet šai secībai, lai mācītos drošības lēmumus, nevis minētu, kā darbojas lapa.",
+    "progress": "{completed}/{total} pamatsoļi pabeigti",
+    "nextStepTitle": "Nākamā darbība",
+    "completeTitle": "Pamatcikls pabeigts",
+    "completionSummary": "Jūs esat izgājuši pamata triāžas ciklu. Izmantojiet Mērķus un Ieskatus, lai pabeigtu scenāriju vai vēl vairāk uzlabotu rezultātu.",
+    "zoneGuideTitle": "Ātra zonu karte",
+    "zoneGuideDescription": "Izmantojiet šīs zonas kā uzticamības karti, pirms pārvietojat ierīces.",
+    "learningFocusTitle": "Ko jūs apgūsiet",
+    "fallbackLearningFocus": "Kā ierīču izvietojums un drošības kontroles maina tīkla risku.",
+    "viewHintGrid": "Padoms: pārvelciet ierīci uz citu zonu vai izmantojiet zonas izvēlni kartītē.",
+    "viewHintList": "Padoms: izmantojiet zonas izvēlni katrā rindā, lai pārvietotu ierīci.",
+    "actions": {
+      "walkthrough": "Parādiet man soli pa solim",
+      "replay": "Atkārtot pamācību",
+      "goToDevices": "Doties uz ierīcēm",
+      "goToControls": "Doties uz kontrolēm",
+      "goToScore": "Doties uz vērtējumu",
+      "goToInsights": "Skatīt ieskatus"
+    },
+    "status": {
+      "done": "Pabeigts",
+      "current": "Pašlaik",
+      "upNext": "Nākamais"
+    },
+    "steps": {
+      "segment": {
+        "title": "Pārvietojiet riskantu ierīci ārpus Galvenā tīkla",
+        "detail": "Sāciet ar IoT vai viesa ierīces atdalīšanu no uzticamajām ierīcēm."
+      },
+      "flag": {
+        "title": "Atzīmējiet nezināmu ierīci",
+        "detail": "Atzīmējiet ierīces, kuras nevarat identificēt, lai tās uztvertu kā neuzticamas."
+      },
+      "control": {
+        "title": "Uzlabojiet vienu drošības kontroli",
+        "detail": "Ieslēdziet vienu aizsardzības iestatījumu, pirms vērtējat rezultātu."
+      },
+      "score": {
+        "title": "Pārbaudiet vērtējumu un pielāgojiet",
+        "detail": "Izmantojiet riska skalu un scenārija mērķus, lai pārliecinātos, ka risks samazinās."
+      }
+    },
+    "nextAction": {
+      "segmentSpecific": "Pārvietojiet {device} ārpus Galvenā tīkla. Novietojiet to zonā {zone}.",
+      "segmentGeneric": "Pārvietojiet vienu IoT vai viesa ierīci ārpus Galvenā tīkla.",
+      "flagSpecific": "Atzīmējiet {device} izmeklēšanai.",
+      "flagGeneric": "Atzīmējiet vienu ierīci ar atzīmi Nezināms izmeklēšanai.",
+      "controlSpecific": "Atveriet Drošības kontroles un uzlabojiet {control}.",
+      "controlGeneric": "Atveriet Drošības kontroles un ieslēdziet vienu augstas ietekmes aizsardzību.",
+      "scoreTarget": "Pārbaudiet riska skalu un turpiniet, līdz vērtējums ir {target} vai zemāks.",
+      "scoreGeneric": "Pārbaudiet riska skalu un pārliecinieties, ka nesenās izmaiņas samazināja risku.",
+      "done": "Jūs esat pabeiguši pamattriāžas ciklu. Izmantojiet Mērķus un Ieskatus, lai pabeigtu scenāriju."
+    }
+  },
   "tutorial": {
     "chooseScenario": "Izvēlieties scenāriju",
     "chooseScenarioDesc": "Sāciet, izvēloties scenāriju. Katrs simulē atšķirīgu tīkla vidi ar dažādām ierīcēm, kas jāorganizē.",

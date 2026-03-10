@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ScenarioSelector } from "@/components/ScenarioSelector";
@@ -20,6 +21,7 @@ import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios, getCustomScenariosUpdatedEventName } from "@/lib/customScenarios";
 import { getDeviceDisplayLabel } from "@/lib/i18n";
 import { formatExplanation } from "@/lib/explanationFormatter";
+import { getOnboardingGuideState, type OnboardingGuideStepId } from "@/lib/onboardingGuide";
 import {
   filterRequiredControlsByScenario,
   getControlDefinition,
@@ -32,7 +34,22 @@ import {
   type UserProgress,
 } from "@/lib/progressTracking";
 import { useToast } from "@/hooks/use-toast";
-import { RotateCcw, Target, FileText, LayoutGrid, List } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  CheckCircle2,
+  Circle,
+  Compass,
+  FileText,
+  GraduationCap,
+  LayoutGrid,
+  List,
+  Network,
+  RotateCcw,
+  Shield,
+  Target,
+  Users,
+} from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import type {
@@ -109,6 +126,12 @@ function DynamicZoneGrid({
     </div>
   );
 }
+
+const zoneGuideIcons: Record<ZoneId, typeof Network> = {
+  main: Network,
+  guest: Users,
+  iot: Shield,
+};
 
 export default function Home() {
   const { t } = useTranslation();
@@ -206,8 +229,13 @@ export default function Home() {
     return serverScenario;
   }, [isCustomScenario, selectedScenarioId, customScenarios, serverScenario]);
 
-  const { showTutorial, startTutorial, completeTutorial, resetTutorialState } =
-    useTutorial(!!currentScenario);
+  const {
+    showTutorial,
+    hasCompletedTutorial,
+    startTutorial,
+    completeTutorial,
+    resetTutorialState,
+  } = useTutorial(!!currentScenario);
 
   useEffect(() => {
     if (allScenarios.length && !selectedScenarioId) {
@@ -478,57 +506,31 @@ export default function Home() {
     scopedRequiredControls,
     controls
   );
-  const hasSegmentedRiskDevice = useMemo(() => {
-    if (!currentScenario) return true;
-    const candidateDevices = currentScenario.devices.filter(
-      (device) =>
-        (device.riskFlags.includes("iot_device") || device.riskFlags.includes("visitor_device")) &&
-        initialScenarioZones[device.id] === "main"
-    );
-    if (candidateDevices.length === 0) return true;
-    return candidateDevices.some((device) => deviceZones[device.id] !== "main");
-  }, [currentScenario, deviceZones, initialScenarioZones]);
-  const hasFlaggedUnknownDevice = useMemo(() => {
-    if (!currentScenario) return true;
-    const unknownDevices = currentScenario.devices.filter((device) =>
-      device.riskFlags.includes("unknown_device")
-    );
-    if (unknownDevices.length === 0) return true;
-    return unknownDevices.some((device) => flaggedDevices.has(device.id));
-  }, [currentScenario, flaggedDevices]);
-  const hasImprovedControl = useMemo(() => {
-    if (!currentScenario || !controls) return false;
-    const controlEntries = Object.entries(currentScenario.initialControls);
-    const hasImprovableControl = controlEntries.some(([controlId, initialValue]) => {
-      if (typeof initialValue === "boolean") {
-        return initialValue === false;
-      }
-      if (controlId === "wifiSecurity" && typeof initialValue === "string") {
-        return initialValue === "OPEN" || initialValue === "WPA2";
-      }
-      return false;
-    });
-    if (!hasImprovableControl) return true;
-
-    return controlEntries.some(([controlId, initialValue]) => {
-      const currentValue = controls[controlId as keyof Controls];
-      if (typeof initialValue === "boolean" && typeof currentValue === "boolean") {
-        return !initialValue && currentValue;
-      }
-      if (
-        controlId === "wifiSecurity" &&
-        typeof initialValue === "string" &&
-        typeof currentValue === "string"
-      ) {
-        if (initialValue === "OPEN") return currentValue !== "OPEN";
-        if (initialValue === "WPA2") return currentValue === "WPA3";
-      }
-      return false;
-    });
-  }, [currentScenario, controls]);
-  const rawRiskReduction = scenarioStartRisk === null ? 0 : scenarioStartRisk - scoreResult.total;
-  const hasLoweredRisk =
-    (scenarioStartRisk !== null && rawRiskReduction >= 0.5) || meetsWinCondition;
+  const onboardingGuide = useMemo(
+    () =>
+      getOnboardingGuideState({
+        scenario: currentScenario,
+        initialScenarioZones,
+        deviceZones,
+        flaggedDevices,
+        controls,
+        scenarioStartRisk,
+        scoreTotal: scoreResult.total,
+        meetsWinCondition,
+      }),
+    [
+      currentScenario,
+      initialScenarioZones,
+      deviceZones,
+      flaggedDevices,
+      controls,
+      scenarioStartRisk,
+      scoreResult.total,
+      meetsWinCondition,
+    ]
+  );
+  const { hasSegmentedRiskDevice, hasFlaggedUnknownDevice, hasImprovedControl, hasLoweredRisk } =
+    onboardingGuide;
   const tutorialActionProgress = useMemo(
     () => ({
       "segment-device": { completed: hasSegmentedRiskDevice },
@@ -538,6 +540,116 @@ export default function Home() {
     }),
     [hasSegmentedRiskDevice, hasFlaggedUnknownDevice, hasImprovedControl, hasLoweredRisk]
   );
+  const guideSteps = useMemo(
+    () =>
+      onboardingGuide.steps.map((step) => {
+        const statusKey =
+          step.status === "done"
+            ? "onboardingGuide.status.done"
+            : step.status === "current"
+              ? "onboardingGuide.status.current"
+              : "onboardingGuide.status.upNext";
+        const detailKey = `onboardingGuide.steps.${step.id}.detail`;
+        const detail = t(detailKey);
+
+        return {
+          ...step,
+          title: t(`onboardingGuide.steps.${step.id}.title`),
+          detail:
+            step.id === "segment"
+              ? `${detail} ${
+                  viewMode === "grid"
+                    ? t("onboardingGuide.viewHintGrid")
+                    : t("onboardingGuide.viewHintList")
+                }`
+              : detail,
+          statusLabel: t(statusKey),
+        };
+      }),
+    [onboardingGuide.steps, t, viewMode]
+  );
+  const nextActionMessage = useMemo(() => {
+    if (!currentScenario) return "";
+
+    switch (onboardingGuide.nextStepId) {
+      case "segment": {
+        if (onboardingGuide.segmentCandidateId && onboardingGuide.segmentRecommendedZoneId) {
+          return t("onboardingGuide.nextAction.segmentSpecific", {
+            device: getDeviceLabelById(onboardingGuide.segmentCandidateId),
+            zone: getZoneLabel(onboardingGuide.segmentRecommendedZoneId),
+          });
+        }
+
+        return t("onboardingGuide.nextAction.segmentGeneric");
+      }
+      case "flag":
+        return onboardingGuide.unknownCandidateId
+          ? t("onboardingGuide.nextAction.flagSpecific", {
+              device: getDeviceLabelById(onboardingGuide.unknownCandidateId),
+            })
+          : t("onboardingGuide.nextAction.flagGeneric");
+      case "control":
+        return onboardingGuide.controlCandidateId
+          ? t("onboardingGuide.nextAction.controlSpecific", {
+              control: getControlLabel(onboardingGuide.controlCandidateId),
+            })
+          : t("onboardingGuide.nextAction.controlGeneric");
+      case "score":
+        return currentScenario.suggestedWinConditions?.maxTotalRisk !== undefined
+          ? t("onboardingGuide.nextAction.scoreTarget", {
+              target: currentScenario.suggestedWinConditions.maxTotalRisk,
+            })
+          : t("onboardingGuide.nextAction.scoreGeneric");
+      case "complete":
+      default:
+        return t("onboardingGuide.nextAction.done");
+    }
+  }, [currentScenario, onboardingGuide, t, getControlLabel, getDeviceLabelById, getZoneLabel]);
+  const focusGuideTarget = useCallback(() => {
+    const selectorMap: Record<OnboardingGuideStepId | "complete", string> = {
+      segment:
+        viewMode === "list"
+          ? "[data-testid='device-list-view']"
+          : "[data-testid='zones-container']",
+      flag:
+        viewMode === "list"
+          ? "[data-testid='device-list-view']"
+          : "[data-testid='zones-container']",
+      control: "[data-testid='controls-drawer']",
+      score: "[data-testid='risk-meter-card']",
+      complete: "[data-testid='insights-card']",
+    };
+
+    const selector = selectorMap[onboardingGuide.nextStepId];
+    const target = document.querySelector(selector);
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+  }, [onboardingGuide.nextStepId, viewMode]);
+  const nextActionButtonLabel = useMemo(() => {
+    switch (onboardingGuide.nextStepId) {
+      case "segment":
+      case "flag":
+        return t("onboardingGuide.actions.goToDevices");
+      case "control":
+        return t("onboardingGuide.actions.goToControls");
+      case "score":
+        return t("onboardingGuide.actions.goToScore");
+      case "complete":
+      default:
+        return t("onboardingGuide.actions.goToInsights");
+    }
+  }, [onboardingGuide.nextStepId, t]);
+  const fallbackLearningObjectives = useMemo(() => {
+    if (currentScenario?.learningObjectives && currentScenario.learningObjectives.length > 0) {
+      return currentScenario.learningObjectives.map((objective, index) => {
+        const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
+        return t(translationKey, { defaultValue: objective }) || objective;
+      });
+    }
+
+    return [t("onboardingGuide.fallbackLearningFocus")];
+  }, [currentScenario, t]);
 
   useEffect(() => {
     if (!currentScenario || !controls || !scoringRules) return;
@@ -680,6 +792,12 @@ export default function Home() {
               <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
               {t("header.reset")}
             </Button>
+            <Link href="/author">
+              <Button variant="ghost" size="sm" data-testid="button-author">
+                <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
+                {t("header.author")}
+              </Button>
+            </Link>
             <div
               className="flex items-center rounded-full border border-border/60 bg-card/60 p-1 shadow-[inset_0_1px_0_hsl(var(--foreground)/0.06)]"
               role="group"
@@ -716,29 +834,174 @@ export default function Home() {
       </header>
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
-        {currentScenario?.learningObjectives && currentScenario.learningObjectives.length > 0 && (
-          <div className="mb-10 text-center" data-testid="goals-section">
-            <h2 className="text-2xl font-semibold font-display tracking-[0.16em] uppercase mb-6">
-              {t("goals.title")}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-              {currentScenario.learningObjectives.map((objective, index) => {
-                const translationKey = `learningObjectives.${currentScenario.id}.${index}`;
-                const translated = t(translationKey, { defaultValue: objective });
-                const displayText = translated || objective;
+        {currentScenario && (
+          <div
+            className="mb-8 grid grid-cols-1 xl:grid-cols-12 gap-6"
+            data-testid="onboarding-guide"
+          >
+            <Card className="xl:col-span-8 border-primary/20">
+              <CardHeader className="pb-4">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Compass className="h-5 w-5 text-primary" aria-hidden="true" />
+                      <CardTitle className="text-xl tracking-[0.08em] uppercase">
+                        {t("onboardingGuide.title")}
+                      </CardTitle>
+                    </div>
+                    <CardDescription>{t("onboardingGuide.subtitle")}</CardDescription>
+                  </div>
+                  <Badge variant="secondary" className="self-start">
+                    {t("onboardingGuide.progress", {
+                      completed: onboardingGuide.completedCount,
+                      total: onboardingGuide.totalSteps,
+                    })}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <div
+                  className="rounded-2xl border border-primary/20 bg-primary/8 px-4 py-4"
+                  data-testid="onboarding-next-step"
+                  aria-live="polite"
+                >
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="space-y-1">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary/80">
+                        {onboardingGuide.nextStepId === "complete"
+                          ? t("onboardingGuide.completeTitle")
+                          : t("onboardingGuide.nextStepTitle")}
+                      </p>
+                      <p className="text-sm leading-relaxed">{nextActionMessage}</p>
+                      {onboardingGuide.nextStepId === "complete" && (
+                        <p className="text-sm text-muted-foreground">
+                          {t("onboardingGuide.completionSummary")}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button onClick={focusGuideTarget} data-testid="button-guide-focus">
+                        {nextActionButtonLabel}
+                        <ArrowRight className="h-4 w-4 ml-2" aria-hidden="true" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={startTutorial}
+                        data-testid="button-guide-tutorial"
+                      >
+                        <GraduationCap className="h-4 w-4 mr-2" aria-hidden="true" />
+                        {hasCompletedTutorial
+                          ? t("onboardingGuide.actions.replay")
+                          : t("onboardingGuide.actions.walkthrough")}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
 
-                return (
-                  <Card key={index} className="text-center" data-testid={`card-goal-${index}`}>
-                    <CardContent className="pt-6 pb-6">
-                      <div className="w-11 h-11 rounded-full bg-primary/15 text-primary flex items-center justify-center text-lg font-semibold mx-auto mb-3 font-display">
-                        {index + 1}
+                <div className="grid gap-3 md:grid-cols-2">
+                  {guideSteps.map((step, index) => (
+                    <div
+                      key={step.id}
+                      className={`rounded-2xl border px-4 py-4 ${
+                        step.status === "done"
+                          ? "border-primary/25 bg-primary/6"
+                          : step.status === "current"
+                            ? "border-primary/35 bg-card/80 shadow-[0_16px_32px_-28px_hsl(var(--shadow-color)/0.7)]"
+                            : "border-border/60 bg-card/60"
+                      }`}
+                      data-testid={`guide-step-${step.id}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5">
+                          {step.status === "done" ? (
+                            <CheckCircle2 className="h-5 w-5 text-primary" aria-hidden="true" />
+                          ) : (
+                            <Circle
+                              className={`h-5 w-5 ${
+                                step.status === "current" ? "text-primary" : "text-muted-foreground"
+                              }`}
+                              aria-hidden="true"
+                            />
+                          )}
+                        </div>
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-sm font-medium">
+                              {t("common.numberedItem", { number: index + 1 })} {step.title}
+                            </p>
+                            <Badge
+                              variant={step.status === "done" ? "secondary" : "outline"}
+                              className="text-[0.6rem]"
+                            >
+                              {step.statusLabel}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {step.detail}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">{displayText}</p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="xl:col-span-4">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg tracking-[0.08em] uppercase">
+                  {t("onboardingGuide.zoneGuideTitle")}
+                </CardTitle>
+                <CardDescription>{t("onboardingGuide.zoneGuideDescription")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <div className="space-y-3">
+                  {zones.map((zone) => {
+                    const ZoneIcon = zoneGuideIcons[zone.id];
+                    return (
+                      <div
+                        key={zone.id}
+                        className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/60 px-4 py-3"
+                      >
+                        <div
+                          className={`mt-0.5 rounded-full border p-2 ${zone.borderClass} ${zone.bgClass}`}
+                        >
+                          <ZoneIcon className={`h-4 w-4 ${zone.colorClass}`} aria-hidden="true" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium">{t(zone.labelKey)}</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {t(zone.descriptionKey)}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="rounded-2xl border border-border/60 bg-muted/30 px-4 py-4">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <p className="text-sm font-medium">{t("onboardingGuide.learningFocusTitle")}</p>
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {fallbackLearningObjectives.map((objective, index) => (
+                      <li
+                        key={`${objective}-${index}`}
+                        className="flex items-start gap-2 text-sm text-muted-foreground leading-relaxed"
+                        data-testid={`card-goal-${index}`}
+                      >
+                        <span
+                          className="mt-1 h-1.5 w-1.5 rounded-full bg-primary/70"
+                          aria-hidden="true"
+                        />
+                        <span>{objective}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 

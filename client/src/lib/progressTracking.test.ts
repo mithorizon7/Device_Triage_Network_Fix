@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { checkWinCondition, recordAttempt, getProgress } from "./progressTracking";
+import {
+  checkWinCondition,
+  recordAttempt,
+  getProgress,
+  getTutorialCompleted,
+  setTutorialCompleted,
+} from "./progressTracking";
 import type { Controls } from "@shared/schema";
 
 const createLocalStorageMock = () => {
@@ -61,5 +67,17 @@ describe("recordAttempt", () => {
   it("does not award perfect score badge above threshold", () => {
     recordAttempt("scenario-2", "Scenario", 11, true, false);
     expect(getProgress().badges.some((badge) => badge.id === "perfect_score")).toBe(false);
+  });
+
+  it("reads legacy tutorial completion key for backward compatibility", () => {
+    localStorage.setItem("device_triage_tutorial_completed", "true");
+    expect(getTutorialCompleted()).toBe(true);
+  });
+
+  it("writes tutorial completion to canonical key and clears legacy key", () => {
+    localStorage.setItem("device_triage_tutorial_completed", "true");
+    setTutorialCompleted();
+    expect(localStorage.getItem("device_triage_tutorial_complete")).toBe("true");
+    expect(localStorage.getItem("device_triage_tutorial_completed")).toBeNull();
   });
 });

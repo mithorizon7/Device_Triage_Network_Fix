@@ -1,7 +1,8 @@
 import type { Controls } from "@shared/schema";
 
 const PROGRESS_KEY = "device_triage_progress";
-const TUTORIAL_KEY = "device_triage_tutorial_completed";
+const TUTORIAL_KEY = "device_triage_tutorial_complete";
+const LEGACY_TUTORIAL_KEY = "device_triage_tutorial_completed";
 
 export interface ScenarioProgress {
   scenarioId: string;
@@ -230,7 +231,10 @@ export function checkWinCondition(
 
 export function getTutorialCompleted(): boolean {
   try {
-    return localStorage.getItem(TUTORIAL_KEY) === "true";
+    return (
+      localStorage.getItem(TUTORIAL_KEY) === "true" ||
+      localStorage.getItem(LEGACY_TUTORIAL_KEY) === "true"
+    );
   } catch {
     return false;
   }
@@ -239,6 +243,7 @@ export function getTutorialCompleted(): boolean {
 export function setTutorialCompleted(): void {
   try {
     localStorage.setItem(TUTORIAL_KEY, "true");
+    localStorage.removeItem(LEGACY_TUTORIAL_KEY);
   } catch {
     // Ignore localStorage errors
   }

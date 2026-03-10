@@ -564,6 +564,62 @@
     "badgeEarned": "Badge Earned!",
     "scenarioComplete": "Scenario Complete!"
   },
+  "onboardingGuide": {
+    "title": "Start Here",
+    "subtitle": "Follow this order so you can learn the security decisions instead of guessing how the page works.",
+    "progress": "{completed}/{total} core steps complete",
+    "nextStepTitle": "Do This Next",
+    "completeTitle": "Core Loop Complete",
+    "completionSummary": "You have finished the basic triage loop. Use Goals and Insights to finish the scenario or improve the score further.",
+    "zoneGuideTitle": "Quick Zone Guide",
+    "zoneGuideDescription": "Use these zones as your basic trust map before you move anything.",
+    "learningFocusTitle": "What You'll Learn",
+    "fallbackLearningFocus": "How device placement and security controls change network risk.",
+    "viewHintGrid": "Tip: drag a device into a new zone or use the zone menu on the card.",
+    "viewHintList": "Tip: use the zone menu on each row to move a device.",
+    "actions": {
+      "walkthrough": "Walk me through it",
+      "replay": "Replay tutorial",
+      "goToDevices": "Go to devices",
+      "goToControls": "Go to controls",
+      "goToScore": "Go to score",
+      "goToInsights": "Review insights"
+    },
+    "status": {
+      "done": "Done",
+      "current": "Current",
+      "upNext": "Up next"
+    },
+    "steps": {
+      "segment": {
+        "title": "Move a risky device out of Main",
+        "detail": "Start by separating an IoT or visitor device from your trusted devices."
+      },
+      "flag": {
+        "title": "Flag an unknown device",
+        "detail": "Mark devices you cannot identify so you remember to treat them as untrusted."
+      },
+      "control": {
+        "title": "Improve one security control",
+        "detail": "Turn on one protective setting before you judge the score."
+      },
+      "score": {
+        "title": "Check the score and refine",
+        "detail": "Use the risk meter and scenario goals to confirm that risk is going down."
+      }
+    },
+    "nextAction": {
+      "segmentSpecific": "Move {device} out of Main Network. Place it in {zone}.",
+      "segmentGeneric": "Move one IoT or visitor device out of Main Network.",
+      "flagSpecific": "Flag {device} for investigation.",
+      "flagGeneric": "Flag one device marked Unknown for investigation.",
+      "controlSpecific": "Open Security Controls and improve {control}.",
+      "controlGeneric": "Open Security Controls and turn on one high-impact protection.",
+      "scoreTarget": "Check the risk meter and keep working until the score is {target} or lower.",
+      "scoreGeneric": "Check the risk meter and confirm that your recent changes lowered risk.",
+      "done": "You have completed the core triage loop. Use Goals and Insights to finish the scenario."
+    }
+  },
   "tutorial": {
     "chooseScenario": "Choose a Scenario",
     "chooseScenarioDesc": "Start by selecting a scenario. Each one simulates a different network environment with various devices that need to be organized.",

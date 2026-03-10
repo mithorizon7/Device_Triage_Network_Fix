@@ -2,8 +2,8 @@
  * Auto-generated translation keys from en.json
  * DO NOT EDIT MANUALLY - run `node scripts/generate-i18n-types.js` to regenerate
  *
- * Generated: 2026-03-06T20:41:19.283Z
- * Total keys: 596
+ * Generated: 2026-03-10T14:51:49.181Z
+ * Total keys: 634
  */
 
 export type TranslationKey =
@@ -346,6 +346,44 @@ export type TranslationKey =
   | "notifications.riskIncreased"
   | "notifications.riskReduced"
   | "notifications.scenarioComplete"
+  | "onboardingGuide.actions.goToControls"
+  | "onboardingGuide.actions.goToDevices"
+  | "onboardingGuide.actions.goToInsights"
+  | "onboardingGuide.actions.goToScore"
+  | "onboardingGuide.actions.replay"
+  | "onboardingGuide.actions.walkthrough"
+  | "onboardingGuide.completeTitle"
+  | "onboardingGuide.completionSummary"
+  | "onboardingGuide.fallbackLearningFocus"
+  | "onboardingGuide.learningFocusTitle"
+  | "onboardingGuide.nextAction.controlGeneric"
+  | "onboardingGuide.nextAction.controlSpecific"
+  | "onboardingGuide.nextAction.done"
+  | "onboardingGuide.nextAction.flagGeneric"
+  | "onboardingGuide.nextAction.flagSpecific"
+  | "onboardingGuide.nextAction.scoreGeneric"
+  | "onboardingGuide.nextAction.scoreTarget"
+  | "onboardingGuide.nextAction.segmentGeneric"
+  | "onboardingGuide.nextAction.segmentSpecific"
+  | "onboardingGuide.nextStepTitle"
+  | "onboardingGuide.progress"
+  | "onboardingGuide.status.current"
+  | "onboardingGuide.status.done"
+  | "onboardingGuide.status.upNext"
+  | "onboardingGuide.steps.control.detail"
+  | "onboardingGuide.steps.control.title"
+  | "onboardingGuide.steps.flag.detail"
+  | "onboardingGuide.steps.flag.title"
+  | "onboardingGuide.steps.score.detail"
+  | "onboardingGuide.steps.score.title"
+  | "onboardingGuide.steps.segment.detail"
+  | "onboardingGuide.steps.segment.title"
+  | "onboardingGuide.subtitle"
+  | "onboardingGuide.title"
+  | "onboardingGuide.viewHintGrid"
+  | "onboardingGuide.viewHintList"
+  | "onboardingGuide.zoneGuideDescription"
+  | "onboardingGuide.zoneGuideTitle"
   | "pagination.goToNext"
   | "pagination.goToPrevious"
   | "pagination.label"
@@ -944,6 +982,44 @@ export const translationKeys = [
   "notifications.riskIncreased",
   "notifications.riskReduced",
   "notifications.scenarioComplete",
+  "onboardingGuide.actions.goToControls",
+  "onboardingGuide.actions.goToDevices",
+  "onboardingGuide.actions.goToInsights",
+  "onboardingGuide.actions.goToScore",
+  "onboardingGuide.actions.replay",
+  "onboardingGuide.actions.walkthrough",
+  "onboardingGuide.completeTitle",
+  "onboardingGuide.completionSummary",
+  "onboardingGuide.fallbackLearningFocus",
+  "onboardingGuide.learningFocusTitle",
+  "onboardingGuide.nextAction.controlGeneric",
+  "onboardingGuide.nextAction.controlSpecific",
+  "onboardingGuide.nextAction.done",
+  "onboardingGuide.nextAction.flagGeneric",
+  "onboardingGuide.nextAction.flagSpecific",
+  "onboardingGuide.nextAction.scoreGeneric",
+  "onboardingGuide.nextAction.scoreTarget",
+  "onboardingGuide.nextAction.segmentGeneric",
+  "onboardingGuide.nextAction.segmentSpecific",
+  "onboardingGuide.nextStepTitle",
+  "onboardingGuide.progress",
+  "onboardingGuide.status.current",
+  "onboardingGuide.status.done",
+  "onboardingGuide.status.upNext",
+  "onboardingGuide.steps.control.detail",
+  "onboardingGuide.steps.control.title",
+  "onboardingGuide.steps.flag.detail",
+  "onboardingGuide.steps.flag.title",
+  "onboardingGuide.steps.score.detail",
+  "onboardingGuide.steps.score.title",
+  "onboardingGuide.steps.segment.detail",
+  "onboardingGuide.steps.segment.title",
+  "onboardingGuide.subtitle",
+  "onboardingGuide.title",
+  "onboardingGuide.viewHintGrid",
+  "onboardingGuide.viewHintList",
+  "onboardingGuide.zoneGuideDescription",
+  "onboardingGuide.zoneGuideTitle",
   "pagination.goToNext",
   "pagination.goToPrevious",
   "pagination.label",
