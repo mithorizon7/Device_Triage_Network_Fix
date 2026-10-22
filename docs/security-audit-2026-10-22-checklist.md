@@ -18,8 +18,8 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Sign-off Gate
 
-- [x] G-001 [status:verified] Authorized local fixes and initial validation complete. Follow-through resolves braces; deployment sign-off is tracked separately and remains pending.
-- [x] G-002 [status:verified] Production and host gaps are explicitly distinguished from local remediation in the report; no production change or rotation performed.
+- [ ] G-001 [status:in_progress] Local remediation complete; release commit and CI are tracked below. Final sign-off requires the authorized Replit synchronization and live rollout evidence.
+- [ ] G-002 [status:in_progress] Production and host gaps are documented; pinned runtime requires Linux CI and actual Replit build/startup verification before closure.
 - [x] G-003 [status:verified] Final local validation: clean npm ci, full audit, typecheck/lint/110 tests/build/i18n/format, browser journeys and compiled HTTP smoke passed after final code changes.
 - [x] G-004 [status:verified] Report includes A-N matrix, dates, evidence, owners and exact follow-up checks.
 
@@ -37,7 +37,7 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Evidence: customScenarios.ts/tests and author.tsx. Owner: Codex.
 - [x] F-008 [status:verified] [P2] [confidence:0.99] Lazy locale startup now falls back to bundled English, overlapping choices preserve the last selection, and switch failures show localized recovery. Four additional tests pass, including document language synchronization for screen readers.
   - Evidence: i18n.ts, i18n-recovery.test.ts, i18n.test.ts and LanguageSwitcher.tsx. Owner: Codex.
-- [ ] F-009 [status:in_progress] [P1] [confidence:0.99] Actual Replit Node 24 module is 24.13.0, below 24.22.1. Added SHA256-pinned official Linux runtime bootstrap; production startup never downloads code or falls back. Must verify on Linux/Replit before deployment.
+- [ ] F-009 [status:in_progress] [P1] [confidence:0.99] Actual Replit Node 24 module is 24.13.0, below 24.22.1. Added SHA256-pinned official Linux runtime bootstrap; production startup never downloads code or falls back. Linux CI bootstrap verified on 442955d; Replit build/serving runtime must still be verified before deployment closure.
   - Evidence: Replit agent read-only inspection; scripts/replit-runtime.sh and .replit. Owner: Codex/provider.
 
 - [x] F-001 [status:verified] [P1] [confidence:0.99] Runtime pins corrected to patched Node 24.22.1, engine constraints and executable guards added. Isolated validation runtime checksum checked; global and production runtimes still pending owner action.
@@ -67,11 +67,14 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Validation Log
 
+- [x] V-006 [status:verified] 2026-10-22 14:57 EDT: GitHub Linux CI succeeded for release 442955dea8aa15d7610c2da2d80d28f5d14d0b94, including clean installation, checksum-pinned Node bootstrap, full dependency audit, 110 tests, lint/typecheck/i18n/format and build.
+  - Evidence: 2026-10-22 14:57 EDT PASS: https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/39835771198 . Replit deployment is not implied.
+
 - [x] V-005 [status:verified] 2026-10-22 14:54-14:56 EDT: 110 tests/typecheck/ESLint/build/i18n/format pass on final code; no chunk warnings. Browser passed tutorial action gates and persisted completion, 24 locale/viewport/view combinations, four authoring widths, save/import, simulated quota failure, failed preferred-locale download, failed author chunk and reload recovery. HTML/JSON report contents and compiled HTTP/API/header/asset checks passed.
-  - Evidence: protected browser-learner-final.txt, browser-recovery-verified.txt, browser-proof.json.txt, screenshots and http-smoke.mjs output. Test harness waited for tutorial animation before selecting; intentional abort tests produced expected network errors.
+  - Evidence: 2026-10-22 14:56 EDT PASS: protected browser-learner-final.txt, browser-recovery-verified.txt, browser-proof.json.txt, screenshots and http-smoke.mjs output. Test harness waited for tutorial animation before selecting; intentional abort tests produced expected network errors.
 
 - [x] V-004 [status:verified] 2026-10-22 14:23 EDT: typecheck/lint and 109 tests passed after storage/locale recovery changes. First build hit ENOSPC; removed only audit-owned npm cache and redundant public Node archive, retained hashes and evidence. Subsequent build/i18n/format passed. A manual-chunk cycle warning was then corrected; final build and browser rerun still required.
-  - Evidence: npm suite output, audit evidence directory, and vite.config.ts. New error boundary/runtime configuration require final rerun.
+  - Evidence: 2026-10-22 14:23 EDT PASS for tests; first build FAIL (ENOSPC), rerun PASS. npm suite output, audit evidence directory, and vite.config.ts. Later validation V-005 supersedes this snapshot.
 
 - [x] V-001 [status:verified] 2026-10-22: npm 11.19.1 scans, 761 unique npm package/version OSV queries, GHSA/maintainer primary references, official CISA mirror 2026.10.21 checked. Only braces remains in OSV; five related npm build-only entries.
   - Evidence: 2026-10-22 13:16 EDT completed; full npm audit exited 1 with five build-only entries, production audit passed with zero, OSV/KEV checks completed. Protected raw evidence and report list sources/limits.
@@ -89,7 +92,7 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Outcome
 
-Local work completed on codex/security-audit-2026-10-22. Existing performance edits preserved. Production, device changes and incident-response closure remain pending; documented risks above are deferrals, not user approval of risk. See the report for sources, compatibility limits and exact commands.
+Local work completed on codex/security-audit-2026-10-22. Existing performance edits preserved and committed in 442955d; branch pushed and Linux CI passed. Production synchronization, device changes and incident-response closure remain pending; documented risks above are deferrals, not user approval of risk. See the report for sources, compatibility limits and exact commands.
 
 ## Change Log
 
