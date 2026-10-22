@@ -11,6 +11,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import prettier from "prettier";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,7 +32,7 @@ function getAllKeys(obj, prefix = "") {
   return keys;
 }
 
-function main() {
+async function main() {
   console.log("Generating i18n TypeScript types...");
 
   const enData = JSON.parse(fs.readFileSync(EN_LOCALE_PATH, "utf8"));
@@ -41,7 +42,6 @@ function main() {
  * Auto-generated translation keys from en.json
  * DO NOT EDIT MANUALLY - run \`node scripts/generate-i18n-types.js\` to regenerate
  * 
- * Generated: ${new Date().toISOString()}
  * Total keys: ${keys.length}
  */
 
@@ -55,8 +55,12 @@ ${keys.map((k) => `  '${k}',`).join("\n")}
 export type TranslationKeyType = typeof translationKeys[number];
 `;
 
-  fs.writeFileSync(OUTPUT_PATH, output);
+  const formattedOutput = await prettier.format(output, {
+    parser: "typescript",
+  });
+
+  fs.writeFileSync(OUTPUT_PATH, formattedOutput);
   console.log(`Generated ${keys.length} translation keys to ${OUTPUT_PATH}`);
 }
 
-main();
+await main();

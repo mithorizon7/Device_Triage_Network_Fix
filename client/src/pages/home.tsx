@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { lazy, Suspense, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,14 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ScenarioSelector } from "@/components/ScenarioSelector";
 import { ZoneDropTarget } from "@/components/ZoneDropTarget";
-import { DeviceListView } from "@/components/DeviceListView";
 import { RiskMeter } from "@/components/RiskMeter";
-import { ControlsDrawer } from "@/components/ControlsDrawer";
 import { BadgesPanel, CompletionBanner } from "@/components/BadgesPanel";
 import { TutorialOverlay, TutorialTrigger, useTutorial } from "@/components/TutorialOverlay";
-import { ExportPanel } from "@/components/ExportPanel";
 import { WinConditionsCard } from "@/components/WinConditionsCard";
-import { InsightsCard } from "@/components/InsightsCard";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios, getCustomScenariosUpdatedEventName } from "@/lib/customScenarios";
@@ -133,6 +129,60 @@ const zoneGuideIcons: Record<ZoneId, typeof Network> = {
   iot: Shield,
 };
 
+const ControlsDrawer = lazy(() =>
+  import("@/components/ControlsDrawer").then((module) => ({
+    default: module.ControlsDrawer,
+  }))
+);
+const DeviceListView = lazy(() =>
+  import("@/components/DeviceListView").then((module) => ({
+    default: module.DeviceListView,
+  }))
+);
+const InsightsCard = lazy(() =>
+  import("@/components/InsightsCard").then((module) => ({
+    default: module.InsightsCard,
+  }))
+);
+const ExportPanel = lazy(() =>
+  import("@/components/ExportPanel").then((module) => ({
+    default: module.ExportPanel,
+  }))
+);
+
+function SidebarCardSkeleton({ bodyLines = 3, testId }: { bodyLines?: number; testId?: string }) {
+  return (
+    <Card data-testid={testId}>
+      <CardContent className="pt-6">
+        <div className="space-y-3 animate-pulse">
+          <Skeleton className="h-4 w-32 rounded-full" />
+          {Array.from({ length: bodyLines }).map((_, index) => (
+            <Skeleton key={index} className="h-10 w-full rounded-xl" />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ListViewSkeleton() {
+  return (
+    <div className="space-y-4" data-testid="device-list-view-skeleton">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Card key={index}>
+          <CardContent className="pt-6">
+            <div className="space-y-3 animate-pulse">
+              <Skeleton className="h-4 w-32 rounded-full" />
+              <Skeleton className="h-16 w-full rounded-xl" />
+              <Skeleton className="h-16 w-full rounded-xl" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
 export default function Home() {
   const { t } = useTranslation();
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("");
@@ -143,6 +193,7 @@ export default function Home() {
   const [isNewCompletion, setIsNewCompletion] = useState(false);
   const [flaggedDevices, setFlaggedDevices] = useState<Set<string>>(new Set());
   const [scenarioStartRisk, setScenarioStartRisk] = useState<number | null>(null);
+  const [showDeferredSidebar, setShowDeferredSidebar] = useState(false);
   const [lastAction, setLastAction] = useState<{
     type: "deviceMoved" | "controlUpdated" | "unknownFlagged" | "unknownUnflagged";
     deviceId?: string;
@@ -170,6 +221,33 @@ export default function Home() {
       // Ignore localStorage errors
     }
   }, [viewMode]);
+
+  useEffect(() => {
+    if (showDeferredSidebar) return;
+
+    const browserWindow = window as Window & typeof globalThis;
+
+    if (typeof browserWindow.requestIdleCallback === "function") {
+      const idleId = browserWindow.requestIdleCallback(
+        () => {
+          setShowDeferredSidebar(true);
+        },
+        { timeout: 800 }
+      );
+
+      return () => {
+        browserWindow.cancelIdleCallback?.(idleId);
+      };
+    }
+
+    const timeoutId = globalThis.setTimeout(() => {
+      setShowDeferredSidebar(true);
+    }, 200);
+
+    return () => {
+      globalThis.clearTimeout(timeoutId);
+    };
+  }, [showDeferredSidebar]);
 
   const { data: serverScenariosList, isLoading: scenariosLoading } = useQuery<
     Array<{ id: string; title: string; environment: { type: string } }>
@@ -737,14 +815,14 @@ export default function Home() {
     return (
       <div className="min-h-screen app-shell">
         <header className="app-header">
-          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] flex flex-wrap items-center justify-between gap-3 py-3">
             <div className="flex items-center gap-3">
               <Target className="h-6 w-6 text-[hsl(var(--primary))]" />
               <h1 className="text-lg font-semibold font-display tracking-[0.16em] uppercase">
                 {t("app.title")}
               </h1>
             </div>
-            <Skeleton className="h-9 w-[280px]" />
+            <Skeleton className="h-9 w-full max-w-[280px]" />
             <ThemeToggle />
           </div>
         </header>
@@ -767,15 +845,15 @@ export default function Home() {
   return (
     <div className="min-h-screen app-shell">
       <header className="app-header">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] flex flex-wrap items-center justify-between gap-3 py-3">
+          <div className="flex min-w-0 items-center gap-3">
             <Target className="h-6 w-6 text-[hsl(var(--primary))]" aria-hidden="true" />
             <h1 className="text-lg font-semibold font-display tracking-[0.16em] uppercase">
               {t("app.title")}
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:justify-end">
             <ScenarioSelector
               scenarios={allScenarios}
               selectedId={selectedScenarioId}
@@ -1019,14 +1097,16 @@ export default function Home() {
                 onFlagToggle={handleFlagToggle}
               />
             ) : (
-              <DeviceListView
-                devices={currentScenario?.devices || []}
-                deviceZones={deviceZones}
-                onZoneChange={handleZoneChange}
-                scenarioId={selectedScenarioId}
-                flaggedDevices={flaggedDevices}
-                onFlagToggle={handleFlagToggle}
-              />
+              <Suspense fallback={<ListViewSkeleton />}>
+                <DeviceListView
+                  devices={currentScenario?.devices || []}
+                  deviceZones={deviceZones}
+                  onZoneChange={handleZoneChange}
+                  scenarioId={selectedScenarioId}
+                  flaggedDevices={flaggedDevices}
+                  onFlagToggle={handleFlagToggle}
+                />
+              </Suspense>
             )}
           </div>
 
@@ -1052,37 +1132,61 @@ export default function Home() {
             )}
 
             {controls && currentScenario && (
-              <ControlsDrawer
-                controls={controls}
-                onControlChange={handleControlChange}
-                guestNetworkAvailable={guestNetworkAvailable}
-                iotNetworkAvailable={iotNetworkAvailable}
-                scenarioType={currentScenario.environment.type}
-                controlsRegistry={controlsRegistry}
-              />
+              <Suspense
+                fallback={<SidebarCardSkeleton bodyLines={4} testId="controls-drawer-skeleton" />}
+              >
+                {showDeferredSidebar ? (
+                  <ControlsDrawer
+                    controls={controls}
+                    onControlChange={handleControlChange}
+                    guestNetworkAvailable={guestNetworkAvailable}
+                    iotNetworkAvailable={iotNetworkAvailable}
+                    scenarioType={currentScenario.environment.type}
+                    controlsRegistry={controlsRegistry}
+                  />
+                ) : (
+                  <SidebarCardSkeleton bodyLines={4} testId="controls-drawer-skeleton" />
+                )}
+              </Suspense>
             )}
 
             {currentScenario && controls && (
-              <InsightsCard
-                scenario={currentScenario}
-                deviceZones={deviceZones}
-                controls={controls}
-                explanations={scoreResult.explanations}
-                flaggedDevices={flaggedDevices}
-                actionInsight={actionInsight}
-                maxExplainItems={scoringRules?.explainPanel?.maxItems ?? 8}
-                explainSortOrder={scoringRules?.explainPanel?.sortOrder}
-                availableControlIds={availableControlIds}
-              />
+              <Suspense
+                fallback={<SidebarCardSkeleton bodyLines={5} testId="insights-card-skeleton" />}
+              >
+                {showDeferredSidebar ? (
+                  <InsightsCard
+                    scenario={currentScenario}
+                    deviceZones={deviceZones}
+                    controls={controls}
+                    explanations={scoreResult.explanations}
+                    flaggedDevices={flaggedDevices}
+                    actionInsight={actionInsight}
+                    maxExplainItems={scoringRules?.explainPanel?.maxItems ?? 8}
+                    explainSortOrder={scoringRules?.explainPanel?.sortOrder}
+                    availableControlIds={availableControlIds}
+                  />
+                ) : (
+                  <SidebarCardSkeleton bodyLines={5} testId="insights-card-skeleton" />
+                )}
+              </Suspense>
             )}
 
             {currentScenario && controls && (
-              <ExportPanel
-                scenario={currentScenario}
-                deviceZones={deviceZones}
-                controls={controls}
-                scoreResult={scoreResult}
-              />
+              <Suspense
+                fallback={<SidebarCardSkeleton bodyLines={2} testId="export-panel-skeleton" />}
+              >
+                {showDeferredSidebar ? (
+                  <ExportPanel
+                    scenario={currentScenario}
+                    deviceZones={deviceZones}
+                    controls={controls}
+                    scoreResult={scoreResult}
+                  />
+                ) : (
+                  <SidebarCardSkeleton bodyLines={2} testId="export-panel-skeleton" />
+                )}
+              </Suspense>
             )}
 
             <BadgesPanel progress={userProgress} />

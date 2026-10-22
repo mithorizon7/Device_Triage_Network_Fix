@@ -5,3 +5,12 @@ server/public
 vite.config.ts.*
 *.tar.gz
 .eslintcache
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+security-evidence/
+.playwright-cli/
+output/playwright/
+.runtime/

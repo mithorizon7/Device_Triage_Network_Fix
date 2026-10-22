@@ -32,13 +32,13 @@ export function ScenarioSelector({
   const { t } = useTranslation();
 
   if (isLoading) {
-    return <div className="h-10 w-[280px] bg-muted/70 rounded-full animate-pulse" />;
+    return <div className="h-10 w-full sm:w-[280px] bg-muted/70 rounded-full animate-pulse" />;
   }
 
   return (
     <Select value={selectedId} onValueChange={onSelect}>
       <SelectTrigger
-        className="w-[280px] rounded-full text-sm font-semibold tracking-[0.04em]"
+        className="w-full sm:w-[280px] rounded-full text-sm font-semibold tracking-[0.04em]"
         data-testid="select-scenario"
         aria-label={t("scenarios.select")}
       >

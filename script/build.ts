@@ -1,7 +1,7 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
-import { execSync } from "child_process";
+import { execFileSync, execSync } from "child_process";
 
 // Run i18n validation and type generation before build
 function runI18nChecks() {
@@ -62,6 +62,9 @@ async function buildAll() {
   await viteBuild();
 
   console.log("building server...");
+  const revision = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  if (!/^[a-f0-9]{40}$/.test(revision)) throw new Error("Cannot identify build revision");
+  const dirty = execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim() !== "";
   const pkg = JSON.parse(await readFile("package.json", "utf-8"));
   const allDeps = [
     ...Object.keys(pkg.dependencies || {}),
@@ -77,6 +80,8 @@ async function buildAll() {
     outfile: "dist/index.cjs",
     define: {
       "process.env.NODE_ENV": '"production"',
+      "process.env.APP_BUILD_SHA": JSON.stringify(revision),
+      "process.env.APP_BUILD_DIRTY": JSON.stringify(String(dirty)),
     },
     minify: true,
     external: externals,

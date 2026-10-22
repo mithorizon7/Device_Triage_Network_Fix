@@ -562,7 +562,8 @@
     "riskDeltaGeneric": "{delta} risk from recent change",
     "actionWhy": "Recent action: {action}",
     "badgeEarned": "Badge Earned!",
-    "scenarioComplete": "Scenario Complete!"
+    "scenarioComplete": "Scenario Complete!",
+    "languageLoadError": "Could not load that language. Check your connection and try again."
   },
   "onboardingGuide": {
     "title": "Start Here",
@@ -757,7 +758,8 @@
       "iot_device": "IoT device",
       "visitor_device": "visitor device",
       "trusted_work_device": "trusted work device"
-    }
+    },
+    "storageError": "Could not update saved scenarios. Browser storage may be full or unavailable. Free some space or enable storage and try again. An open draft will not be closed."
   },
   "notFound": {
     "title": "404 Page Not Found",
@@ -802,5 +804,10 @@
   },
   "footer": {
     "disclaimer": "All addresses and identifiers are fictional for training purposes. No real network data is collected."
+  },
+  "errors": {
+    "unexpectedTitle": "This page could not finish loading",
+    "unexpectedDescription": "Check your connection, then reload to try again. Unsaved changes may be lost.",
+    "reload": "Reload page"
   }
 }

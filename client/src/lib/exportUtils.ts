@@ -224,7 +224,7 @@ export function exportAsHtml(data: ExportData, options: ExportHtmlOptions): void
   const resolvedFileNamePrefix = fileNamePrefix || "network-triage-report";
 
   const html = `<!DOCTYPE html>
-<html lang="${locale || "en"}">
+<html lang="${esc(locale || "en")}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -132,21 +132,33 @@ export default function AuthorPage() {
         id: `${scenario.id}_copy_${Date.now()}`,
         title: t("author.copyTitle", { title: scenario.title }),
       };
-      saveCustomScenario(duplicate);
+      if (!saveCustomScenario(duplicate)) {
+        toast({ variant: "destructive", title: t("author.storageError") });
+        return;
+      }
       setCustomScenarios(getCustomScenarios());
     },
-    [t]
+    [t, toast]
   );
 
-  const handleDelete = useCallback((scenarioId: string) => {
-    deleteCustomScenario(scenarioId);
-    setCustomScenarios(getCustomScenarios());
-  }, []);
+  const handleDelete = useCallback(
+    (scenarioId: string) => {
+      if (!deleteCustomScenario(scenarioId)) {
+        toast({ variant: "destructive", title: t("author.storageError") });
+        return;
+      }
+      setCustomScenarios(getCustomScenarios());
+    },
+    [t, toast]
+  );
 
   const handleSave = useCallback(() => {
     if (editingScenario) {
       const isNew = !customScenarios.some((s) => s.id === editingScenario.id);
-      saveCustomScenario(editingScenario);
+      if (!saveCustomScenario(editingScenario)) {
+        toast({ variant: "destructive", title: t("author.storageError") });
+        return;
+      }
       setCustomScenarios(getCustomScenarios());
       setEditingScenario(null);
 
@@ -170,6 +182,11 @@ export default function AuthorPage() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      if (file.size > 1_000_000) {
+        setImportError(t("author.importError"));
+        e.target.value = "";
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -185,7 +202,10 @@ export default function AuthorPage() {
           const { scenario: sanitizedScenario, invalidDeviceIds } =
             sanitizeScenarioNetworkIds(scenario);
           sanitizedScenario.id = `imported_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-          saveCustomScenario(sanitizedScenario);
+          if (!saveCustomScenario(sanitizedScenario)) {
+            setImportError(t("author.storageError"));
+            return;
+          }
           setCustomScenarios(getCustomScenarios());
           setImportError(null);
           if (invalidDeviceIds.length > 0) {
@@ -198,6 +218,7 @@ export default function AuthorPage() {
           setImportError(t("author.importError"));
         }
       };
+      reader.onerror = () => setImportError(t("author.importError"));
       reader.readAsText(file);
       e.target.value = "";
     },
@@ -292,7 +313,7 @@ export default function AuthorPage() {
     return (
       <div className="min-h-screen app-shell">
         <header className="app-header">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] flex flex-wrap items-center justify-between gap-3 py-3">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -307,7 +328,7 @@ export default function AuthorPage() {
                 {t("author.editScenario")}
               </h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <Button variant="outline" onClick={handleCancel} data-testid="button-cancel">
                 {t("author.cancel")}
               </Button>
@@ -419,7 +440,7 @@ export default function AuthorPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-2">
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
                 {t("author.devicesCount", { count: editingScenario.devices.length })}
               </CardTitle>
@@ -528,7 +549,7 @@ export default function AuthorPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-2">
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-base font-display tracking-[0.12em] uppercase">
                 {t("author.learningObjectives")}
               </CardTitle>
@@ -676,7 +697,7 @@ export default function AuthorPage() {
   return (
     <div className="min-h-screen app-shell">
       <header className="app-header">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] flex flex-wrap items-center justify-between gap-3 py-3">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -691,7 +712,7 @@ export default function AuthorPage() {
               {t("author.title")}
             </h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" asChild>
               <label className="cursor-pointer" data-testid="button-import">
                 <Upload className="h-4 w-4 mr-2" />

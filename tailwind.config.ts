@@ -1,10 +1,17 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: "class",
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      // Keep the v3 visual scale while using the maintained v4 compiler.
+      boxShadow: {
+        sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        DEFAULT: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+      },
+      blur: { sm: "4px", DEFAULT: "8px" },
+      backdropBlur: { sm: "4px", DEFAULT: "8px" },
       borderRadius: {
         lg: ".5625rem" /* 9px */,
         md: ".375rem" /* 6px */,
@@ -104,5 +111,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;

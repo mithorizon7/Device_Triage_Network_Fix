@@ -1,7 +1,8 @@
-import type { Scenario } from "@shared/schema";
+import { scenarioSchema, type Scenario } from "@shared/schema";
 
 const CUSTOM_SCENARIOS_KEY = "device_triage_custom_scenarios";
 const CUSTOM_SCENARIOS_UPDATED_EVENT = "deviceTriageCustomScenariosUpdated";
+const MAX_STORED_SCENARIOS_SIZE = 1_000_000;
 
 function notifyCustomScenariosUpdated(): void {
   if (typeof window === "undefined") return;
@@ -12,15 +13,25 @@ export function getCustomScenarios(): Scenario[] {
   try {
     const stored = localStorage.getItem(CUSTOM_SCENARIOS_KEY);
     if (!stored) return [];
-    return JSON.parse(stored);
+    if (stored.length > MAX_STORED_SCENARIOS_SIZE) return [];
+    const parsed: unknown = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.flatMap((value) => {
+      const result = scenarioSchema.safeParse(value);
+      return result.success ? [sanitizeScenarioNetworkIds(result.data).scenario] : [];
+    });
   } catch {
     return [];
   }
 }
 
-export function saveCustomScenario(scenario: Scenario): void {
+export function saveCustomScenario(scenario: Scenario): boolean {
   try {
-    const { scenario: sanitized } = sanitizeScenarioNetworkIds(scenario);
+    // Preserve legacy oversized data rather than replacing it after a failed read.
+    if ((localStorage.getItem(CUSTOM_SCENARIOS_KEY)?.length ?? 0) > MAX_STORED_SCENARIOS_SIZE) {
+      return false;
+    }
+    const { scenario: sanitized } = sanitizeScenarioNetworkIds(scenarioSchema.parse(scenario));
     const existing = getCustomScenarios();
     const index = existing.findIndex((s) => s.id === scenario.id);
     if (index >= 0) {
@@ -28,21 +39,28 @@ export function saveCustomScenario(scenario: Scenario): void {
     } else {
       existing.push(sanitized);
     }
-    localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(existing));
+    const serialized = JSON.stringify(existing);
+    if (serialized.length > MAX_STORED_SCENARIOS_SIZE) return false;
+    localStorage.setItem(CUSTOM_SCENARIOS_KEY, serialized);
     notifyCustomScenariosUpdated();
+    return true;
   } catch {
-    // Ignore localStorage errors (e.g., quota exceeded, private browsing)
+    return false;
   }
 }
 
-export function deleteCustomScenario(scenarioId: string): void {
+export function deleteCustomScenario(scenarioId: string): boolean {
   try {
+    if ((localStorage.getItem(CUSTOM_SCENARIOS_KEY)?.length ?? 0) > MAX_STORED_SCENARIOS_SIZE) {
+      return false;
+    }
     const existing = getCustomScenarios();
     const filtered = existing.filter((s) => s.id !== scenarioId);
     localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(filtered));
     notifyCustomScenariosUpdated();
+    return true;
   } catch {
-    // Ignore localStorage errors
+    return false;
   }
 }
 

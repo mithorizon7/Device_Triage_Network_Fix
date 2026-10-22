@@ -108,7 +108,7 @@ export function DeviceListView({
                       className={`py-3 first:pt-0 last:pb-0 ${flaggedDevices.has(device.id) ? "bg-[hsl(var(--accent)/0.12)] -mx-4 px-4 rounded-xl border border-[hsl(var(--accent)/0.25)]" : ""}`}
                       data-testid={`list-device-${device.id}`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="flex-shrink-0 p-2 rounded-lg bg-muted/70 border border-border/60 cursor-help">
@@ -121,7 +121,7 @@ export function DeviceListView({
                         </Tooltip>
 
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{getLabel(device)}</p>
+                          <p className="text-sm font-medium break-words">{getLabel(device)}</p>
                           <p className="text-xs text-muted-foreground">
                             {t(`devices.${device.type}`, {
                               defaultValue:
@@ -157,7 +157,7 @@ export function DeviceListView({
                           )}
                         </div>
 
-                        <div className="flex-shrink-0 flex items-center gap-2">
+                        <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
                           <label className="sr-only" htmlFor={`zone-select-${device.id}`}>
                             {t("devices.moveToZone", { device: getLabel(device) })}
                           </label>
@@ -167,7 +167,7 @@ export function DeviceListView({
                           >
                             <SelectTrigger
                               id={`zone-select-${device.id}`}
-                              className="w-[140px] text-xs rounded-full"
+                              className="w-full sm:w-[140px] text-xs rounded-full"
                               data-testid={`list-select-zone-${device.id}`}
                             >
                               <SelectValue />

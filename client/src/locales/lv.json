@@ -562,7 +562,8 @@
     "riskDeltaGeneric": "{delta} risks no nesenām izmaiņām",
     "actionWhy": "Nesenā darbība: {action}",
     "badgeEarned": "Nopelnīta nozīmīte!",
-    "scenarioComplete": "Scenārijs pabeigts!"
+    "scenarioComplete": "Scenārijs pabeigts!",
+    "languageLoadError": "Neizdevās ielādēt šo valodu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
   },
   "onboardingGuide": {
     "title": "Sāciet šeit",
@@ -757,7 +758,8 @@
       "iot_device": "IoT ierīce",
       "visitor_device": "viesu ierīce",
       "trusted_work_device": "uzticama darba ierīce"
-    }
+    },
+    "storageError": "Neizdevās atjaunināt saglabātos scenārijus. Pārlūka krātuve var būt pilna vai nepieejama. Atbrīvojiet vietu vai iespējojiet krātuvi un mēģiniet vēlreiz. Atvērts melnraksts netiks aizvērts."
   },
   "notFound": {
     "title": "404 Lapa nav atrasta",
@@ -802,5 +804,10 @@
   },
   "footer": {
     "disclaimer": "Visas adreses un identifikatori ir izdomāti apmācību nolūkiem. Nekādi reāli tīkla dati netiek apkopoti."
+  },
+  "errors": {
+    "unexpectedTitle": "Šo lapu neizdevās pilnībā ielādēt",
+    "unexpectedDescription": "Pārbaudiet savienojumu un pārlādējiet lapu, lai mēģinātu vēlreiz. Nesaglabātās izmaiņas var tikt zaudētas.",
+    "reload": "Pārlādēt lapu"
   }
 }

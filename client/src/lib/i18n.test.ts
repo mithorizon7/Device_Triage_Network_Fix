@@ -1,8 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import i18n from "./i18n";
+import { describe, it, expect, beforeEach, beforeAll, afterEach, vi } from "vitest";
+import i18n, { initializeI18n } from "./i18n";
 import en from "../locales/en.json";
 import lv from "../locales/lv.json";
 import ru from "../locales/ru.json";
+
+afterEach(() => vi.unstubAllGlobals());
 
 // Helper to flatten nested objects into dot-notation keys
 function flattenKeys(obj: Record<string, unknown>, prefix = ""): string[] {
@@ -22,6 +24,10 @@ describe("i18n Translation Integrity", () => {
   const locales = { en, lv, ru };
   const localeNames = ["en", "lv", "ru"] as const;
   const baseKeys = flattenKeys(en);
+
+  beforeAll(async () => {
+    await initializeI18n();
+  });
 
   describe("Key Parity", () => {
     it("should have English as canonical locale with all keys", () => {
@@ -138,6 +144,18 @@ describe("i18n Translation Integrity", () => {
       const translation = i18n.t("app.title");
       expect(translation).not.toContain("[MISSING:");
       expect(translation).not.toBe("app.title");
+    });
+
+    it("keeps the most recent language choice when requests overlap", async () => {
+      await Promise.all([i18n.changeLanguage("ru"), i18n.changeLanguage("en")]);
+      expect(i18n.language).toBe("en");
+    });
+
+    it("updates the document language for assistive technology", async () => {
+      const documentElement = { lang: "en" };
+      vi.stubGlobal("document", { documentElement });
+      await i18n.changeLanguage("lv");
+      expect(documentElement.lang).toBe("lv");
     });
 
     it.each(localeNames)("should translate app.title in %s", async (locale) => {

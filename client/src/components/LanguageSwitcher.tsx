@@ -8,14 +8,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { languages } from "@/lib/i18n";
+import { useToast } from "@/hooks/use-toast";
 
 export function LanguageSwitcher() {
   const { i18n, t } = useTranslation();
+  const { toast } = useToast();
 
   const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0];
 
-  const handleLanguageChange = (code: string) => {
-    i18n.changeLanguage(code);
+  const handleLanguageChange = async (code: string) => {
+    try {
+      await i18n.changeLanguage(code);
+    } catch {
+      toast({ variant: "destructive", title: t("notifications.languageLoadError") });
+    }
   };
 
   return (

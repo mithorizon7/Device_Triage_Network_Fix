@@ -2,8 +2,7 @@
  * Auto-generated translation keys from en.json
  * DO NOT EDIT MANUALLY - run `node scripts/generate-i18n-types.js` to regenerate
  *
- * Generated: 2026-03-10T14:51:49.181Z
- * Total keys: 634
+ * Total keys: 639
  */
 
 export type TranslationKey =
@@ -74,6 +73,7 @@ export type TranslationKey =
   | "author.scenarioNotesPlaceholder"
   | "author.scenarioTitle"
   | "author.scenarioTitlePlaceholder"
+  | "author.storageError"
   | "author.title"
   | "author.winConditions"
   | "badges.badgeEarned"
@@ -249,6 +249,9 @@ export type TranslationKey =
   | "environmentTypes.other"
   | "environmentTypes.public"
   | "environmentTypes.school"
+  | "errors.reload"
+  | "errors.unexpectedDescription"
+  | "errors.unexpectedTitle"
   | "explain.collapseExplanations"
   | "explain.expandExplanations"
   | "explain.factorsAffecting"
@@ -341,6 +344,7 @@ export type TranslationKey =
   | "notFound.title"
   | "notifications.actionWhy"
   | "notifications.badgeEarned"
+  | "notifications.languageLoadError"
   | "notifications.riskDelta"
   | "notifications.riskDeltaGeneric"
   | "notifications.riskIncreased"
@@ -710,6 +714,7 @@ export const translationKeys = [
   "author.scenarioNotesPlaceholder",
   "author.scenarioTitle",
   "author.scenarioTitlePlaceholder",
+  "author.storageError",
   "author.title",
   "author.winConditions",
   "badges.badgeEarned",
@@ -885,6 +890,9 @@ export const translationKeys = [
   "environmentTypes.other",
   "environmentTypes.public",
   "environmentTypes.school",
+  "errors.reload",
+  "errors.unexpectedDescription",
+  "errors.unexpectedTitle",
   "explain.collapseExplanations",
   "explain.expandExplanations",
   "explain.factorsAffecting",
@@ -977,6 +985,7 @@ export const translationKeys = [
   "notFound.title",
   "notifications.actionWhy",
   "notifications.badgeEarned",
+  "notifications.languageLoadError",
   "notifications.riskDelta",
   "notifications.riskDeltaGeneric",
   "notifications.riskIncreased",
