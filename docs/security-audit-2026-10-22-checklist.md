@@ -20,17 +20,17 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 - [ ] G-001 [status:in_progress] Local remediation complete; release commit and CI are tracked below. Final sign-off requires the authorized Replit synchronization and live rollout evidence.
 - [ ] G-002 [status:in_progress] Production and host gaps are documented; pinned runtime requires Linux CI and actual Replit build/startup verification before closure.
-- [x] G-003 [status:verified] 2026-10-23 final recheck: full npm audit zero, typecheck/lint/110 tests/build/i18n/format pass after the last lint configuration change. Prior application browser/HTTP checks retained; live checks remain separate.
+- [x] G-003 [status:verified] Final 2026-10-23 local recheck after cache/tooling exclusions: typecheck, lint, 110 tests, build, i18n lint and formatting pass; npm audit zero. Replit identified its pre-existing .cache/.bun/install/cache tree as the hosted lint issue; hosted standard lint remains separate.
 - [x] G-004 [status:verified] Report includes A-N matrix, dates, evidence, owners and exact follow-up checks.
 
 ## Rerun Matrix
 
-- [x] G-010 [status:verified] All affected checks rerun after the last lint configuration change. Application content is unchanged; final CI and deployment provenance remain separate gates.
+- [x] G-010 [status:verified] Complete local suite rerun after the final Replit-specific lint discovery fix. Application bytes are unchanged; hosted standard lint and final provenance still required.
 - [ ] G-011 [status:in_progress] Freeze final dependency versions and separately verify remote deployment evidence.
 
 ## Findings Log
 
-- [x] F-011 [status:verified] [P2] [confidence:0.99] ESLint did not inherit git ignores and scanned saved browser/HTTP audit helpers as source. Excluded only generated evidence, browser output, and downloaded runtime directories; complete release checks pass. Explicit discovery checks confirm client and server source remain covered.
+- [ ] F-011 [status:in_progress] [P2] [confidence:0.99] ESLint scanned generated evidence and Replit's pre-existing .cache/.bun/install/cache dependencies, causing false source errors locally and heap exhaustion on Replit. Exclusions now also cover generated .cache and .local tooling; final checks and standard hosted lint rerun required. Client/server source remains covered.
   - Evidence: 2026-10-23 release recheck failed on security-evidence helper snippets, not application source. Owner: Codex.
 
 - [x] F-010 [status:verified] [P2] [confidence:0.99] Browser checks exposed fixed-width mobile headers and legacy variable shorthand after the CSS migration. Headers/list controls now wrap; shorthand is converted to explicit var() in shared primitives. Final browser rerun passed, including authoring widths and deliberate chunk/locale network failures.
@@ -74,7 +74,10 @@ Security audit with repository remediation. Follow-through authorization on 2026
 ## Validation Log
 
 - [x] V-007 [status:verified] 2026-10-23 14:31-14:34 EDT: Node 24.22.1/npm 11.19.1; fresh full npm audit reports zero vulnerabilities. Typecheck, lint, 110 tests, build, i18n lint and formatting pass after F-011. Client bundle sizes are unchanged.
-  - Evidence: protected security-evidence/2026-10-23/release-validation.txt and npm-audit-release.json. The separately installed current shell runtime was observed, not installed by this audit.
+  - Evidence: 2026-10-23 14:34 EDT PASS: protected security-evidence/2026-10-23/release-validation.txt and npm-audit-release.json. The separately installed current shell runtime was observed, not installed by this audit.
+
+- [x] V-008 [status:verified] 2026-10-23 14:42-14:45 EDT: complete local validation passed after cache/tooling exclusions; ESLint discovery explicitly ignores generated directories while covering client/server source. Clean compiled 3d1051c startup/HTTP smoke also passed before this lint-only change.
+  - Evidence: 2026-10-23 14:45 EDT PASS: protected cache-fix-validation.txt, lint-discovery.jsonl, clean-release-health.json, clean-release-start.txt and local-http-smoke.txt. Hosted checks remain separate.
 
 - [x] V-006 [status:verified] 2026-10-22 14:57 EDT: GitHub Linux CI succeeded for release 442955dea8aa15d7610c2da2d80d28f5d14d0b94, including clean installation, checksum-pinned Node bootstrap, full dependency audit, 110 tests, lint/typecheck/i18n/format and build.
   - Evidence: 2026-10-22 14:57 EDT PASS: https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/39835771198 . Replit deployment is not implied.

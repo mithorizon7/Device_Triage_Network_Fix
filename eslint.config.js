@@ -16,6 +16,8 @@ export default [
       ".playwright-cli/**",
       "output/playwright/**",
       ".runtime/**",
+      ".cache/**",
+      ".local/**",
       "**/*.d.ts",
     ],
   },
