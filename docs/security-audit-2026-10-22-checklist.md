@@ -30,6 +30,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Findings Log
 
+- [ ] F-013 [status:in_progress] [P2] [confidence:0.99] Replit's standard formatting check scanned generated .local tooling/state and .upm/store.json. Align Git, formatter and lint exclusions for generated provider directories without excluding application source; rerun standard hosted checks.
+  - Evidence: Replit validation of 891ed42: 118 tests/build/lint/audit passed; standard formatting failed only on generated state. Owner: Codex.
+
 - [ ] F-012 [status:in_progress] [P1] [confidence:0.99] Live report inspection showed language switching reset placements and controls: Smart TV returned to Main, IoT control returned off. Home's initialization effect depended on translation identity; equivalent custom-scenario focus refreshes could also reset work. Separate session initialization from translated warnings and guard equivalent scenario data; add regression tests and redeploy.
   - Evidence: 2026-10-23 live-report.json and live-mobile-verified.png, report-content assertion failed with main !== iot. Earlier layout-only checks passed but did not assert learner state. Owner: Codex.
 
@@ -62,6 +65,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Fix Log
 
+- [x] P-007 [status:verified] F-013: align .gitignore, .prettierignore and eslint.config.js for generated .cache/.local/.upm/.runtime state. Local standard lint/format pass and explicit ignore-discovery tests leave client/server source covered. Hosted standard formatting remains a release check.
+  - Addresses: F-013. Evidence: protected generated-state-checks.txt and repository ignore configuration.
+
 - [x] P-006 [status:verified] F-012: separated scenario initialization from translated warnings, keyed sessions by canonical scenario content, and reused safe initial-state mapping for resets. Scoring waits for the matching initialized session; initial/reset score notifications no longer report a false increase. Eight new tests pass; real local browser/report checks pass.
   - Addresses: F-012. Evidence: scenarioSession.ts/tests, home.tsx, local-session-regression.txt and local-session-report-proof.json. Hosted redeployment still required.
 
@@ -78,6 +84,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Addresses: F-004, F-005. Evidence: CI config review, schema regression tests and successful full checks.
 
 ## Validation Log
+
+- [x] V-010 [status:verified] 2026-10-23 15:17 EDT: standard local lint and formatting pass after the generated-state exclusion fix; formatter discovery explicitly ignores provider state and retains application source. GitHub main and branch CI for functional fix 891ed42 passed all 118 tests and complete release checks. Replit also passed build/lint/118 tests/audit for that revision; hosted formatting fix still being synchronized.
+  - Evidence: 2026-10-23 15:17 EDT PASS: protected generated-state-checks.txt and ci-main-session-final.json/ci-branch-session-final.json; https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/40009504018 .
 
 - [x] V-009 [status:verified] 2026-10-23 15:07-15:11 EDT: final learner-session fix passes typecheck, lint, 118 tests, build, i18n and formatting. Local production browser passed tutorial, 24 locale/view/viewport combinations, custom focus refresh, scenario change, author save/import and quota recovery. Downloaded report retains Smart TV in IoT, enabled IoT control and risk 51.7 (initial 67.7).
   - Evidence: 2026-10-23 15:11 EDT PASS: protected local-session-regression.txt, local-session-report-proof.json, session-fix-format.txt and direct command output. The failed first-live report is preserved separately; final live rerun remains required.

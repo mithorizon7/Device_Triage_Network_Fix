@@ -9,6 +9,12 @@ coverage
 .vite
 .next
 .cache
+.local
+.runtime
+.upm
+security-evidence
+.playwright-cli
+output/playwright
 .tmp
 build
 **/*.min.js

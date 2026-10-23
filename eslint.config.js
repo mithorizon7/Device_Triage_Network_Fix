@@ -18,6 +18,7 @@ export default [
       ".runtime/**",
       ".cache/**",
       ".local/**",
+      ".upm/**",
       "**/*.d.ts",
     ],
   },
