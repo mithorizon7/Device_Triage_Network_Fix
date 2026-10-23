@@ -7,7 +7,17 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 
 export default [
   {
-    ignores: ["dist/**", "client/dist/**", "server/dist/**", "node_modules/**", "**/*.d.ts"],
+    ignores: [
+      "dist/**",
+      "client/dist/**",
+      "server/dist/**",
+      "node_modules/**",
+      "security-evidence/**",
+      ".playwright-cli/**",
+      "output/playwright/**",
+      ".runtime/**",
+      "**/*.d.ts",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

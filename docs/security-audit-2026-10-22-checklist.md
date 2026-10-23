@@ -20,15 +20,18 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 - [ ] G-001 [status:in_progress] Local remediation complete; release commit and CI are tracked below. Final sign-off requires the authorized Replit synchronization and live rollout evidence.
 - [ ] G-002 [status:in_progress] Production and host gaps are documented; pinned runtime requires Linux CI and actual Replit build/startup verification before closure.
-- [x] G-003 [status:verified] Final local validation: clean npm ci, full audit, typecheck/lint/110 tests/build/i18n/format, browser journeys and compiled HTTP smoke passed after final code changes.
+- [x] G-003 [status:verified] 2026-10-23 final recheck: full npm audit zero, typecheck/lint/110 tests/build/i18n/format pass after the last lint configuration change. Prior application browser/HTTP checks retained; live checks remain separate.
 - [x] G-004 [status:verified] Report includes A-N matrix, dates, evidence, owners and exact follow-up checks.
 
 ## Rerun Matrix
 
-- [x] G-010 [status:verified] All affected code checks rerun after final code edits; only audit documentation changes follow local validation.
+- [x] G-010 [status:verified] All affected checks rerun after the last lint configuration change. Application content is unchanged; final CI and deployment provenance remain separate gates.
 - [ ] G-011 [status:in_progress] Freeze final dependency versions and separately verify remote deployment evidence.
 
 ## Findings Log
+
+- [x] F-011 [status:verified] [P2] [confidence:0.99] ESLint did not inherit git ignores and scanned saved browser/HTTP audit helpers as source. Excluded only generated evidence, browser output, and downloaded runtime directories; complete release checks pass. Explicit discovery checks confirm client and server source remain covered.
+  - Evidence: 2026-10-23 release recheck failed on security-evidence helper snippets, not application source. Owner: Codex.
 
 - [x] F-010 [status:verified] [P2] [confidence:0.99] Browser checks exposed fixed-width mobile headers and legacy variable shorthand after the CSS migration. Headers/list controls now wrap; shorthand is converted to explicit var() in shared primitives. Final browser rerun passed, including authoring widths and deliberate chunk/locale network failures.
   - Evidence: 390px overflow reproduced (979px scroll width), then 24 locale/viewport/grid-list combinations passed. Owner: Codex.
@@ -56,6 +59,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Fix Log
 
+- [x] P-005 [status:verified] F-011: eslint.config.js excludes generated evidence/runtime directories already ignored by Git, without excluding application source.
+  - Addresses: F-011. Evidence: ESLint isPathIgnored checks and complete 2026-10-23 release validation.
+
 - [x] P-001 [status:verified] F-001: .nvmrc, .replit, package.json and scripts/check-runtime.cjs.
   - Addresses: F-001. Evidence: guarded patched Node configuration and tested Node 24.22.1 binary.
 - [x] P-002 [status:verified] F-002/F-006: package-lock.json targeted updates; obsolete unused Drizzle and Vite plugins removed; server/vite.ts Host validation restored.
@@ -66,6 +72,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Addresses: F-004, F-005. Evidence: CI config review, schema regression tests and successful full checks.
 
 ## Validation Log
+
+- [x] V-007 [status:verified] 2026-10-23 14:31-14:34 EDT: Node 24.22.1/npm 11.19.1; fresh full npm audit reports zero vulnerabilities. Typecheck, lint, 110 tests, build, i18n lint and formatting pass after F-011. Client bundle sizes are unchanged.
+  - Evidence: protected security-evidence/2026-10-23/release-validation.txt and npm-audit-release.json. The separately installed current shell runtime was observed, not installed by this audit.
 
 - [x] V-006 [status:verified] 2026-10-22 14:57 EDT: GitHub Linux CI succeeded for release 442955dea8aa15d7610c2da2d80d28f5d14d0b94, including clean installation, checksum-pinned Node bootstrap, full dependency audit, 110 tests, lint/typecheck/i18n/format and build.
   - Evidence: 2026-10-22 14:57 EDT PASS: https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/39835771198 . Replit deployment is not implied.
