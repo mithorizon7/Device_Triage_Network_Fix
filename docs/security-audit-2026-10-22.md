@@ -2,7 +2,42 @@
 
 Audit window: 22 October 2026, approximately 12:55-13:25 America/New_York (16:55-17:25 UTC). Advisory reference period: 15-22 October, plus older unresolved dependencies. Branch: `codex/security-audit-2026-10-22`, based on `b4279e5`. This report distinguishes local results from deployment evidence. At the end of the initial audit no production changes, global installations, credential rotations, or incident-recovery claims were made. The user subsequently authorized fixes, commit/push, and deployment; follow-through is recorded below.
 
-## Urgent actions and current result
+## Verified Application Release: 23 October 2026
+
+The authorized application release is live at [Device Triage](https://devicetriage.replit.app). Application fixes are committed and pushed to `main` and `codex/security-audit-2026-10-22`. Subsequent commits record audit evidence only; they do not imply that production is running a different application revision.
+
+| Evidence layer          | Verified result                                                                                                                                                                                                                                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production revision     | `ade9affbd2c2019facc3e51f58c5da9cae7e3311`, `dirty: false`                                                                                                                                                                                                                                                     |
+| Reviewed source tree    | `fe4a443d190bdcc1c3cb9900d2dde7cd3fc8b67c`; matching clean Replit release branch                                                                                                                                                                                                                               |
+| Replit service          | `a636909f-cbeb-406c-bc91-5c9e186a0bce`, existing domain and Autoscale identity retained                                                                                                                                                                                                                        |
+| Publication identity    | `c30def56-9831-440e-b09d-d0f7c520b59c`; this service identity is reused across publishes, so live revision was checked separately                                                                                                                                                                              |
+| Serving runtime         | Production release events at 19:40:26.325 and 19:40:33.035 UTC report Node 24.22.1 / OpenSSL 3.5.9 and the exact clean revision                                                                                                                                                                                |
+| CI and project checks   | [Main CI](https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/40012585272) and [branch CI](https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/40012580995) pass; 118 tests across nine files, typecheck, lint, formatting, translations, clean build and dependency audit |
+| Served client integrity | All four entry JS/CSS asset SHA256 digests match the reviewed local production build                                                                                                                                                                                                                           |
+| Public HTTP             | HTTPS redirect, non-cacheable health, all three scenarios, APIs, deep links, assets, CSP/security headers, sensitive-file/missing-asset 404s and unsupported-method 405 pass                                                                                                                                   |
+
+**Additional defects found and fixed during release verification:**
+
+- Language switching reset device placements and controls because scenario initialization depended on translation identity. Equivalent custom-scenario focus refreshes could also reset work. Initialization now uses canonical scenario content, translated warnings are separate, and scoring waits for the matching initialized session. Explicit scenario changes and reset still initialize a fresh attempt. Eight additional regression tests pass.
+- Generated audit/provider state was scanned as source. Git, ESLint and Prettier exclusions now consistently cover generated evidence, runtime, cache, `.local` and `.upm` state without excluding application code. Replit's standard checks pass without tracked-files-only bypasses.
+- The modal language popup could try to hide a header retaining trigger focus. It is now non-modal; pointer/keyboard selection and Escape focus restoration pass with no ARIA warning. One early automated Escape check raced popup initialization; the retained failure was rerun after waiting for actual menu focus/opening effects, without another application change.
+
+**Final public acceptance:** fresh browser completed all eight tutorial steps and their action gates; all three languages, four viewport widths and both grid/list views passed (24 combinations). Language switches retain Smart TV in IoT, the IoT control enabled and risk 51.7 from an initial 67.7. Custom-scenario focus refresh preserves decisions; selecting a different scenario initializes its defaults. Author save/import, four authoring widths and simulated storage-quota draft recovery pass. Actual downloaded JSON/HTML reports match the decisions and score. Preferred-locale download failure falls back to English; failed author download shows recovery, and reload succeeds once the fault is removed. Baseline browser console: zero errors and zero warnings; deliberate network aborts produce expected diagnostic errors. Three subsequent public health samples at 19:47:37-19:47:41 UTC identify the exact clean release.
+
+**Preservation:** Replit verified a complete pre-synchronization workspace archive, all-reference Git bundles and checksums under `/home/runner/release-preservation/pre-reviewed-release-20261023T182714Z/`. Its archive SHA256 is `dedcba4c4d488842a86e1b5cd4f252d263b849d7fec463fcc1d0dd785a3bc389`; initial all-reference bundle SHA256 is `b2b7517e751197e19818a02b886775b652d6c278c8efec4a4dcd06e60be738f5`. Seven pre-existing branches and publication ancestry were retained before the last synchronization; no history was force-rewritten or remote work discarded. These are recoverable workspace/history backups, not a managed-host artifact-retention guarantee. Any rollback must be rebuilt on the patched runtime and dependencies.
+
+**Evidence limits and follow-up ownership:** production serving logs are agent-reported current-serving samples, not complete or independently revision-scoped telemetry. The final query requested 19:35:00-19:42:01.946 UTC and returned 57 lines spanning 19:40:24.480-19:41:07.309 UTC. No explicit application exception appeared after the matching release events. Eighteen readiness error entries occurred before/between them, none after the second event in that sample; their source is unattributed. Repeated public probes and browser acceptance are separate positive evidence, not proof of complete log history.
+
+The checksum-pinned clean-build/offline-start procedure is verified in Linux CI and the reviewed Replit workspace. Actual serving Node/OpenSSL versions are verified from production release events. Available published-build logs do not independently establish archive checksum acquisition, `npm ci` invocation, runtime file inventory or rollback retention. Saved build/run override fields were not exposed by the available API or observed Publishing settings; no mismatch was established, but it was not ruled out. Provider/operator must obtain those attestations, complete log-retention evidence, managed ingress/HTTP3/kernel/trust-store status and any related environment inventory before claiming infrastructure-wide closure. Production/shared configuration metadata showed no CA override names; the serving process's full trust environment was not directly inspected. Historical cloud/gateway/installation forensics remain open; no blanket credential rotations or incident-recovery claim was made.
+
+The original A-N advisory review remains a dated October 22 snapshot. The [official Node 24.22.1 release](https://nodejs.org/en/blog/release/v24.22.1) was rechecked on October 23, and fresh full npm/Replit/CI audits report zero known findings. The 722-pair OSV result was reused because dependency bytes did not change after that scan; it is not presented as a newly repeated OSV scan. Local shell Node 24.22.1 was observed, not installed by this audit. Chrome 155.0.8059.85 and Unbound 1.24.2 remain installed; unrelated device updates/restarts and conditional incident response remain operator follow-ups. Application release verification does not certify those systems or absence of unknown vulnerabilities.
+
+Raw acceptance records, scripts, screenshots, hashes and the first-attempt failures are retained in the protected, Git-ignored `security-evidence/2026-10-23/` directory and browser output directory. The living checklist distinguishes verified application findings from these external deferrals.
+
+## Initial Priority Snapshot: 22 October 2026
+
+This historical snapshot is superseded by the verified release section above where later evidence is available.
 
 1. **Deploy a verified patched Node runtime.** Repository settings require Node 24.22.1 or newer patched Node 24. Replit inspection found only 24.13.0 in its Node 24 module; a SHA256-pinned official Linux runtime bootstrap is now configured for clean builds and offline production startup. The actual serving runtime must still be verified. Changing a module label or lockfile does not prove that a deployed executable changed.
 2. **Verify the identified Replit deployment.** Broader search found Device Triage in the MIT Horizon account, app ID a636909f-cbeb-406c-bc91-5c9e186a0bce, serving https://devicetriage.replit.app. Its workspace remote matches this repository. Preserve remote publication/configuration history before synchronizing the reviewed release. Railway still requires reauthentication; Railway relevance is not established.
@@ -30,7 +65,9 @@ The March audit and commit `b4279e5` were reviewed before running project code. 
 
 The uncommitted performance work in App, i18n, Home, bootstrap, generator and its checklist was preserved. Its pre-audit diff was captured outside git. No onboarding redesign, redundant database migration, blanket credential rotation, or unrelated package major upgrade was performed. Old test results were not reused as proof for changed dependencies: affected checks were rerun under the patched runtime.
 
-## Inventory and access
+## Initial Inventory and Access
+
+This table records the initial audit inventory. The October 23 release section above updates production access, serving runtime, CI, browser acceptance and the observed local Node version.
 
 | Asset                       | Observed evidence                                                                                                                                                         | Coverage                                                                                                                                                                                                       |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -133,15 +170,19 @@ Initial pre-migration main client chunk was 603.65 kB minified / 189.49 kB gzip 
 - [x] Identify the primary Replit app and public domain. Other old/preview deployments, workers and scheduled jobs remain to be enumerated with provider evidence.
 - [ ] Reconnect Railway only if relevant, then enumerate every environment, shared variable, private registry connection, bucket, database and service. Keep secret values out of reports.
 - [ ] Preserve provider/access/build/gateway/cloud logs from at least October 17 through now, including install/build cache history. State actual retention limits. Review earlier history if indicators warrant it.
-- [ ] Confirm the provider offers Node 24.22.1 or newer patched Node 24. Do not treat `nodejs-24` as an exact patch pin. If unavailable, pause rollout and use a provider-supported verified runtime/image strategy; do not bypass the guard.
-- [ ] Review, commit and push the branch changes, including the preserved performance work; verify CI before deployment.
-- [ ] Build in a clean environment from the reviewed lockfile, with no old dependency/build cache; install using disabled lifecycle scripts. Do not mount production secrets during an untrusted PR build. Esbuild's platform packages worked without postinstall scripts in this audit.
-- [ ] Run the commands above. Set `NODE_ENV=production`; `.replit` invokes the verified runtime wrapper, then `npm start`, which checks the runtime. Set HOST only as required by the provider. Do not deploy `npm run dev` or expose Vite/test UI publicly.
-- [ ] Confirm HTTPS redirect/certificate, HTTP/3 terminator remediation, rate/traffic limits at ingress, and host kernel/backport/reboot status with provider evidence. No IP-based policy should trust arbitrary forwarded headers.
-- [ ] In a preview, verify all three locales, core tutorial/actions, author import, list view, report downloads and layout under the CSP. Allowing inline CSS is required by existing React/UI styling; executable inline scripts and unsafe-eval are blocked in production. Replit preview framing was already denied by the earlier X-Frame-Options policy.
-- [ ] After authorized redeploy/restart, inspect the runtime _inside the serving process/container_ and capture its version/digest, not merely the build log: `node --version`; `node -p 'JSON.stringify(process.versions)'`. Verify bundled CA provenance against the patched runtime; check extra CA overrides separately.
-- [ ] Probe the verified domain using the commands below; confirm latest assets and old secrets/tokens are invalid where rotations were required. Recheck all other reachable environments.
-- [ ] Rollback: retain the last functional artifact and config, but rebuild any rollback artifact on the patched runtime/dependencies. Do not roll back to the vulnerable Node 20/22 or Vite toolchain. No data migration was introduced.
+- [x] Verify patched Node in the actual serving process, not merely a module label. Final production release events report Node 24.22.1 and OpenSSL 3.5.9; runtime guards remain enabled.
+- [x] Review, commit and push the branch changes, including preserved performance work; final code CI passes before deployment.
+- [x] Verify reviewed clean installation/build with lifecycle scripts disabled in Linux CI and Replit workspace. Standard checks pass without generated-state bypasses.
+- [ ] Obtain independent published-build command/image/retention attestation. Workspace checks and serving versions do not prove the complete production acquisition process.
+- [x] Verify actual production-mode serving, exact clean revision, headers and application assets. Do not expose Vite/test UI publicly; reviewed production start does not download executable code.
+- [x] Verify public HTTPS redirect, valid client TLS connection and security headers.
+- [ ] Obtain HTTP/3 terminator remediation, ingress rate/traffic controls, kernel/backport/reboot and full trust evidence from the provider. No IP-based policy should trust arbitrary forwarded headers.
+- [x] Verify all three locales, core tutorial/actions, author import, grid/list, report contents and responsive layout under the actual production CSP. Inline CSS remains necessary for existing UI styling; inline executable scripts and unsafe-eval remain blocked.
+- [x] Inspect actual production application release events for runtime versions and revision. The final bounded serving-log sample and its limits are recorded above.
+- [ ] Attest the serving binary/CA store and any process-level overrides directly. Configuration metadata showed no override names, but is not direct process-environment inspection.
+- [x] Probe the primary domain, verify all scenario APIs and negative routes, and compare all four entry asset digests. No identified credential required a specific rotation; no old-token invalidation claim is made.
+- [x] Preserve recoverable pre-release workspace/history/configuration backups and original publication ancestry. No data migration was introduced.
+- [ ] Before any rollback, rebuild its reviewed source on the patched runtime/dependencies and verify it. Managed artifact-retention/rollback guarantees remain unverified; do not restore a vulnerable old runtime/toolchain.
 
 Once the actual domain is known, set it locally without embedding credentials:
 
@@ -170,14 +211,16 @@ There is no identified leaked credential requiring a specific revocation from th
 
 These actions affect tools outside the repository and require the operator's authorization.
 
-- [ ] Switch the development shell to the patched release in `.nvmrc` using the existing version manager (`nvm install 24.22.1`, `nvm use 24.22.1`, then verify `node --version`). Remove reliance on Node 22.12.0 for this project. Obtain artifacts through verified vendor channels.
+- [x] Development shell now reports Node 24.22.1, matching `.nvmrc`; this was observed on October 23, not globally installed or changed by this audit.
 - [ ] In Chrome, open Help > About Google Chrome, update to current stable (October 20 release is 156.0.8078.47/.48 for Mac), relaunch and verify. Inventory bundled Chromium/Electron separately; updating Chrome does not update the coding app.
 - [ ] Inventory Unbound service use before changing it: `brew services list`, `unbound -V`, and inspect the owner-managed configuration. If active, plan an approved `brew update` / `brew upgrade unbound`, verify >=1.26.2 and validate config with `unbound-checkconf` before restarting the applicable service. Confirm resolver behavior after restart. Do not blindly restart DNS or assume this inventory proves current exposure.
 - [ ] Check System Settings > General > Software Update for supported macOS patches and background security updates; capture the installed build after any approved reboot. Do not infer safety from an OS major version alone.
 - [ ] If pip/uv/certifi or agent-bundled Python is used, inspect installed metadata without starting suspect Python. Follow the vendor's hash-pinned bootstrap guidance, and verify each tool's own vendored certificates. No global Python changes were made here.
 - [ ] Obtain the router/VPN/firewall/appliance inventory. Apply vendor-specific Cisco, Fortinet, PAN, Splunk, Atlassian, BeyondTrust and DNS guidance only to matching products. Obtain managed-host kernel/trust evidence from the provider.
 
-## Confidence and closure
+## Initial Confidence and Closure
+
+The following records the initial audit's confidence and blockers. The verified October 23 application release above supersedes its production-access/runtime/browser blockers; separately listed provider, device and historical-forensic limits remain open.
 
 High confidence: exact local dependency matches, retained source protections, implemented HTTP/CI/import fixes, runtime checksum/version and passing local regression/build results. The repository has no demonstrated authorization, SQL injection, SSRF, command injection, privileged WebSocket or cross-tenant route because those server capabilities are absent; this is a source-path assessment, not a universal security guarantee. Existing export text escaping and local-only password analysis were reviewed; no server password collection was found.
 

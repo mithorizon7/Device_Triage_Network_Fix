@@ -2,35 +2,35 @@
 
 ## Scope
 
-Security audit with repository remediation. Follow-through authorization on 2026-10-22: finish fixes, commit, and deploy the reviewed application; unrelated shared device/account changes remain separate.
+Security audit with repository remediation. Deployment follow-through was explicitly confirmed on 2026-10-23. The sign-off gates below cover the reviewed application release; provider-only infrastructure, historical incident response and unrelated device/account work remain separately documented follow-ups, not claims of completed remediation.
 
 ## Audit Queue
 
 - [x] Q-005 [status:verified] Tailwind 4.3.3 removes braces and 78 obsolete packages. Clean npm install/full audit zero, OSV 722 pairs zero affected; final code suite and browser recovery/responsive checks pass.
-- [ ] Q-006 [status:in_progress] Confirm the Replit Device Triage service/repository identity, synchronize an exact reviewed commit, and deploy without overwriting remote work.
-- [ ] Q-007 [status:open] Commit and push reviewed changes, verify CI, then verify the live deployment and document remaining provider evidence gaps.
+- [x] Q-006 [status:verified] Replit identity/repository confirmed; seven pre-existing branches, publication history and verified backups preserved. Clean ade9aff release deployed to the existing domain; public health, asset hashes and learner/recovery checks pass.
+- [x] Q-007 [status:verified] Reviewed application fixes committed and pushed to main and the audit branch; both CI runs pass. Actual public revision/runtime and learner behavior verified; release evidence and remaining provider limits documented.
 
-- [x] Q-000 [status:verified] Audit repository, installed dependencies, delivery configuration and accessible deployment metadata; preserve the uncommitted performance work. No production changes or credential rotations authorized.
+- [x] Q-000 [status:verified] Initial audit inventoried repository, dependencies, delivery configuration and accessible metadata before later deployment authorization; uncommitted performance work was preserved. Credential rotations were not performed.
 - [x] Q-001 [status:verified] Static compromise precheck completed before project execution. No project Python environment, LiteLLM artifact, suspicious registry origin or matched secret in 618 historical blobs. Raw evidence and pre-audit patch are outside git in a mode-700 audit directory.
-- [x] Q-002 [status:verified] Refreshed A-N sources; official CISA mirror accessed after cisa.gov returned 403. npm/GHSA and OSV checks captured. No deployed asset could be identified through available provider access.
+- [x] Q-002 [status:verified] Initial audit refreshed A-N sources and captured npm/GHSA/OSV checks; official CISA mirror used after cisa.gov returned 403. Initial deployment discovery was incomplete; Q-006 subsequently resolved the primary service identity.
 - [x] Q-003 [status:verified] Implemented runtime, dependency, CI, HTTP, import/storage and export fixes; 101 tests pass under isolated Node 24.22.1 with loopback permission.
 - [x] Q-004 [status:verified] Validated local changes and compiled artifact; report and separate deployment/device/conditional incident-response checklists are in security-audit-2026-10-22.md.
 
 ## Sign-off Gate
 
-- [ ] G-001 [status:in_progress] Local remediation complete; release commit and CI are tracked below. Final sign-off requires the authorized Replit synchronization and live rollout evidence.
-- [ ] G-002 [status:in_progress] Production and host gaps are documented; pinned runtime requires Linux CI and actual Replit build/startup verification before closure.
-- [x] G-003 [status:verified] Final accessibility-fix suite passed: typecheck/lint/118 tests/build/i18n/format. Full local browser run passes learner state, authoring, reports and pointer/keyboard/Escape focus restoration with no ARIA focus warnings. Final live focus-fix rollout remains separate.
+- [x] G-001 [status:verified] Application release ade9aff is committed, pushed, CI-passed, deployed and independently verified on the public service. Broader provider/device/incident-response closure is not implied.
+- [x] G-002 [status:verified] All confirmed application findings are verified. Linux CI and reviewed Replit workspace builds pass; actual production release logs identify patched Node/OpenSSL and clean provenance. Published-command/artifact attestation gaps remain explicitly tracked under R-005.
+- [x] G-003 [status:verified] Final accessibility-fix suite passed: typecheck/lint/118 tests/build/i18n/format. Full local browser run passes learner state, authoring, reports and pointer/keyboard/Escape focus restoration with no ARIA focus warnings. Independent final live acceptance is recorded in V-012.
 - [x] G-004 [status:verified] Report includes A-N matrix, dates, evidence, owners and exact follow-up checks.
 
 ## Rerun Matrix
 
-- [ ] G-010 [status:in_progress] Repeat local and live learner checks after the scenario-session initialization fix, including preservation of placements/controls across locale changes and focus refresh.
-- [ ] G-011 [status:in_progress] Freeze final dependency versions and separately verify remote deployment evidence.
+- [x] G-010 [status:verified] All affected checks rerun after final application edits. Fresh live acceptance passes state preservation, 24 locale/view/viewport combinations, keyboard focus, authoring, exports and network-failure recovery. Only audit documentation changes follow.
+- [x] G-011 [status:verified] Final lockfile is unchanged from the zero-finding dependency scans; final CI/Replit audit passes. Production revision, clean flag, serving Node/OpenSSL, headers, APIs and entry asset SHA256 matches verified independently.
 
 ## Findings Log
 
-- [ ] F-014 [status:in_progress] [P2] [confidence:0.95] Live console review caught the language popup attempting to aria-hide a header that retained trigger focus. Use a non-modal language menu, preserving normal menu keyboard behavior and background navigation. Verify pointer/keyboard opening, selection, Escape focus restoration and absence of the warning before redeployment.
+- [x] F-014 [status:verified] [P2] [confidence:0.99] Language popup is non-modal; final live pointer/keyboard opening, language selection and Escape focus restoration pass with zero ARIA warnings. The first automated Escape check raced popup initialization; focus-aware rerun passes without further application changes.
   - Evidence: final-live-learner.txt and protected console-2026-10-23T19-23-59-084Z.log warning; no application error or lost state occurred. Owner: Codex.
 
 - [x] F-013 [status:verified] [P2] [confidence:0.99] Replit's standard formatting check scanned generated .local tooling/state and .upm/store.json. Git, formatter and lint exclusions are aligned; standard hosted lint/format and clean build pass on 517d2d0 without bypasses.
@@ -49,10 +49,10 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Evidence: customScenarios.ts/tests and author.tsx. Owner: Codex.
 - [x] F-008 [status:verified] [P2] [confidence:0.99] Lazy locale startup now falls back to bundled English, overlapping choices preserve the last selection, and switch failures show localized recovery. Four additional tests pass, including document language synchronization for screen readers.
   - Evidence: i18n.ts, i18n-recovery.test.ts, i18n.test.ts and LanguageSwitcher.tsx. Owner: Codex.
-- [x] F-009 [status:verified] [P1] [confidence:0.99] Replaced reliance on old Replit Node with a guarded patched runtime. Linux CI and Replit workspace verify checksum-pinned builds. Actual production release events for 517d2d0 report Node 24.22.1/OpenSSL 3.5.9 and clean source. Published command/retention attestation remains a separate provider evidence limit, not proof of an old serving runtime.
+- [x] F-009 [status:verified] [P1] [confidence:0.99] Replaced reliance on old Replit Node with a guarded patched runtime. Linux CI and Replit workspace verify checksum-pinned builds. Actual production release events for ade9aff report Node 24.22.1/OpenSSL 3.5.9 and clean source. Published command/retention attestation remains a separate provider evidence limit, not proof of an old serving runtime.
   - Evidence: Replit agent read-only inspection; scripts/replit-runtime.sh and .replit. Owner: Codex/provider.
 
-- [x] F-001 [status:verified] [P1] [confidence:0.99] Runtime pins corrected to patched Node 24.22.1, engine constraints and executable guards added. Isolated validation runtime checksum checked; global and production runtimes still pending owner action.
+- [x] F-001 [status:verified] [P1] [confidence:0.99] Runtime pins, engine constraints and executable guards require patched Node 24.22.1. Final local shell, CI, reviewed Replit workspace and actual production serving logs report that version; no global installation was performed by this audit.
   - confidence: 0.99. Evidence: .nvmrc, .replit, scripts/check-runtime.cjs and official archive checksum. Owner: Codex for local pins; operator for actual deployment/global runtime.
 - [x] F-002 [status:verified] [P1] [confidence:0.99] Vite 5.4.21 and transitive 7.3.0 updated to 7.3.7; Host bypass removed and development binds loopback unless explicitly configured. Production plugins excluded.
   - confidence: 0.99. Evidence: package-lock.json, server/vite.ts, server/index.ts. Owner: Codex.
@@ -68,8 +68,8 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Fix Log
 
-- [x] P-008 [status:verified] F-014: LanguageSwitcher uses a non-modal popup. Local full browser test confirms pointer/keyboard opening, Escape focus restoration and zero blocked-aria-hidden warnings while preserving all learner state. Standard code checks and 118 tests pass.
-  - Addresses: F-014. Evidence: LanguageSwitcher.tsx, focus-fix-validation.txt and local-focus-regression.txt. Public rollout still required.
+- [x] P-008 [status:verified] F-014: LanguageSwitcher uses a non-modal popup. Local and final public full browser tests confirm pointer/keyboard opening, Escape focus restoration and zero blocked-aria-hidden warnings while preserving all learner state. Standard code checks and 118 tests pass.
+  - Addresses: F-014. Evidence: LanguageSwitcher.tsx, focus-fix-validation.txt, local-focus-regression.txt and acceptance-learner-verified.txt.
 
 - [x] P-007 [status:verified] F-013: align .gitignore, .prettierignore and eslint.config.js for generated .cache/.local/.upm/.runtime state. Local standard lint/format pass and explicit ignore-discovery tests leave client/server source covered. Hosted standard formatting remains a release check.
   - Addresses: F-013. Evidence: protected generated-state-checks.txt and repository ignore configuration.
@@ -90,6 +90,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Addresses: F-004, F-005. Evidence: CI config review, schema regression tests and successful full checks.
 
 ## Validation Log
+
+- [x] V-012 [status:verified] 2026-10-23 15:40-15:49 EDT: final public ade9aff release passes HTTP/API/security checks and four entry asset SHA256 matches. Fresh learner acceptance passes tutorial, all languages/layouts, state preservation, custom focus refresh, scenario initialization, author/import/quota recovery, reports and menu keyboard/Escape focus with zero baseline console errors/warnings. Deliberate locale/author download aborts recover correctly. Three subsequent health samples match the exact clean release. Production logs report Node 24.22.1/OpenSSL 3.5.9.
+  - Evidence: 2026-10-23 15:49 EDT PASS: protected acceptance-http-result.json, acceptance-learner-verified.txt, acceptance-console-before-faults.txt, acceptance-recovery.txt, acceptance-report-proof.json, acceptance-health-samples.json and acceptance-production-runtime.txt. CI: https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/40012585272 . First focus-timing harness failure retained separately; focus-aware rerun passed.
 
 - [x] V-011 [status:verified] 2026-10-23 15:23-15:32 EDT: public 517d2d0 HTTP/API/security checks pass; all four entry asset SHA256 hashes match the reviewed local build. Fresh live learner run, state preservation, 24 responsive/locale/view cases, author/import/quota and actual report-content assertions pass; failed locale/chunk recovery passes. A focus warning led to F-014, whose final local full-suite and browser rerun now pass without that warning.
   - Evidence: 2026-10-23 15:32 EDT PASS: protected final-live-http-result.json, final-live-learner.txt, final-live-recovery.txt, final-live-report-proof.json, focus-fix-validation.txt and local-focus-regression.txt. Final focus-fix production rollout still required.
@@ -124,16 +127,20 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Residual Risks
 
-- [x] R-001 [status:accepted_risk] Railway connector requires reauthentication; cannot determine whether this project uses Railway or inspect secrets/logs. Owner: operator. Closure: connect correct workspace and assess every environment/credential consumer.
-- [x] R-002 [status:accepted_risk] Replit service identity resolved through broader search; deployed runtime, October 17 onward logs, ingress/HTTP3/kernel/trust stores still require evidence. Owner: provider/operator. Closure: actual domain/service and supporting runtime/log evidence.
-- [x] R-003 [status:accepted_risk] No cloud audit logs, historical Python/container installs or coding-gateway logs available. Owner: operator/IR. Closure: artifact/install history and applicable IAM/gateway logs; report does not claim historical safety.
-- [x] R-004 [status:accepted_risk] Global Node 22.12.0, Unbound 1.24.2 and Chrome 155 remain unchanged. Owner: device operator. Closure: approved update/restart and actual version checks. Local visual/interaction verification is recorded separately; live rollout checks remain required.
+- [x] R-001 [status:accepted_risk] Deferred external inventory: Railway relevance remains unestablished and its connector requires reauthentication; primary deployment is verified on Replit. Owner: operator. Closure trigger: identify any related Railway environment, then assess its consumers/credentials. No absence or rotation claim is made.
+- [x] R-002 [status:accepted_risk] Primary service identity/runtime/HTTPS/headers are verified; managed ingress HTTP3, kernel, full trust-store provenance and comprehensive retention remain unverified. Owner: provider/operator. Closure: obtain provider evidence before claiming infrastructure-wide hardening.
+- [x] R-003 [status:accepted_risk] Limited serving-log samples were inspected, not complete cloud audit logs, historical Python/container installs or coding-gateway logs. Owner: operator/IR. Closure: preserve and review applicable historical artifacts/IAM/gateway records; escalate on credible indicators. No historical-safety or incident-recovery claim is made.
+- [x] R-004 [status:accepted_risk] Local shell now reports Node 24.22.1, observed but not installed by this audit. Chrome 155.0.8059.85 and Unbound 1.24.2 remain installed; no unrelated device/service changes were made. Owner: device operator. Closure: separately authorized updates/relaunch/restart with version and service checks.
+- [x] R-005 [status:accepted_risk] Published build/run override fields and artifact retention are not exposed by the available API or observed UI. Reviewed CI/workspace bootstrap and actual serving versions are verified, but production archive-acquisition/rollback retention are not attested. Final log sample contains 18 readiness errors before/between release events and none after the second event; their source remains unattributed. Owner: provider/operator. Closure: obtain command/image/retention evidence; investigate if steady-state public 5xx or post-start errors recur.
+
+The terminal risk labels record scoped deferrals with owners, not user approval, completed remediation or blanket security acceptance. Application release sign-off does not close these external investigations.
 
 ## Outcome
 
-Local work completed on codex/security-audit-2026-10-22. Existing performance edits preserved and committed in 442955d; branch pushed and Linux CI passed. Production synchronization, device changes and incident-response closure remain pending; documented risks above are deferrals, not user approval of risk. See the report for sources, compatibility limits and exact commands.
+Application fixes completed on codex/security-audit-2026-10-22, committed and pushed to main and the audit branch. Existing performance work and remote history are preserved. Public ade9aff is verified live at https://devicetriage.replit.app with exact clean provenance, matching client assets, patched serving runtime and passing learner/recovery checks. Subsequent commits contain audit evidence only. Provider/device/incident-response follow-ups above remain unverified, not falsely marked fixed.
 
 ## Change Log
 
 - 2026-10-22: reviewed prior audits, preserved existing edits and completed static precheck before runtime execution.
 - 2026-10-22: refreshed sources, implemented compatible local fixes, tested isolated patched runtime and documented deployment/device/incident-response blockers.
+- 2026-10-23: preserved Replit history, fixed generated-state checks, discovered and corrected locale/focus-triggered learner resets, fixed language-menu focus accessibility, committed/pushed and verified the actual public release. Retained first-attempt failures and final passing acceptance evidence.
