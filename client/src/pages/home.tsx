@@ -15,6 +15,7 @@ import { WinConditionsCard } from "@/components/WinConditionsCard";
 import { zones } from "@/lib/zones";
 import { calculateScore, type ScoringRules } from "@/lib/scoringEngine";
 import { getCustomScenarios, getCustomScenariosUpdatedEventName } from "@/lib/customScenarios";
+import { createInitialScenarioState, getScenarioSessionKey } from "@/lib/scenarioSession";
 import { getDeviceDisplayLabel } from "@/lib/i18n";
 import { formatExplanation } from "@/lib/explanationFormatter";
 import { getOnboardingGuideState, type OnboardingGuideStepId } from "@/lib/onboardingGuide";
@@ -213,6 +214,8 @@ export default function Home() {
   const previousScore = useRef<number | null>(null);
   const { toast } = useToast();
   const lastZoneWarningScenario = useRef<string | null>(null);
+  const initializedScenarioKey = useRef<string | null>(null);
+  const [activeScenarioKey, setActiveScenarioKey] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -321,32 +324,48 @@ export default function Home() {
     }
   }, [allScenarios, selectedScenarioId]);
 
-  useEffect(() => {
-    if (currentScenario) {
-      const allowedZoneIds = new Set(zones.map((zone) => zone.id));
-      const initialZones: Record<string, ZoneId> = {};
-      const invalidDeviceIds: string[] = [];
-      currentScenario.devices.forEach((device) => {
-        const zoneId = allowedZoneIds.has(device.networkId as ZoneId)
-          ? (device.networkId as ZoneId)
-          : "main";
-        if (zoneId === "main" && device.networkId !== "main") {
-          invalidDeviceIds.push(device.id);
-        }
-        initialZones[device.id] = zoneId;
-      });
-      setDeviceZones(initialZones);
-      setControls({ ...currentScenario.initialControls });
+  const scenarioSession = useMemo(
+    () =>
+      currentScenario
+        ? {
+            key: getScenarioSessionKey(currentScenario),
+            ...createInitialScenarioState(currentScenario),
+          }
+        : null,
+    [currentScenario]
+  );
 
-      if (invalidDeviceIds.length > 0 && lastZoneWarningScenario.current !== currentScenario.id) {
-        toast({
-          title: t("author.importZoneWarningTitle"),
-          description: t("author.importZoneWarning", { count: invalidDeviceIds.length }),
-        });
-        lastZoneWarningScenario.current = currentScenario.id;
-      }
+  useEffect(() => {
+    if (!scenarioSession) {
+      initializedScenarioKey.current = null;
+      return;
     }
-  }, [currentScenario, toast, t]);
+    if (initializedScenarioKey.current === scenarioSession.key) return;
+    initializedScenarioKey.current = scenarioSession.key;
+    setActiveScenarioKey(scenarioSession.key);
+    setDeviceZones(scenarioSession.deviceZones);
+    setControls(scenarioSession.controls);
+    setFlaggedDevices(new Set());
+    setLastAction(null);
+    setScenarioStartRisk(null);
+    lastRecordedScore.current = null;
+    previousScore.current = null;
+    setIsNewCompletion(false);
+  }, [scenarioSession]);
+
+  useEffect(() => {
+    if (
+      !currentScenario ||
+      !scenarioSession?.invalidDeviceCount ||
+      lastZoneWarningScenario.current === currentScenario.id
+    )
+      return;
+    toast({
+      title: t("author.importZoneWarningTitle"),
+      description: t("author.importZoneWarning", { count: scenarioSession.invalidDeviceCount }),
+    });
+    lastZoneWarningScenario.current = currentScenario.id;
+  }, [currentScenario, scenarioSession, toast, t]);
 
   const handleScenarioChange = useCallback((id: string) => {
     setSelectedScenarioId(id);
@@ -500,25 +519,24 @@ export default function Home() {
 
   const handleReset = useCallback(() => {
     if (currentScenario) {
-      const allowedZoneIds = new Set(zones.map((zone) => zone.id));
-      const initialZones: Record<string, ZoneId> = {};
-      currentScenario.devices.forEach((device) => {
-        const zoneId = allowedZoneIds.has(device.networkId as ZoneId)
-          ? (device.networkId as ZoneId)
-          : "main";
-        initialZones[device.id] = zoneId;
-      });
-      setDeviceZones(initialZones);
-      setControls({ ...currentScenario.initialControls });
+      const initial = createInitialScenarioState(currentScenario);
+      setDeviceZones(initial.deviceZones);
+      setControls(initial.controls);
       setFlaggedDevices(new Set());
       setLastAction(null);
       setScenarioStartRisk(null);
+      previousScore.current = null;
       resetTutorialState();
     }
   }, [currentScenario, resetTutorialState]);
 
   const scoreResult: ScoreResult = useMemo(() => {
-    if (!scoringRules || !currentScenario || !controls) {
+    if (
+      !scoringRules ||
+      !currentScenario ||
+      !controls ||
+      activeScenarioKey !== scenarioSession?.key
+    ) {
       return {
         subscores: { exposure: 0, credentialAccount: 0, hygiene: 0 },
         total: 0,
@@ -536,21 +554,22 @@ export default function Home() {
       currentScenario.environment.type,
       getDeviceLabel
     );
-  }, [scoringRules, currentScenario, deviceZones, controls, flaggedDevices, t]);
+  }, [
+    scoringRules,
+    currentScenario,
+    deviceZones,
+    controls,
+    flaggedDevices,
+    activeScenarioKey,
+    scenarioSession,
+    t,
+  ]);
 
   const guestNetworkAvailable = currentScenario?.networks.some((n) => n.id === "guest") ?? false;
   const iotNetworkAvailable = currentScenario?.networks.some((n) => n.id === "iot") ?? false;
   const initialScenarioZones = useMemo<Record<string, ZoneId>>(() => {
-    if (!currentScenario) return {};
-    const allowedZoneIds = new Set(zones.map((zone) => zone.id));
-    const initialZones: Record<string, ZoneId> = {};
-    currentScenario.devices.forEach((device) => {
-      initialZones[device.id] = allowedZoneIds.has(device.networkId as ZoneId)
-        ? (device.networkId as ZoneId)
-        : "main";
-    });
-    return initialZones;
-  }, [currentScenario]);
+    return scenarioSession?.deviceZones ?? {};
+  }, [scenarioSession]);
 
   const iotDevicesInIotZone = useMemo(() => {
     if (!currentScenario) return false;
@@ -730,10 +749,19 @@ export default function Home() {
   }, [currentScenario, t]);
 
   useEffect(() => {
-    if (!currentScenario || !controls || !scoringRules) return;
+    if (!currentScenario || !scenarioSession || !scoringRules) return;
     if (scenarioStartRisk !== null) return;
-    setScenarioStartRisk(scoreResult.total);
-  }, [currentScenario, controls, scoringRules, scenarioStartRisk, scoreResult.total]);
+    setScenarioStartRisk(
+      calculateScore(
+        scoringRules,
+        currentScenario.devices,
+        scenarioSession.deviceZones,
+        scenarioSession.controls,
+        new Set(),
+        currentScenario.environment.type
+      ).total
+    );
+  }, [currentScenario, scenarioSession, scoringRules, scenarioStartRisk]);
 
   useEffect(() => {
     if (!currentScenario || scoreResult.total === 0) return;
@@ -774,6 +802,7 @@ export default function Home() {
   }, [selectedScenarioId]);
 
   useEffect(() => {
+    if (!controls || !currentScenario || activeScenarioKey !== scenarioSession?.key) return;
     if (previousScore.current === null) {
       previousScore.current = scoreResult.total;
       return;
@@ -807,7 +836,17 @@ export default function Home() {
     }
 
     previousScore.current = scoreResult.total;
-  }, [scoreResult.total, scoreResult.explanations, actionInsight, toast, t]);
+  }, [
+    scoreResult.total,
+    scoreResult.explanations,
+    actionInsight,
+    toast,
+    t,
+    controls,
+    currentScenario,
+    activeScenarioKey,
+    scenarioSession,
+  ]);
 
   const isLoading = scenariosLoading || rulesLoading || scenarioLoading;
 
