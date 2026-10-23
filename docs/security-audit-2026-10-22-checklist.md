@@ -20,7 +20,7 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 - [ ] G-001 [status:in_progress] Local remediation complete; release commit and CI are tracked below. Final sign-off requires the authorized Replit synchronization and live rollout evidence.
 - [ ] G-002 [status:in_progress] Production and host gaps are documented; pinned runtime requires Linux CI and actual Replit build/startup verification before closure.
-- [x] G-003 [status:verified] Final session-fix suite passed: typecheck/lint/118 tests/build/i18n/format. Local production-browser regression preserves work across all locales and custom-scenario focus refresh; report contents match. Final live redeployment remains separate.
+- [x] G-003 [status:verified] Final accessibility-fix suite passed: typecheck/lint/118 tests/build/i18n/format. Full local browser run passes learner state, authoring, reports and pointer/keyboard/Escape focus restoration with no ARIA focus warnings. Final live focus-fix rollout remains separate.
 - [x] G-004 [status:verified] Report includes A-N matrix, dates, evidence, owners and exact follow-up checks.
 
 ## Rerun Matrix
@@ -30,10 +30,13 @@ Security audit with repository remediation. Follow-through authorization on 2026
 
 ## Findings Log
 
-- [ ] F-013 [status:in_progress] [P2] [confidence:0.99] Replit's standard formatting check scanned generated .local tooling/state and .upm/store.json. Align Git, formatter and lint exclusions for generated provider directories without excluding application source; rerun standard hosted checks.
+- [ ] F-014 [status:in_progress] [P2] [confidence:0.95] Live console review caught the language popup attempting to aria-hide a header that retained trigger focus. Use a non-modal language menu, preserving normal menu keyboard behavior and background navigation. Verify pointer/keyboard opening, selection, Escape focus restoration and absence of the warning before redeployment.
+  - Evidence: final-live-learner.txt and protected console-2026-10-23T19-23-59-084Z.log warning; no application error or lost state occurred. Owner: Codex.
+
+- [x] F-013 [status:verified] [P2] [confidence:0.99] Replit's standard formatting check scanned generated .local tooling/state and .upm/store.json. Git, formatter and lint exclusions are aligned; standard hosted lint/format and clean build pass on 517d2d0 without bypasses.
   - Evidence: Replit validation of 891ed42: 118 tests/build/lint/audit passed; standard formatting failed only on generated state. Owner: Codex.
 
-- [ ] F-012 [status:in_progress] [P1] [confidence:0.99] Live report inspection showed language switching reset placements and controls: Smart TV returned to Main, IoT control returned off. Home's initialization effect depended on translation identity; equivalent custom-scenario focus refreshes could also reset work. Separate session initialization from translated warnings and guard equivalent scenario data; add regression tests and redeploy.
+- [x] F-012 [status:verified] [P1] [confidence:0.99] Fixed language-triggered learner-state reset and equivalent custom-scenario focus refresh resets. Eight regression tests pass. Live 517d2d0 run retains Smart TV in IoT, enabled IoT control and risk 51.7 across all locales; custom focus refresh and legitimate scenario changes pass. Reports agree with visible state.
   - Evidence: 2026-10-23 live-report.json and live-mobile-verified.png, report-content assertion failed with main !== iot. Earlier layout-only checks passed but did not assert learner state. Owner: Codex.
 
 - [x] F-011 [status:verified] [P2] [confidence:0.99] ESLint scanned generated evidence and Replit's pre-existing .cache/.bun/install/cache dependencies. Generated cache/tooling exclusions fix both cases; standard hosted lint and clean build passed on 81ccd4e. Client/server source remains covered.
@@ -46,7 +49,7 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Evidence: customScenarios.ts/tests and author.tsx. Owner: Codex.
 - [x] F-008 [status:verified] [P2] [confidence:0.99] Lazy locale startup now falls back to bundled English, overlapping choices preserve the last selection, and switch failures show localized recovery. Four additional tests pass, including document language synchronization for screen readers.
   - Evidence: i18n.ts, i18n-recovery.test.ts, i18n.test.ts and LanguageSwitcher.tsx. Owner: Codex.
-- [ ] F-009 [status:in_progress] [P1] [confidence:0.99] Actual Replit Node 24 module is 24.13.0, below 24.22.1. Added SHA256-pinned official Linux runtime bootstrap; production startup never downloads code or falls back. Linux CI bootstrap verified on 442955d; Replit build/serving runtime must still be verified before deployment closure.
+- [x] F-009 [status:verified] [P1] [confidence:0.99] Replaced reliance on old Replit Node with a guarded patched runtime. Linux CI and Replit workspace verify checksum-pinned builds. Actual production release events for 517d2d0 report Node 24.22.1/OpenSSL 3.5.9 and clean source. Published command/retention attestation remains a separate provider evidence limit, not proof of an old serving runtime.
   - Evidence: Replit agent read-only inspection; scripts/replit-runtime.sh and .replit. Owner: Codex/provider.
 
 - [x] F-001 [status:verified] [P1] [confidence:0.99] Runtime pins corrected to patched Node 24.22.1, engine constraints and executable guards added. Isolated validation runtime checksum checked; global and production runtimes still pending owner action.
@@ -64,6 +67,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Evidence: protected npm-audit-followthrough.json and osv-followthrough.json; clean npm ci. Owner: Codex.
 
 ## Fix Log
+
+- [x] P-008 [status:verified] F-014: LanguageSwitcher uses a non-modal popup. Local full browser test confirms pointer/keyboard opening, Escape focus restoration and zero blocked-aria-hidden warnings while preserving all learner state. Standard code checks and 118 tests pass.
+  - Addresses: F-014. Evidence: LanguageSwitcher.tsx, focus-fix-validation.txt and local-focus-regression.txt. Public rollout still required.
 
 - [x] P-007 [status:verified] F-013: align .gitignore, .prettierignore and eslint.config.js for generated .cache/.local/.upm/.runtime state. Local standard lint/format pass and explicit ignore-discovery tests leave client/server source covered. Hosted standard formatting remains a release check.
   - Addresses: F-013. Evidence: protected generated-state-checks.txt and repository ignore configuration.
@@ -84,6 +90,9 @@ Security audit with repository remediation. Follow-through authorization on 2026
   - Addresses: F-004, F-005. Evidence: CI config review, schema regression tests and successful full checks.
 
 ## Validation Log
+
+- [x] V-011 [status:verified] 2026-10-23 15:23-15:32 EDT: public 517d2d0 HTTP/API/security checks pass; all four entry asset SHA256 hashes match the reviewed local build. Fresh live learner run, state preservation, 24 responsive/locale/view cases, author/import/quota and actual report-content assertions pass; failed locale/chunk recovery passes. A focus warning led to F-014, whose final local full-suite and browser rerun now pass without that warning.
+  - Evidence: 2026-10-23 15:32 EDT PASS: protected final-live-http-result.json, final-live-learner.txt, final-live-recovery.txt, final-live-report-proof.json, focus-fix-validation.txt and local-focus-regression.txt. Final focus-fix production rollout still required.
 
 - [x] V-010 [status:verified] 2026-10-23 15:17 EDT: standard local lint and formatting pass after the generated-state exclusion fix; formatter discovery explicitly ignores provider state and retains application source. GitHub main and branch CI for functional fix 891ed42 passed all 118 tests and complete release checks. Replit also passed build/lint/118 tests/audit for that revision; hosted formatting fix still being synchronized.
   - Evidence: 2026-10-23 15:17 EDT PASS: protected generated-state-checks.txt and ci-main-session-final.json/ci-branch-session-final.json; https://github.com/mithorizon7/Device_Triage_Network_Fix/actions/runs/40009504018 .
