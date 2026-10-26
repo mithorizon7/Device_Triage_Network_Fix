@@ -1,8 +1,87 @@
 import type { Controls } from "@shared/schema";
+import { z } from "zod";
 
 const PROGRESS_KEY = "device_triage_progress";
 const TUTORIAL_KEY = "device_triage_tutorial_complete";
 const LEGACY_TUTORIAL_KEY = "device_triage_tutorial_completed";
+const PROGRESS_RECOVERY_KEY = "device_triage_progress_recovery";
+const MAX_PROGRESS_SIZE = 1_000_000;
+
+const timestampSchema = z.string().max(64);
+const progressSchema = z
+  .unknown()
+  .refine(
+    (value) => {
+      if (typeof value !== "object" || value === null) return false;
+      const { scenarios, badges } = value as Record<string, unknown>;
+      return (
+        typeof scenarios === "object" &&
+        scenarios !== null &&
+        !Array.isArray(scenarios) &&
+        Object.keys(scenarios).length <= 1_000 &&
+        Array.isArray(badges) &&
+        badges.length <= 8
+      );
+    },
+    { abort: true }
+  )
+  .pipe(
+    z.object({
+      scenarios: z.preprocess(
+        (value) => new Map(Object.entries(value as Record<string, unknown>)),
+        z
+          .map(
+            z.string().max(128),
+            z.object({
+              scenarioId: z.string().max(128),
+              scenarioTitle: z.string().max(512),
+              bestScore: z.number().min(0).max(100),
+              completedAt: timestampSchema.nullable(),
+              attempts: z.number().int().nonnegative(),
+              lastAttemptAt: timestampSchema,
+            })
+          )
+          .transform((entries) => Object.fromEntries(entries))
+      ),
+      badges: z
+        .array(
+          z.object({
+            id: z.enum([
+              "first_completion",
+              "all_builtin",
+              "perfect_score",
+              "iot_master",
+              "quick_learner",
+              "persistent",
+              "custom_creator",
+              "security_expert",
+            ]),
+            name: z.string().max(128),
+            description: z.string().max(128),
+            earnedAt: timestampSchema,
+            scenarioId: z.string().max(128).optional(),
+          })
+        )
+        .max(8),
+      totalCompletions: z.number().int().nonnegative(),
+      firstCompletedAt: timestampSchema.nullable(),
+    })
+  );
+
+function parseProgress(stored: string): UserProgress {
+  if (stored.length > MAX_PROGRESS_SIZE) throw new Error("Progress size limit");
+  const progress = progressSchema.parse(JSON.parse(stored));
+  return { ...progress, scenarios: Object.assign(Object.create(null), progress.scenarios) };
+}
+
+function emptyProgress(): UserProgress {
+  return {
+    scenarios: Object.create(null),
+    badges: [],
+    totalCompletions: 0,
+    firstCompletedAt: null,
+  };
+}
 
 export interface ScenarioProgress {
   scenarioId: string;
@@ -67,27 +146,32 @@ export function getProgress(): UserProgress {
   try {
     const stored = localStorage.getItem(PROGRESS_KEY);
     if (!stored) {
-      return {
-        scenarios: {},
-        badges: [],
-        totalCompletions: 0,
-        firstCompletedAt: null,
-      };
+      return emptyProgress();
     }
-    return JSON.parse(stored);
+    return parseProgress(stored);
   } catch {
-    return {
-      scenarios: {},
-      badges: [],
-      totalCompletions: 0,
-      firstCompletedAt: null,
-    };
+    return emptyProgress();
   }
 }
 
 export function saveProgress(progress: UserProgress): void {
   try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+    const serialized = JSON.stringify(progress);
+    parseProgress(serialized);
+    const previous = localStorage.getItem(PROGRESS_KEY);
+    if (previous) {
+      try {
+        parseProgress(previous);
+      } catch {
+        // Do not overwrite damaged history unless a recovery copy can be retained.
+        if (localStorage.getItem(PROGRESS_RECOVERY_KEY) === null) {
+          localStorage.setItem(PROGRESS_RECOVERY_KEY, previous);
+        } else if (localStorage.getItem(PROGRESS_RECOVERY_KEY) !== previous) {
+          return;
+        }
+      }
+    }
+    localStorage.setItem(PROGRESS_KEY, serialized);
   } catch {
     // Ignore localStorage errors (e.g., quota exceeded, private browsing)
   }
@@ -167,6 +251,7 @@ export function recordAttempt(
   }
 
   // Security Expert badge: Complete 5 different scenarios
+  progress.scenarios[scenarioId] = existing;
   const completedScenarioCount = Object.values(progress.scenarios).filter(
     (s) => s.completedAt !== null
   ).length;
@@ -175,7 +260,6 @@ export function recordAttempt(
     if (badge) newBadges.push(badge);
   }
 
-  progress.scenarios[scenarioId] = existing;
   saveProgress(progress);
 
   return { newBadges, isNewCompletion };

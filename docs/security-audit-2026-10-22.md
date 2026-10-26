@@ -2,7 +2,21 @@
 
 Audit window: 22 October 2026, approximately 12:55-13:25 America/New_York (16:55-17:25 UTC). Advisory reference period: 15-22 October, plus older unresolved dependencies. Branch: `codex/security-audit-2026-10-22`, based on `b4279e5`. This report distinguishes local results from deployment evidence. At the end of the initial audit no production changes, global installations, credential rotations, or incident-recovery claims were made. The user subsequently authorized fixes, commit/push, and deployment; follow-through is recorded below.
 
-## Verified Application Release: 23 October 2026
+## October 26 Closeout
+
+The user authorized completing all application work and deployment, explicitly waiving an uncoached human pilot because participants are unavailable. Automated first-session and recovery checks replace that gate for this release, not as evidence of human usability.
+
+A fresh October 26 npm audit flags [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) in Zod 3.24.2 and nested 4.3.6. The advisory was published October 1 and updated October 23; it is newly returned by this audit, not necessarily newly disclosed. Historical zero-finding scans below remain dated observations, not current guarantees. Zod 4.6.7 replaces both paths, the unused direct error adapter is removed, and the [Zod 4 migration](https://zod.dev/v4/changelog) is covered by shipped-fixture/registry tests.
+
+Imports retain the 1 MB cap and now reject excessive arrays before inspecting elements: 128 devices, three unique supported networks including Main, 32 objectives, four risk flags per device and 14 required controls. Text fields are bounded; IDs must be nonempty and devices unique. Storage is limited to 100 custom scenarios without silently erasing legacy entries excluded by validation. Author controls enforce limits and invalid drafts stay open with localized guidance in English, Latvian and Russian.
+
+Closeout also found malformed saved progress could crash startup and prototype-named scenario IDs could resolve inherited state. Bounded progress validation and null-prototype dictionaries prevent those paths. Damaged history is copied to a separate recovery key before replacement; a different existing recovery copy is never overwritten. Progress validation runs on initialization rather than every React render. A fifth-scenario badge now includes the current completion, and legitimate zero-risk completion uses actual session readiness instead of a numeric loading sentinel.
+
+Replit's October 26 read-only inspection reports the original seven branches remain preserved and the current publication tree matches the reviewed October 23 tree, but the previously recorded workspace archive/bundles are no longer found in the inspected filesystem. Their earlier checksum checks are historical only; no deletion was observed or attributed. Fresh independently retained recovery material and an isolated restoration rehearsal are required for this closeout. The guarded runtime wrapper now emits explicit archive-checksum, lifecycle-disabled install and offline-start markers so publication evidence can expose saved-command divergence instead of assuming it away.
+
+Full local checks currently pass 153 tests, typecheck, lint, i18n, format, production build and a zero-finding npm audit. Final browser/recovery rerun, source recovery rehearsal, CI, hosted synchronization, publication and public verification remain open in the living checklist until independently completed. Outage email notifications and critical-vulnerability publishing blocking are selected in Replit and require republishing; privacy/analytics settings remain unchanged. The [operations runbook](operations-runbook.md) defines ownership, detection, evidence and safe recovery without reintroducing older vulnerable dependencies.
+
+## Historical Verified Application Release: 23 October 2026
 
 The authorized application release is live at [Device Triage](https://devicetriage.replit.app). Application fixes are committed and pushed to `main` and `codex/security-audit-2026-10-22`. Subsequent commits record audit evidence only; they do not imply that production is running a different application revision.
 

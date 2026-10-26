@@ -23,6 +23,7 @@ import {
   deleteCustomScenario,
   exportScenarioAsJson,
   createEmptyScenario,
+  generateScenarioId,
   sanitizeScenarioNetworkIds,
 } from "@/lib/customScenarios";
 import { getDeviceIcon } from "@/lib/deviceIcons";
@@ -42,7 +43,7 @@ import {
   Copy,
   AlertTriangle,
 } from "lucide-react";
-import { scenarioSchema } from "@shared/schema";
+import { SCENARIO_LIMITS, scenarioSchema } from "@shared/schema";
 import type { Scenario, Device, DeviceType, RiskFlag, ControlsRegistry } from "@shared/schema";
 
 const deviceTypes: DeviceType[] = [
@@ -84,7 +85,7 @@ function generateMac(index: number): string {
 export default function AuthorPage() {
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
-  const [customScenarios, setCustomScenarios] = useState<Scenario[]>(getCustomScenarios());
+  const [customScenarios, setCustomScenarios] = useState<Scenario[]>(getCustomScenarios);
   const [editingScenario, setEditingScenario] = useState<Scenario | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -129,8 +130,8 @@ export default function AuthorPage() {
     (scenario: Scenario) => {
       const duplicate = {
         ...scenario,
-        id: `${scenario.id}_copy_${Date.now()}`,
-        title: t("author.copyTitle", { title: scenario.title }),
+        id: generateScenarioId(),
+        title: t("author.copyTitle", { title: scenario.title }).slice(0, SCENARIO_LIMITS.title),
       };
       if (!saveCustomScenario(duplicate)) {
         toast({ variant: "destructive", title: t("author.storageError") });
@@ -154,6 +155,10 @@ export default function AuthorPage() {
 
   const handleSave = useCallback(() => {
     if (editingScenario) {
+      if (!scenarioSchema.safeParse(editingScenario).success) {
+        toast({ variant: "destructive", title: t("author.validationError") });
+        return;
+      }
       const isNew = !customScenarios.some((s) => s.id === editingScenario.id);
       if (!saveCustomScenario(editingScenario)) {
         toast({ variant: "destructive", title: t("author.storageError") });
@@ -182,7 +187,7 @@ export default function AuthorPage() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      if (file.size > 1_000_000) {
+      if (file.size > SCENARIO_LIMITS.serializedSize) {
         setImportError(t("author.importError"));
         e.target.value = "";
         return;
@@ -195,7 +200,6 @@ export default function AuthorPage() {
           const parsed = JSON.parse(content);
           const result = scenarioSchema.safeParse(parsed);
           if (!result.success) {
-            console.error("Scenario validation failed:", result.error.errors);
             throw new Error("Invalid scenario format");
           }
           const scenario = result.data;
@@ -233,7 +237,7 @@ export default function AuthorPage() {
   );
 
   const addDevice = useCallback(() => {
-    if (!editingScenario) return;
+    if (!editingScenario || editingScenario.devices.length >= SCENARIO_LIMITS.devices) return;
     const newIndex = editingScenario.devices.length;
     const newDevice: Device = {
       id: generateDeviceId(),
@@ -295,7 +299,11 @@ export default function AuthorPage() {
   );
 
   const addLearningObjective = useCallback(() => {
-    if (!editingScenario) return;
+    if (
+      !editingScenario ||
+      (editingScenario.learningObjectives?.length ?? 0) >= SCENARIO_LIMITS.objectives
+    )
+      return;
     const objectives = [...(editingScenario.learningObjectives || []), ""];
     updateScenarioField("learningObjectives", objectives);
   }, [editingScenario, updateScenarioField]);
@@ -354,6 +362,7 @@ export default function AuthorPage() {
                   <Label htmlFor="title">{t("author.scenarioTitle")}</Label>
                   <Input
                     id="title"
+                    maxLength={SCENARIO_LIMITS.title}
                     value={editingScenario.title}
                     onChange={(e) => updateScenarioField("title", e.target.value)}
                     placeholder={t("author.scenarioTitlePlaceholder")}
@@ -388,6 +397,7 @@ export default function AuthorPage() {
                 <Label htmlFor="notes">{t("author.scenarioNotes")}</Label>
                 <Textarea
                   id="notes"
+                  maxLength={SCENARIO_LIMITS.notes}
                   value={editingScenario.environment.notes || ""}
                   onChange={(e) =>
                     updateScenarioField("environment", {
@@ -449,6 +459,7 @@ export default function AuthorPage() {
                 size="sm"
                 onClick={addDevice}
                 data-testid="button-add-device"
+                disabled={editingScenario.devices.length >= SCENARIO_LIMITS.devices}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 {t("author.addDevice")}
@@ -477,6 +488,7 @@ export default function AuthorPage() {
                           <div className="flex gap-2">
                             <Input
                               value={device.label}
+                              maxLength={SCENARIO_LIMITS.label}
                               onChange={(e) => updateDevice(device.id, { label: e.target.value })}
                               placeholder={t("author.deviceNamePlaceholder")}
                               className="flex-1"
@@ -558,6 +570,9 @@ export default function AuthorPage() {
                 size="sm"
                 onClick={addLearningObjective}
                 data-testid="button-add-objective"
+                disabled={
+                  (editingScenario.learningObjectives?.length ?? 0) >= SCENARIO_LIMITS.objectives
+                }
               >
                 <Plus className="h-4 w-4 mr-2" />
                 {t("author.addObjective")}
@@ -577,6 +592,7 @@ export default function AuthorPage() {
                       </span>
                       <Input
                         value={objective}
+                        maxLength={SCENARIO_LIMITS.objective}
                         onChange={(e) => updateLearningObjective(index, e.target.value)}
                         placeholder={t("author.objectivePlaceholder")}
                         data-testid={`input-objective-${index}`}

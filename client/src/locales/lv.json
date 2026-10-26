@@ -734,7 +734,8 @@
         "understandImpact": "Saprast katras kontroles ietekmi uz kopējo drošību"
       }
     },
-    "importError": "Neizdevās importēt scenāriju. Lūdzu, pārbaudiet faila formātu.",
+    "importError": "Neizdevās importēt scenāriju. Pārbaudiet JSON formātu, unikālus ierīču ID un galveno tīklu. Ierobežojumi: 1 MB, 128 ierīces, 32 mērķi un 14 obligātās vadīklas.",
+    "validationError": "Pārbaudiet nosaukumu un ierīču nosaukumus. Tie nedrīkst būt tukši. Ierobežojumi: 128 ierīces, 32 mērķi, 512 rakstzīmes nosaukumā un 8000 piezīmēs. Melnraksts joprojām ir atvērts.",
     "importZoneWarningTitle": "Zonas koriģētas",
     "importZoneWarning": "{count, plural, one {# ierīcei bija} other {# ierīcēm bija}} nezināma tīkla zona, un tā tika pārvietota uz Galveno.",
     "deviceDefaultName": "Ierīce {index}",

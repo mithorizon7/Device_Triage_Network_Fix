@@ -1,8 +1,19 @@
-import { scenarioSchema, type Scenario } from "@shared/schema";
+import { SCENARIO_LIMITS, scenarioSchema, type Scenario } from "@shared/schema";
 
 const CUSTOM_SCENARIOS_KEY = "device_triage_custom_scenarios";
 const CUSTOM_SCENARIOS_UPDATED_EVENT = "deviceTriageCustomScenariosUpdated";
-const MAX_STORED_SCENARIOS_SIZE = 1_000_000;
+const MAX_STORED_SCENARIOS_SIZE = SCENARIO_LIMITS.serializedSize;
+
+function readStoredScenarios(): unknown[] {
+  const stored = localStorage.getItem(CUSTOM_SCENARIOS_KEY);
+  if (!stored) return [];
+  if (stored.length > MAX_STORED_SCENARIOS_SIZE) throw new Error("Storage size limit");
+  const parsed: unknown = JSON.parse(stored);
+  if (!Array.isArray(parsed) || parsed.length > SCENARIO_LIMITS.storedScenarios) {
+    throw new Error("Storage collection limit");
+  }
+  return parsed;
+}
 
 function notifyCustomScenariosUpdated(): void {
   if (typeof window === "undefined") return;
@@ -11,11 +22,7 @@ function notifyCustomScenariosUpdated(): void {
 
 export function getCustomScenarios(): Scenario[] {
   try {
-    const stored = localStorage.getItem(CUSTOM_SCENARIOS_KEY);
-    if (!stored) return [];
-    if (stored.length > MAX_STORED_SCENARIOS_SIZE) return [];
-    const parsed: unknown = JSON.parse(stored);
-    if (!Array.isArray(parsed)) return [];
+    const parsed = readStoredScenarios();
     return parsed.flatMap((value) => {
       const result = scenarioSchema.safeParse(value);
       return result.success ? [sanitizeScenarioNetworkIds(result.data).scenario] : [];
@@ -27,18 +34,18 @@ export function getCustomScenarios(): Scenario[] {
 
 export function saveCustomScenario(scenario: Scenario): boolean {
   try {
-    // Preserve legacy oversized data rather than replacing it after a failed read.
-    if ((localStorage.getItem(CUSTOM_SCENARIOS_KEY)?.length ?? 0) > MAX_STORED_SCENARIOS_SIZE) {
-      return false;
-    }
     const { scenario: sanitized } = sanitizeScenarioNetworkIds(scenarioSchema.parse(scenario));
-    const existing = getCustomScenarios();
-    const index = existing.findIndex((s) => s.id === scenario.id);
+    // Keep legacy entries intact even when tightened validation excludes them from the UI.
+    const existing = readStoredScenarios();
+    const index = existing.findIndex(
+      (s) => typeof s === "object" && s !== null && "id" in s && s.id === sanitized.id
+    );
     if (index >= 0) {
       existing[index] = sanitized;
     } else {
       existing.push(sanitized);
     }
+    if (existing.length > SCENARIO_LIMITS.storedScenarios) return false;
     const serialized = JSON.stringify(existing);
     if (serialized.length > MAX_STORED_SCENARIOS_SIZE) return false;
     localStorage.setItem(CUSTOM_SCENARIOS_KEY, serialized);
@@ -51,11 +58,10 @@ export function saveCustomScenario(scenario: Scenario): boolean {
 
 export function deleteCustomScenario(scenarioId: string): boolean {
   try {
-    if ((localStorage.getItem(CUSTOM_SCENARIOS_KEY)?.length ?? 0) > MAX_STORED_SCENARIOS_SIZE) {
-      return false;
-    }
-    const existing = getCustomScenarios();
-    const filtered = existing.filter((s) => s.id !== scenarioId);
+    const existing = readStoredScenarios();
+    const filtered = existing.filter(
+      (s) => !(typeof s === "object" && s !== null && "id" in s && s.id === scenarioId)
+    );
     localStorage.setItem(CUSTOM_SCENARIOS_KEY, JSON.stringify(filtered));
     notifyCustomScenariosUpdated();
     return true;
@@ -92,7 +98,7 @@ export interface CreateEmptyScenarioOptions {
   learningObjectives?: string[];
 }
 
-const DEFAULT_NETWORKS = [
+const DEFAULT_NETWORKS: Scenario["networks"] = [
   {
     id: "main",
     label: "Main Network",

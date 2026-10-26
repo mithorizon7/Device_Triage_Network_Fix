@@ -190,7 +190,7 @@ export default function Home() {
   const [deviceZones, setDeviceZones] = useState<Record<string, ZoneId>>({});
   const [controls, setControls] = useState<Controls | null>(null);
   const [customScenarios, setCustomScenarios] = useState<Scenario[]>([]);
-  const [userProgress, setUserProgress] = useState<UserProgress>(getProgress());
+  const [userProgress, setUserProgress] = useState<UserProgress>(getProgress);
   const [isNewCompletion, setIsNewCompletion] = useState(false);
   const [flaggedDevices, setFlaggedDevices] = useState<Set<string>>(new Set());
   const [scenarioStartRisk, setScenarioStartRisk] = useState<number | null>(null);
@@ -764,7 +764,13 @@ export default function Home() {
   }, [currentScenario, scenarioSession, scoringRules, scenarioStartRisk]);
 
   useEffect(() => {
-    if (!currentScenario || scoreResult.total === 0) return;
+    if (
+      !currentScenario ||
+      !controls ||
+      !scoringRules ||
+      activeScenarioKey !== scenarioSession?.key
+    )
+      return;
 
     const currentScore = Math.round(scoreResult.total);
     if (lastRecordedScore.current === currentScore) return;
@@ -790,7 +796,18 @@ export default function Home() {
         });
       });
     }
-  }, [currentScenario, scoreResult.total, meetsWinCondition, iotDevicesInIotZone, toast, t]);
+  }, [
+    currentScenario,
+    controls,
+    scoringRules,
+    activeScenarioKey,
+    scenarioSession,
+    scoreResult.total,
+    meetsWinCondition,
+    iotDevicesInIotZone,
+    toast,
+    t,
+  ]);
 
   useEffect(() => {
     lastRecordedScore.current = null;

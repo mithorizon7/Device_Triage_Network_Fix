@@ -55,7 +55,7 @@ export function lintScenario(
     warnings.push({ code: "duplicateNetworkIds", params: { ids: duplicateNetworkIds.join(", ") } });
   }
 
-  const networkIdSet = new Set(networkIds);
+  const networkIdSet = new Set<string>(networkIds);
   const invalidDeviceNetworkIds: string[] = [];
   const missingDeviceNetworkIds: string[] = [];
   const invalidDeviceTypes: string[] = [];

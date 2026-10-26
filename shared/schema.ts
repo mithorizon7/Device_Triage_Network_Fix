@@ -1,5 +1,33 @@
 import { z } from "zod";
 
+export const SCENARIO_LIMITS = {
+  devices: 128,
+  networks: 3,
+  objectives: 32,
+  requirements: 14,
+  identifier: 128,
+  label: 256,
+  title: 512,
+  notes: 8_000,
+  objective: 1_000,
+  storedScenarios: 100,
+  serializedSize: 1_000_000,
+} as const;
+
+// Reject excessive collections before validating elements or allocating their issues.
+function boundedArray<T extends z.ZodType>(item: T, maximum: number) {
+  return z
+    .unknown()
+    .refine((value) => !Array.isArray(value) || value.length <= maximum, {
+      error: `Collection must contain at most ${maximum} items`,
+      abort: true,
+    })
+    .pipe(z.array(item).max(maximum));
+}
+
+const identifierSchema = z.string().trim().min(1).max(SCENARIO_LIMITS.identifier);
+const labelSchema = z.string().trim().min(1).max(SCENARIO_LIMITS.label);
+
 export const deviceTypeSchema = z.enum([
   "router",
   "laptop",
@@ -24,21 +52,21 @@ export const riskFlagSchema = z.enum([
 export const zoneIdSchema = z.enum(["main", "guest", "iot"]);
 
 export const deviceSchema = z.object({
-  id: z.string(),
+  id: identifierSchema,
   type: deviceTypeSchema,
-  label: z.string(),
-  networkId: z.string(),
-  ip: z.string().optional(),
-  localId: z.string().optional(),
-  riskFlags: z.array(riskFlagSchema),
+  label: labelSchema,
+  networkId: identifierSchema,
+  ip: z.string().max(SCENARIO_LIMITS.label).optional(),
+  localId: z.string().max(SCENARIO_LIMITS.label).optional(),
+  riskFlags: boundedArray(riskFlagSchema, 4),
 });
 
 export const networkSchema = z.object({
-  id: z.string(),
-  label: z.string(),
-  ssid: z.string().nullable(),
-  security: z.string().nullable(),
-  subnet: z.string().nullable(),
+  id: zoneIdSchema,
+  label: labelSchema,
+  ssid: z.string().max(SCENARIO_LIMITS.label).nullable(),
+  security: z.string().max(SCENARIO_LIMITS.label).nullable(),
+  subnet: z.string().max(SCENARIO_LIMITS.label).nullable(),
   enabled: z.boolean(),
 });
 
@@ -78,6 +106,7 @@ export const controlDefinitionSchema = z.object({
 export const controlsRegistrySchema = z.object({
   version: z.string(),
   controlCategories: z.record(
+    z.string(),
     z.object({
       labelKey: z.string(),
       order: z.number(),
@@ -87,29 +116,39 @@ export const controlsRegistrySchema = z.object({
 });
 
 export const scenarioSchema = z.object({
-  id: z.string(),
-  title: z.string(),
+  id: identifierSchema,
+  title: z.string().trim().min(1).max(SCENARIO_LIMITS.title),
   environment: z.object({
-    type: z.string(),
-    isp: z.string().optional(),
-    publicIp: z.string().optional(),
-    notes: z.string().optional(),
+    type: identifierSchema,
+    isp: z.string().max(SCENARIO_LIMITS.label).optional(),
+    publicIp: z.string().max(SCENARIO_LIMITS.label).optional(),
+    notes: z.string().max(SCENARIO_LIMITS.notes).optional(),
   }),
-  networks: z.array(networkSchema),
+  networks: boundedArray(networkSchema, SCENARIO_LIMITS.networks).refine(
+    (networks) =>
+      networks.some((network) => network.id === "main") &&
+      new Set(networks.map((network) => network.id)).size === networks.length,
+    { error: "Networks must have unique zones and include main" }
+  ),
   initialControls: controlsSchema,
-  devices: z.array(deviceSchema),
-  learningObjectives: z.array(z.string()).optional(),
+  devices: boundedArray(deviceSchema, SCENARIO_LIMITS.devices).refine(
+    (devices) => new Set(devices.map((device) => device.id)).size === devices.length,
+    { error: "Device identifiers must be unique" }
+  ),
+  learningObjectives: boundedArray(
+    z.string().max(SCENARIO_LIMITS.objective),
+    SCENARIO_LIMITS.objectives
+  ).optional(),
   suggestedWinConditions: z
     .object({
-      maxTotalRisk: z.number().optional(),
-      requires: z
-        .array(
-          z.object({
-            control: z.string(),
-            value: z.union([z.boolean(), z.string()]),
-          })
-        )
-        .optional(),
+      maxTotalRisk: z.number().min(0).max(100).optional(),
+      requires: boundedArray(
+        z.object({
+          control: baseControlsSchema.keyof(),
+          value: z.union([z.boolean(), z.string().max(SCENARIO_LIMITS.label)]),
+        }),
+        SCENARIO_LIMITS.requirements
+      ).optional(),
     })
     .optional(),
 });

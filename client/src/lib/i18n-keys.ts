@@ -2,7 +2,7 @@
  * Auto-generated translation keys from en.json
  * DO NOT EDIT MANUALLY - run `node scripts/generate-i18n-types.js` to regenerate
  *
- * Total keys: 639
+ * Total keys: 640
  */
 
 export type TranslationKey =
@@ -75,6 +75,7 @@ export type TranslationKey =
   | "author.scenarioTitlePlaceholder"
   | "author.storageError"
   | "author.title"
+  | "author.validationError"
   | "author.winConditions"
   | "badges.badgeEarned"
   | "badges.badgeEarnedDetail"
@@ -716,6 +717,7 @@ export const translationKeys = [
   "author.scenarioTitlePlaceholder",
   "author.storageError",
   "author.title",
+  "author.validationError",
   "author.winConditions",
   "badges.badgeEarned",
   "badges.badgeEarnedDetail",

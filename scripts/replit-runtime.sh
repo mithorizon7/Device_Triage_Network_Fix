@@ -37,6 +37,7 @@ prepare_runtime() {
     echo "Node archive checksum mismatch; refusing to install or execute it." >&2
     exit 1
   fi
+  echo "[runtime-bootstrap] verified official node=$version platform=$platform archive-sha256=$actual"
   mkdir "$staging/node"
   tar -xzf "$archive" --strip-components=1 -C "$staging/node"
   [[ "$("$staging/node/bin/node" -p 'process.versions.node')" == "$version" ]]
@@ -55,11 +56,12 @@ if [[ ! -x "$runtime/bin/node" ]]; then
   exit 1
 fi
 export PATH="$runtime/bin:$PATH"
+echo "[runtime-bootstrap] mode=$mode prepared-runtime=true startup-download=false"
 node scripts/check-runtime.cjs
 [[ "$(node -p 'process.versions.node')" == "$version" ]]
 node -p 'JSON.stringify({node:process.versions.node,openssl:process.versions.openssl})'
 case "$mode" in
-  build) npm ci --ignore-scripts; npm run build ;;
+  build) echo "[runtime-bootstrap] install=npm-ci lifecycle-scripts=false"; npm ci --ignore-scripts; npm run build ;;
   dev) exec npm run dev ;;
   start) exec npm start ;;
   prepare) ;;

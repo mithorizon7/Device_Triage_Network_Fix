@@ -734,7 +734,8 @@
         "understandImpact": "Understand the impact of each control on overall security"
       }
     },
-    "importError": "Failed to import scenario. Please check the file format.",
+    "importError": "Could not import the scenario. Check the JSON format, unique device IDs and main network. Limits: 1 MB, 128 devices, 32 objectives and 14 required controls.",
+    "validationError": "Check the title and device names. Each must be nonempty. Limits: 128 devices, 32 objectives, 512 title characters and 8,000 notes characters. Your draft is still open.",
     "importZoneWarningTitle": "Zones adjusted",
     "importZoneWarning": "{count, plural, one {# device had} other {# devices had}} an unknown network zone and was moved to Main.",
     "deviceDefaultName": "Device {index}",

@@ -6,6 +6,9 @@ Security audit with repository remediation. Deployment follow-through was explic
 
 ## Audit Queue
 
+- [ ] Q-008 [status:in_progress] October 26 closeout: patch Zod and bound untrusted scenario validation; rerun complete checks, automated learner/recovery acceptance, commit/push and verify the deployed release. Human pilot explicitly waived because participants are unavailable.
+- [ ] Q-009 [status:open] Verify operational outage alerts and rehearse recovery without deploying a known-vulnerable release; document remaining provider-only evidence limits.
+
 - [x] Q-005 [status:verified] Tailwind 4.3.3 removes braces and 78 obsolete packages. Clean npm install/full audit zero, OSV 722 pairs zero affected; final code suite and browser recovery/responsive checks pass.
 - [x] Q-006 [status:verified] Replit identity/repository confirmed; seven pre-existing branches, publication history and verified backups preserved. Clean ade9aff release deployed to the existing domain; public health, asset hashes and learner/recovery checks pass.
 - [x] Q-007 [status:verified] Reviewed application fixes committed and pushed to main and the audit branch; both CI runs pass. Actual public revision/runtime and learner behavior verified; release evidence and remaining provider limits documented.
@@ -18,17 +21,27 @@ Security audit with repository remediation. Deployment follow-through was explic
 
 ## Sign-off Gate
 
-- [x] G-001 [status:verified] Application release ade9aff is committed, pushed, CI-passed, deployed and independently verified on the public service. Broader provider/device/incident-response closure is not implied.
+- [ ] G-001 [status:in_progress] October 26 replacement application release must be committed, pushed, CI-passed, deployed and independently verified on the public service. October 23 evidence below remains historical.
 - [x] G-002 [status:verified] All confirmed application findings are verified. Linux CI and reviewed Replit workspace builds pass; actual production release logs identify patched Node/OpenSSL and clean provenance. Published-command/artifact attestation gaps remain explicitly tracked under R-005.
-- [x] G-003 [status:verified] Final accessibility-fix suite passed: typecheck/lint/118 tests/build/i18n/format. Full local browser run passes learner state, authoring, reports and pointer/keyboard/Escape focus restoration with no ARIA focus warnings. Independent final live acceptance is recorded in V-012.
+- [ ] G-003 [status:open] Rerun typecheck/lint/tests/build/i18n/format and public learner/recovery acceptance after the October 26 changes. October 23 results remain recorded in V-012.
 - [x] G-004 [status:verified] Report includes A-N matrix, dates, evidence, owners and exact follow-up checks.
 
 ## Rerun Matrix
 
-- [x] G-010 [status:verified] All affected checks rerun after final application edits. Fresh live acceptance passes state preservation, 24 locale/view/viewport combinations, keyboard focus, authoring, exports and network-failure recovery. Only audit documentation changes follow.
-- [x] G-011 [status:verified] Final lockfile is unchanged from the zero-finding dependency scans; final CI/Replit audit passes. Production revision, clean flag, serving Node/OpenSSL, headers, APIs and entry asset SHA256 matches verified independently.
+- [ ] G-010 [status:open] Rerun all affected checks after final October 26 application edits, including malformed imports and learner state preservation.
+- [ ] G-011 [status:open] Fresh dependency scans, CI/Replit checks, exact public revision/assets and serving runtime must pass for the replacement release.
 
 ## Findings Log
+
+- [ ] F-017 [status:in_progress] [P2] [confidence:0.99] Progress storage only catches JSON syntax errors; syntactically valid null/wrong-shape progress crashes learner startup. Prototype-named scenario IDs can also resolve inherited map values. Validate bounded progress and use safe dictionary semantics; preserve damaged progress before replacement. Owner: Codex.
+  - Evidence: client/src/lib/progressTracking.ts getProgress returns unchecked JSON.parse, recordAttempt reads arbitrary dictionary keys.
+- [ ] F-018 [status:in_progress] [P2] [confidence:0.99] Zero-risk completion was skipped by a loading sentinel, and the five-scenario badge counted before the current completion was inserted. Use actual scoring/session readiness and include the current completion. Owner: Codex.
+  - Evidence: home.tsx completion effect excluded scoreResult.total === 0; progressTracking.ts counted scenario records before assignment. Fifth-completion regression now passes; zero-risk browser check pending.
+
+- [ ] F-015 [status:in_progress] [P1] [confidence:0.99] Fresh October 26 audit flags GHSA-mrhx-c7xc-m3w5 in root Zod 3.24.2 and nested Zod 4.3.6. Scenario import/storage has a 1 MB cap but unbounded collection validation. Patch both dependency paths and add pre-element validation limits. Owner: Codex.
+  - Evidence: security-evidence/2026-10-26/npm-audit-before.json; shared/schema.ts; https://github.com/advisories/GHSA-mrhx-c7xc-m3w5 .
+- [ ] F-016 [status:in_progress] [P2] [confidence:0.99] October 26 provider inspection cannot locate the October 23 workspace archive/bundles; prior checksum verification is historical only. Preserve current clean source/history in new verified recovery material and rehearse restoration. Unknown historical uncommitted archive availability remains a provider limit. Owner: Codex/operator.
+  - Evidence: read-only Replit agent inspection October 26; seven original branch commits remain reachable. No deletion was observed or attributed.
 
 - [x] F-014 [status:verified] [P2] [confidence:0.99] Language popup is non-modal; final live pointer/keyboard opening, language selection and Escape focus restoration pass with zero ARIA warnings. The first automated Escape check raced popup initialization; focus-aware rerun passes without further application changes.
   - Evidence: final-live-learner.txt and protected console-2026-10-23T19-23-59-084Z.log warning; no application error or lost state occurred. Owner: Codex.
@@ -67,6 +80,9 @@ Security audit with repository remediation. Deployment follow-through was explic
   - Evidence: protected npm-audit-followthrough.json and osv-followthrough.json; clean npm ci. Owner: Codex.
 
 ## Fix Log
+
+- [ ] P-009 [status:in_progress] F-015: Zod 4.6.7 replaces both vulnerable versions; remove unused direct error adapter, migrate records and remove obsolete error dumping. Collection gates reject oversize arrays before elements; bound strings, require unique device/zone IDs, preserve legacy stored entries and localize validation recovery. Full local suite passes 141 tests; public verification pending.
+- [ ] P-010 [status:in_progress] F-016: fresh source bundles/restore rehearsal pending. Runtime wrapper now emits archive-checksum, npm-ci/lifecycle and offline-start markers so actual publication logs can distinguish the guarded path from saved-command overrides.
 
 - [x] P-008 [status:verified] F-014: LanguageSwitcher uses a non-modal popup. Local and final public full browser tests confirm pointer/keyboard opening, Escape focus restoration and zero blocked-aria-hidden warnings while preserving all learner state. Standard code checks and 118 tests pass.
   - Addresses: F-014. Evidence: LanguageSwitcher.tsx, focus-fix-validation.txt, local-focus-regression.txt and acceptance-learner-verified.txt.
